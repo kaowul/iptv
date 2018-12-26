@@ -10,10 +10,7 @@ Contributions are always welcome! Just try to follow our coding style: [FastoGT 
 
 Build
 ========
-
-Linux
--------
-`cmake .. -GNinja -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local`
+Build documentation: [Build FastoNoSQL](https://github.com/fasto/iptv/wiki/Build)
 
 License
 =======
