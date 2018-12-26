@@ -10,7 +10,7 @@ Contributions are always welcome! Just try to follow our coding style: [FastoGT 
 
 Build
 ========
-Build documentation: [Build FastoNoSQL](https://github.com/fasto/iptv/wiki/Build)
+Build documentation: [Build IPTV](https://github.com/fastogt/iptv/wiki/Build)
 
 License
 =======
