@@ -34,7 +34,7 @@ common::Error StopServiceInfo::DoDeSerialize(json_object* serialized) {
   common::Error err = inf.base_class::DoDeSerialize(serialized);
   UNUSED(err);
 
-  json_object* jlicense = NULL;
+  json_object* jlicense = nullptr;
   json_bool jdelay_exists = json_object_object_get_ex(serialized, STOP_SERVICE_INFO_DELAY_FIELD, &jlicense);
   if (jdelay_exists) {
     inf.delay_ = json_object_get_int64(jlicense);

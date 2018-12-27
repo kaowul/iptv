@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <string>
 #include <thread>
 
 #include <common/libev/io_loop.h>
@@ -68,36 +69,36 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
   void Stop();
   void Restart();
 
-  virtual void PreLooped(common::libev::IoLoop* loop) override;
-  virtual void PostLooped(common::libev::IoLoop* loop) override;
-  virtual void Accepted(common::libev::IoClient* client) override;
-  virtual void Moved(common::libev::IoLoop* server, common::libev::IoClient* client) override;
-  virtual void Closed(common::libev::IoClient* client) override;
+  void PreLooped(common::libev::IoLoop* loop) override;
+  void PostLooped(common::libev::IoLoop* loop) override;
+  void Accepted(common::libev::IoClient* client) override;
+  void Moved(common::libev::IoLoop* server, common::libev::IoClient* client) override;
+  void Closed(common::libev::IoClient* client) override;
 
-  virtual void TimerEmited(common::libev::IoLoop* loop, common::libev::timer_id_t id) override;
+  void TimerEmited(common::libev::IoLoop* loop, common::libev::timer_id_t id) override;
 
-  virtual void Accepted(common::libev::IoChild* child) override;
-  virtual void Moved(common::libev::IoLoop* server, common::libev::IoChild* child) override;
-  virtual void ChildStatusChanged(common::libev::IoChild* child, int status) override;
+  void Accepted(common::libev::IoChild* child) override;
+  void Moved(common::libev::IoLoop* server, common::libev::IoChild* child) override;
+  void ChildStatusChanged(common::libev::IoChild* child, int status) override;
 
-  virtual void DataReceived(common::libev::IoClient* client) override;
-  virtual void DataReadyToWrite(common::libev::IoClient* client) override;
+  void DataReceived(common::libev::IoClient* client) override;
+  void DataReadyToWrite(common::libev::IoClient* client) override;
 
   common::ErrnoError StreamDataRecived(common::libev::IoClient* client) WARN_UNUSED_RESULT;
   void StopStream();
   void RestartStream();
 
-  virtual void OnStatusChanged(IBaseStream* stream, StreamStatus status) override;
-  virtual GstPadProbeInfo* OnCheckReveivedData(IBaseStream* stream, Probe* probe, GstPadProbeInfo* info) override;
-  virtual GstPadProbeInfo* OnCheckReveivedOutputData(IBaseStream* stream, Probe* probe, GstPadProbeInfo* info) override;
-  virtual void OnProbeEvent(IBaseStream* stream, Probe* probe, GstEvent* event) override;
-  virtual void OnPipelineEOS(IBaseStream* stream) override;
-  virtual void OnTimeoutUpdated(IBaseStream* stream) override;
-  virtual void OnSyncMessageReceived(IBaseStream* stream, GstMessage* message) override;
-  virtual void OnASyncMessageReceived(IBaseStream* stream, GstMessage* message) override;
-  virtual void OnInputChanged(const InputUri& uri) override;
+  void OnStatusChanged(IBaseStream* stream, StreamStatus status) override;
+  GstPadProbeInfo* OnCheckReveivedData(IBaseStream* stream, Probe* probe, GstPadProbeInfo* info) override;
+  GstPadProbeInfo* OnCheckReveivedOutputData(IBaseStream* stream, Probe* probe, GstPadProbeInfo* info) override;
+  void OnProbeEvent(IBaseStream* stream, Probe* probe, GstEvent* event) override;
+  void OnPipelineEOS(IBaseStream* stream) override;
+  void OnTimeoutUpdated(IBaseStream* stream) override;
+  void OnSyncMessageReceived(IBaseStream* stream, GstMessage* message) override;
+  void OnASyncMessageReceived(IBaseStream* stream, GstMessage* message) override;
+  void OnInputChanged(const InputUri& uri) override;
 
-  virtual void OnPipelineCreated(IBaseStream* stream) override;
+  void OnPipelineCreated(IBaseStream* stream) override;
 
   common::ErrnoError SendResponceToParent(const std::string& cmd) WARN_UNUSED_RESULT;
 

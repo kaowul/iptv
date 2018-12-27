@@ -31,15 +31,15 @@ GstElement* make_element_safe(const std::string& type, const std::string& name) 
 }
 
 const gchar* pad_get_type(GstPad* pad) {
-  GstCaps* caps = gst_pad_query_caps(pad, NULL);
+  GstCaps* caps = gst_pad_query_caps(pad, nullptr);
   if (!caps) {
-    return NULL;
+    return nullptr;
   }
 
   GstStructure* pad_struct = gst_caps_get_structure(caps, 0);
   if (!pad_struct) {
     gst_caps_unref(caps);
-    return NULL;
+    return nullptr;
   }
 
   const gchar* name = gst_structure_get_name(pad_struct);

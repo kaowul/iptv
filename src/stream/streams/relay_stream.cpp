@@ -16,6 +16,8 @@
 
 #include <string.h>
 
+#include <string>
+
 #include "stream/gstreamer_utils.h"  // for pad_get_type
 
 #include "gst_constants.h"
@@ -176,10 +178,10 @@ GValueArray* RelayStream::HandleAutoplugSort(GstElement* bin, GstPad* pad, GstCa
   std::string type_title;
   std::string type_full;
   if (!get_type_from_caps(caps, &type_title, &type_full)) {
-    return NULL;
+    return nullptr;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 GstAutoplugSelectResult RelayStream::HandleAutoplugSelect(GstElement* bin,

@@ -117,37 +117,37 @@ bool ConvertFromString(const std::string& from, iptv_cloud::InputUri* out) {
   }
 
   iptv_cloud::InputUri res;
-  json_object* jid = NULL;
+  json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(obj, FIELD_INPUT_ID, &jid);
   if (jid_exists) {
     res.SetID(json_object_get_int64(jid));
   }
 
-  json_object* juri = NULL;
+  json_object* juri = nullptr;
   json_bool juri_exists = json_object_object_get_ex(obj, FIELD_INPUT_URI, &juri);
   if (juri_exists) {
     res.SetInput(common::uri::Url(json_object_get_string(juri)));
   }
 
-  json_object* juri_volume_audio = NULL;
+  json_object* juri_volume_audio = nullptr;
   json_bool juri_volume_audio_exists = json_object_object_get_ex(obj, FIELD_VOLUME_AUDIO, &juri_volume_audio);
   if (juri_volume_audio_exists) {
     res.SetVolume(json_object_get_double(juri_volume_audio));
   }
 
-  json_object* juri_mute_audio = NULL;
+  json_object* juri_mute_audio = nullptr;
   json_bool juri_mute_audio_exists = json_object_object_get_ex(obj, FIELD_MUTE_AUDIO, &juri_mute_audio);
   if (juri_mute_audio_exists) {
     res.SetMute(json_object_get_boolean(juri_mute_audio));
   }
 
-  json_object* juri_relay_video = NULL;
+  json_object* juri_relay_video = nullptr;
   json_bool juri_relay_video_exists = json_object_object_get_ex(obj, FIELD_RELAY_VIDEO, &juri_relay_video);
   if (juri_relay_video_exists) {
     res.SetRelayVideo(json_object_get_boolean(juri_relay_video));
   }
 
-  json_object* juri_relay_audio = NULL;
+  json_object* juri_relay_audio = nullptr;
   json_bool juri_relay_audio_exists = json_object_object_get_ex(obj, FIELD_RELAY_AUDIO, &juri_relay_audio);
   if (juri_relay_audio_exists) {
     res.SetRelayAudio(json_object_get_boolean(juri_relay_audio));

@@ -14,6 +14,8 @@
 
 #include "stream/streams/playlist_relay_stream.h"
 
+#include <string>
+
 #include <gst/app/gstappsrc.h>  // for GST_APP_SRC
 
 #include "stream/elements/sources/appsrc.h"
@@ -28,12 +30,12 @@ namespace stream {
 namespace streams {
 
 PlaylistRelayStream::PlaylistRelayStream(PlaylistRelayConfig* config, IStreamClient* client, StreamStruct* stats)
-    : RelayStream(config, client, stats), app_src_(nullptr), current_file_(NULL), curent_pos_(0) {}
+    : RelayStream(config, client, stats), app_src_(nullptr), current_file_(nullptr), curent_pos_(0) {}
 
 PlaylistRelayStream::~PlaylistRelayStream() {
   if (current_file_) {
     fclose(current_file_);
-    current_file_ = NULL;
+    current_file_ = nullptr;
   }
 }
 
@@ -63,7 +65,7 @@ void PlaylistRelayStream::HandleNeedData(GstElement* pipeline, guint rsize) {
   UNUSED(rsize);
 
   size_t size = 0;
-  char* ptr = NULL;
+  char* ptr = nullptr;
   while (size == 0) {
     if (!current_file_) {
       current_file_ = OpenNextFile();
@@ -78,7 +80,7 @@ void PlaylistRelayStream::HandleNeedData(GstElement* pipeline, guint rsize) {
     size = fread(ptr, sizeof(char), BUFFER_SIZE, current_file_);
     if (size == 0) {
       fclose(current_file_);
-      current_file_ = NULL;
+      current_file_ = nullptr;
       free(ptr);
     }
   }
@@ -102,7 +104,7 @@ FILE* PlaylistRelayStream::OpenNextFile() {
     input_t input = rconf->GetInput();
     if (curent_pos_ >= input.size()) {
       INFO_LOG() << GetID() << " No more files for playing";
-      return NULL;  // EOS
+      return nullptr;  // EOS
     }
   }
 

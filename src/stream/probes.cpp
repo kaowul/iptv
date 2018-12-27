@@ -28,7 +28,7 @@ Consistency::Consistency()
       saw_serialized_event(FALSE) {}
 
 Probe::Probe(const std::string& name, element_id_t id, IBaseStream* stream)
-    : stream_(stream), name_(name), id_(id), id_buffer_(0), pad_(NULL), consistency_(), is_broken_(false) {
+    : stream_(stream), name_(name), id_(id), id_buffer_(0), pad_(nullptr), consistency_(), is_broken_(false) {
   CHECK(stream);
 }
 
@@ -86,7 +86,7 @@ void Probe::Clear() {
 }
 
 void Probe::ClearInner() {
-  pad_ = NULL;
+  pad_ = nullptr;
   id_buffer_ = 0;
 }
 
@@ -161,7 +161,7 @@ GstPadProbeReturn Probe::source_callback_probe_buffer(GstPad* pad, GstPadProbeIn
       case GST_EVENT_CAPS: {
         /* ok to have these before segment event */
         /* FIXME check order more precisely, if so spec'ed somehow ? */
-        GstCaps* caps = NULL;
+        GstCaps* caps = nullptr;
         gst_event_parse_caps(event, &caps);
         if (caps) {
           GstStructure* pad_struct = gst_caps_get_structure(caps, 0);
@@ -177,7 +177,7 @@ GstPadProbeReturn Probe::source_callback_probe_buffer(GstPad* pad, GstPadProbeIn
         if (probe->consistency_.expect_flush && probe->consistency_.flushing) {
           INFO_LOG() << stream->GetID() << " Received SEGMENT while in a flushing seek on pad " << pad;
         }
-        const GstSegment* segment = NULL;
+        const GstSegment* segment = nullptr;
         gst_event_parse_segment(event, &segment);
         probe->consistency_.segment = TRUE;
         probe->consistency_.eos = FALSE;
@@ -250,14 +250,14 @@ GstPadProbeReturn Probe::sink_callback_probe_buffer(GstPad* pad, GstPadProbeInfo
     switch (GST_EVENT_TYPE(event)) {
       case GST_EVENT_SEEK: {
         GstSeekFlags flags;
-        gst_event_parse_seek(event, NULL, NULL, &flags, NULL, NULL, NULL, NULL);
+        gst_event_parse_seek(event, nullptr, nullptr, &flags, nullptr, nullptr, nullptr, nullptr);
         probe->consistency_.expect_flush = ((flags & GST_SEEK_FLAG_FLUSH) == GST_SEEK_FLAG_FLUSH);
         break;
       }
       case GST_EVENT_CAPS: {
         /* ok to have these before segment event */
         /* FIXME check order more precisely, if so spec'ed somehow ? */
-        GstCaps* caps = NULL;
+        GstCaps* caps = nullptr;
         gst_event_parse_caps(event, &caps);
         if (caps) {
           GstStructure* pad_struct = gst_caps_get_structure(caps, 0);

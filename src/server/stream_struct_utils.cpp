@@ -21,7 +21,7 @@ namespace server {
 
 common::ErrnoError AllocSharedStreamStruct(const StreamInfo& sha, StreamStruct** stream) {
   StreamStruct* mem = static_cast<StreamStruct*>(
-      mmap(NULL, sizeof(StreamStruct), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
+      mmap(nullptr, sizeof(StreamStruct), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
   if (!mem) {
     return common::make_errno_error("Failed to allocate memory.", ENOMEM);
   }
@@ -42,7 +42,7 @@ void FreeSharedStreamStruct(StreamStruct** data) {
 
   ldata->~StreamStruct();
   munmap(ldata, sizeof(StreamStruct));
-  *data = NULL;
+  *data = nullptr;
 }
 
 }  // namespace server

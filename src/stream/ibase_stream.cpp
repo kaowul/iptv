@@ -142,7 +142,7 @@ void streams_init(int argc, char** argv, EncoderType enc) {
   if (common::logging::CURRENT_LOG_LEVEL() == common::logging::LOG_LEVEL_DEBUG) {
     int res = ::setenv("GST_DEBUG", "3", 1);
     if (res == SUCCESS_RESULT_VALUE) {
-      gst_debug_add_log_function(RedirectGstLog, NULL, NULL);
+      gst_debug_add_log_function(RedirectGstLog, nullptr, nullptr);
     }
   }
   gst_init(&argc, &argv);
@@ -170,7 +170,7 @@ IBaseStream::IBaseStream(Config* config, IStreamClient* client, StreamStruct* st
       probe_in_(),
       probe_out_(),
       loop_(g_main_loop_new(ctx_holder::instance()->ctx, FALSE)),
-      pipeline_(NULL),
+      pipeline_(nullptr),
       status_(SNEW),
       status_tick(0),
       no_data_panic_tick(0),
@@ -304,7 +304,7 @@ IBaseStream::~IBaseStream() {
   SetPipelineState(GST_STATE_NULL);
   if (pipeline_) {
     g_object_unref(pipeline_);
-    pipeline_ = NULL;
+    pipeline_ = nullptr;
   }
   destroy(&api_);
 }
@@ -474,7 +474,7 @@ void IBaseStream::ResetDataWait() {
 
 void IBaseStream::Quit(ExitStatus status) {
   GstElement* pipeline = pipeline_;
-  GstStructure* result = gst_structure_new("exit_info", "status", G_TYPE_INT, status, NULL);
+  GstStructure* result = gst_structure_new("exit_info", "status", G_TYPE_INT, status, nullptr);
   GstMessage* message = gst_message_new_application(GST_OBJECT(pipeline), result);
   bool res = gst_element_post_message(pipeline, message);
   if (!res) {
@@ -642,7 +642,7 @@ gboolean IBaseStream::HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* mes
       break;
     }
     case GST_MESSAGE_CLOCK_LOST: {
-      GstClock* clock = NULL;
+      GstClock* clock = nullptr;
       gst_message_parse_clock_lost(message, &clock);
       INFO_LOG() << GetID() << " ASYNC GST_MESSAGE_CLOCK_LOST: " << GST_OBJECT_NAME(clock);
       break;

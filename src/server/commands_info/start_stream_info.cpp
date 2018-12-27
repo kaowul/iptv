@@ -35,13 +35,13 @@ common::Error StartStreamInfo::DoDeSerialize(json_object* serialized) {
     return common::make_error_inval();
   }
 
-  json_object* jconfig = NULL;
+  json_object* jconfig = nullptr;
   json_bool jconfig_exists = json_object_object_get_ex(serialized, CONFIG_KEY_FIELD, &jconfig);
   if (!jconfig_exists) {
     return common::make_error_inval();
   }
 
-  json_object* jcmd = NULL;
+  json_object* jcmd = nullptr;
   json_bool jcmd_exists = json_object_object_get_ex(serialized, CMD_KEY_FIELD, &jcmd);
   if (!jcmd_exists) {
     return common::make_error_inval();

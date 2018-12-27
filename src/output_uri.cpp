@@ -133,19 +133,19 @@ bool ConvertFromString(const std::string& from, iptv_cloud::OutputUri* out) {
   }
 
   iptv_cloud::OutputUri res;
-  json_object* jid = NULL;
+  json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_ID, &jid);
   if (jid_exists) {
     res.SetID(json_object_get_int64(jid));
   }
 
-  json_object* juri = NULL;
+  json_object* juri = nullptr;
   json_bool juri_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_URI, &juri);
   if (juri_exists) {
     res.SetOutput(common::uri::Url(json_object_get_string(juri)));
   }
 
-  json_object* jhttp_root = NULL;
+  json_object* jhttp_root = nullptr;
   json_bool jhttp_root_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_HTTP_ROOT, &jhttp_root);
   if (jhttp_root_exists) {
     const char* http_root_str = json_object_get_string(jhttp_root);
@@ -153,25 +153,25 @@ bool ConvertFromString(const std::string& from, iptv_cloud::OutputUri* out) {
     res.SetHttpRoot(http_root);
   }
 
-  json_object* jwidth = NULL;
+  json_object* jwidth = nullptr;
   json_bool jwidth_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_WIDTH, &jwidth);
   if (jwidth_exists) {
     res.SetWidth(json_object_get_int(jwidth));
   }
 
-  json_object* jheight = NULL;
+  json_object* jheight = nullptr;
   json_bool jheight_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_HEIGHT, &jheight);
   if (jheight_exists) {
     res.SetHeight(json_object_get_int(jheight));
   }
 
-  json_object* jvbitrate = NULL;
+  json_object* jvbitrate = nullptr;
   json_bool jvbitrate_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_VIDEO_BITRATE, &jvbitrate);
   if (jvbitrate_exists) {
     res.SetVideoBitrate(json_object_get_int(jvbitrate));
   }
 
-  json_object* jabitrate = NULL;
+  json_object* jabitrate = nullptr;
   json_bool jabitrate_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_AUDIO_BITRATE, &jabitrate);
   if (jabitrate_exists) {
     res.SetAudioBitrate(json_object_get_int(jabitrate));

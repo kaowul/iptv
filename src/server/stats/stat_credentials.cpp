@@ -49,14 +49,14 @@ bool StatCredentialsBase::IsValidCredentials(const std::string& json_data, StatC
     return false;
   }
 
-  json_object* jtype = NULL;
+  json_object* jtype = nullptr;
   json_bool jtype_exists = json_object_object_get_ex(obj, FIELD_TYPE, &jtype);
   if (!jtype_exists) {
     json_object_put(obj);
     return false;
   }
 
-  json_object* jcreds = NULL;
+  json_object* jcreds = nullptr;
   json_bool jcreds_exists = json_object_object_get_ex(obj, FIELD_CREDS, &jcreds);
   if (!jcreds_exists) {
     json_object_put(obj);

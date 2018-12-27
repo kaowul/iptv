@@ -50,8 +50,8 @@ IBaseBuilder* FakeStream::CreateBuilder() {
 gboolean FakeStream::HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* message) {
   GstMessageType type = GST_MESSAGE_TYPE(message);
   if (type == GST_MESSAGE_ERROR) {
-    GError* err = NULL;
-    gchar* err_msg = NULL;
+    GError* err = nullptr;
+    gchar* err_msg = nullptr;
 
     gst_message_parse_error(message, &err, &err_msg);
     if (err->code == G_FILE_ERROR_NOENT) {

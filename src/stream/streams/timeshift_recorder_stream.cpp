@@ -14,6 +14,8 @@
 
 #include "stream/streams/timeshift_recorder_stream.h"
 
+#include <string>
+
 #include <common/file_system/string_path_utils.h>
 #include <common/time.h>
 
@@ -33,13 +35,13 @@ pad::Pad* link_to_multiplexer(elements::Element* src, elements::Element* sink, c
   pad::Pad* src_pad = src->StaticPad("src");
   if (!src_pad->IsValid()) {
     delete src_pad;
-    return NULL;
+    return nullptr;
   }
   pad::Pad* sink_pad = sink->RequestPad(pad_name);
   if (!sink_pad->IsValid()) {
     delete src_pad;
     delete sink_pad;
-    return NULL;
+    return nullptr;
   }
 
   GstPadLinkReturn ret = gst_pad_link(src_pad->GetGstPad(), sink_pad->GetGstPad());
@@ -151,7 +153,7 @@ gchararray TimeShiftRecorderStream::OnPathSet(GstElement* splitmux, guint fragme
 }
 
 gchararray TimeShiftRecorderStream::path_setter_callback(GstElement* splitmux, guint fragment_id, gpointer user_data) {
-  return path_setter_full_callback(splitmux, fragment_id, NULL, user_data);
+  return path_setter_full_callback(splitmux, fragment_id, nullptr, user_data);
 }
 
 gchararray TimeShiftRecorderStream::path_setter_full_callback(GstElement* splitmux,

@@ -14,8 +14,8 @@
 
 #include "stream/elements/encoders/audio_encoders.h"
 
-#include <string.h>  // for NULL, strcmp
-#include <string>    // for string
+#include <string>  // for string
+#include <vector>
 
 #include <gst/gstcaps.h>
 #include <gst/gstelementfactory.h>
@@ -120,7 +120,7 @@ elements_line_t build_audio_converters(volume_t volume,
   if (achannels != DEFAULT_AUDIO_CHANNEL_COUNT) {
     elements::ElementCapsFilter* caps =
         new elements::ElementCapsFilter(common::MemSPrintf(AUDIO_CONVERT_CAPS_FILTER_NAME_1U, audio_convert_id));
-    GstCaps* cap_convert = gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, achannels, NULL);
+    GstCaps* cap_convert = gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, achannels, nullptr);
     caps->SetCaps(cap_convert);
     gst_caps_unref(cap_convert);
 

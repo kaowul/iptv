@@ -14,6 +14,8 @@
 
 #include "stream_commands_info/stream_stats_info.h"
 
+#include <string>
+
 #define FIELD_STREAM_STATS_ID "id"
 #define FIELD_STREAM_STATS_LAST_UPDATE_TIME "last_update_time"
 #define FIELD_STREAM_STATS_PREV_TOTAL_BYTES "prev_total_bytes"
@@ -63,45 +65,45 @@ common::Error StreamStatsInfo::SerializeFields(json_object* out) const {
 }
 
 common::Error StreamStatsInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jid = NULL;
+  json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(serialized, FIELD_STREAM_STATS_ID, &jid);
   if (!jid_exists) {
     return common::make_error_inval();
   }
   StreamStats stats(json_object_get_int64(jid));
 
-  json_object* jlut = NULL;
+  json_object* jlut = nullptr;
   json_bool jlut_exists = json_object_object_get_ex(serialized, FIELD_STREAM_STATS_LAST_UPDATE_TIME, &jlut);
   if (jlut_exists) {
     stats.SetLastUpdateTime(json_object_get_int64(jlut));
   }
 
-  json_object* jptb = NULL;
+  json_object* jptb = nullptr;
   json_bool jptb_exists = json_object_object_get_ex(serialized, FIELD_STREAM_STATS_PREV_TOTAL_BYTES, &jptb);
   if (jptb_exists) {
     stats.SetPrevTotalBytes(json_object_get_int64(jptb));
   }
 
-  json_object* jtb = NULL;
+  json_object* jtb = nullptr;
   json_bool jtb_exists = json_object_object_get_ex(serialized, FIELD_STREAM_STATS_TOTAL_BYTES, &jtb);
   if (jtb_exists) {
     stats.SetTotalBytes(json_object_get_int64(jtb));
   }
 
-  json_object* jbps = NULL;
+  json_object* jbps = nullptr;
   json_bool jbps_exists = json_object_object_get_ex(serialized, FIELD_STREAM_STATS_BYTES_PER_SECOND, &jbps);
   if (jbps_exists) {
     stats.SetBps(json_object_get_int64(jbps));
   }
 
-  json_object* jdbps = NULL;
+  json_object* jdbps = nullptr;
   json_bool jdbps_exists = json_object_object_get_ex(serialized, FIELD_STREAM_STATS_DESIRE_BYTES_PER_SECOND, &jdbps);
   common::media::DesireBytesPerSec dbps;
   if (jdbps_exists && common::ConvertFromString(json_object_get_string(jdbps), &dbps)) {
     stats.SetDesireBytesPerSecond(dbps);
   }
 
-  json_object* jbroken = NULL;
+  json_object* jbroken = nullptr;
   json_bool jbroken_exists = json_object_object_get_ex(serialized, FIELD_STREAM_STATS_IS_BROKEN, &jbroken);
   if (jbroken_exists) {
     stats.SetIsBroken(jbroken);

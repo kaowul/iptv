@@ -14,6 +14,8 @@
 
 #include "stream_commands_info/changed_sources_info.h"
 
+#include <string>
+
 #define CHANGE_SOURCES_URL_FIELD "url"
 
 namespace iptv_cloud {
@@ -34,7 +36,7 @@ ChangedSouresInfo::url_t ChangedSouresInfo::GetUrl() const {
 
 common::Error ChangedSouresInfo::DoDeSerialize(json_object* serialized) {
   ChangedSouresInfo inf;
-  json_object* jurl = NULL;
+  json_object* jurl = nullptr;
   json_bool jurl_exists = json_object_object_get_ex(serialized, CHANGE_SOURCES_URL_FIELD, &jurl);
   if (jurl_exists) {
     std::string url_str = json_object_get_string(jurl);

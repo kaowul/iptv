@@ -22,6 +22,8 @@
 #include <sys/sysinfo.h>
 #include <sys/times.h>
 
+#include <string>
+
 #include <common/file_system/file_system.h>
 #include <common/macros.h>
 #include <common/sprintf.h>
@@ -45,7 +47,7 @@ void RemoveOldFilesByTime(const common::file_system::ascii_directory_string_path
 
   DEBUG_LOG() << "Started clean up hls folder: " << path;
   struct dirent* dent;
-  while ((dent = readdir(dirp)) != NULL) {
+  while ((dent = readdir(dirp)) != nullptr) {
     if (!strcmp(dent->d_name, ".") || !strcmp(dent->d_name, "..")) {
       continue;
     }
@@ -150,7 +152,7 @@ long double MemoryShot::GetAvailable() const {
 
 MemoryShot GetMachineMemoryShot() {
   FILE* meminfo = fopen("/proc/meminfo", "r");
-  if (meminfo == NULL) {
+  if (meminfo == nullptr) {
     return MemoryShot();
   }
 
@@ -186,7 +188,7 @@ NetShot::NetShot() : bytes_recv(0), bytes_send(0) {}
 
 NetShot GetMachineNetShot() {
   FILE* netinfo = fopen("/proc/net/dev", "r");
-  if (netinfo == NULL) {
+  if (netinfo == nullptr) {
     return NetShot();
   }
 

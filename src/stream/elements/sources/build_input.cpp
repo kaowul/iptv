@@ -14,8 +14,6 @@
 
 #include "stream/elements/sources/build_input.h"
 
-#include <stddef.h>  // for NULL
-
 #include "stream/elements/sources/filesrc.h"
 #include "stream/elements/sources/httpsrc.h"
 #include "stream/elements/sources/rtmpsrc.h"

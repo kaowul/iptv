@@ -16,6 +16,8 @@
 
 #include <string.h>
 
+#include <string>
+
 #include <common/sprintf.h>
 
 #include "gst_constants.h"
@@ -213,7 +215,7 @@ GValueArray* MosaicStream::HandleAutoplugSort(GstElement* bin, GstPad* pad, GstC
   std::string type_title;
   std::string type_full;
   if (!get_type_from_caps(caps, &type_title, &type_full)) {
-    return NULL;
+    return nullptr;
   }
 
   EncodingConfig* econfig = static_cast<EncodingConfig*>(GetApi());
@@ -247,7 +249,7 @@ GValueArray* MosaicStream::HandleAutoplugSort(GstElement* bin, GstPad* pad, GstC
     return result;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void MosaicStream::HandleCairoDraw(GstElement* overlay, cairo_t* cr, guint64 timestamp, guint64 duration) {

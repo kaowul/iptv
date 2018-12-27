@@ -132,7 +132,7 @@ common::ErrnoError ReadCommand(common::libev::IoClient* client, std::string* out
 }
 
 common::ErrnoError WriteMessage(common::libev::IoClient* client, const std::string& message) {
-  char* protocoled_data = NULL;
+  char* protocoled_data = nullptr;
   size_t protocoled_data_len = 0;
   common::ErrnoError err = protocol::GenerateProtocoledMessage(message, &protocoled_data, &protocoled_data_len);
   if (err) {

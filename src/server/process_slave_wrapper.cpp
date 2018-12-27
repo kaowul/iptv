@@ -22,6 +22,9 @@
 #include <unistd.h>
 
 #include <fstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <common/file_system/file_system.h>
 #include <common/file_system/string_path_utils.h>
@@ -559,7 +562,7 @@ common::ErrnoError ProcessSlaveWrapper::DaemonDataReceived(DaemonClient* dclient
 
   int argc;
   sds* argv = sdssplitargslong(cmd_str.c_str(), &argc);
-  if (argv == NULL) {
+  if (argv == nullptr) {
     const std::string error_str = "PROBLEM PARSING INNER COMMAND: " + input_command;
     return common::make_errno_error(error_str, EAGAIN);
   }
@@ -610,7 +613,7 @@ common::ErrnoError ProcessSlaveWrapper::PipeDataReceived(pipe::PipeClient* pipe_
 
   int argc;
   sds* argv = sdssplitargslong(cmd_str.c_str(), &argc);
-  if (argv == NULL) {
+  if (argv == nullptr) {
     const std::string error_str = "PROBLEM PARSING INNER COMMAND: " + input_command;
     return common::make_errno_error(error_str, EAGAIN);
   }
@@ -806,7 +809,7 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
 
     char* error;
     stream_exec_t stream_exec_func = reinterpret_cast<stream_exec_t>(dlsym(handle, "stream_exec"));
-    if ((error = dlerror()) != NULL) {
+    if ((error = dlerror()) != nullptr) {
       ERROR_LOG() << "Failed to load start stream function error: " << error;
       dlclose(handle);
       _exit(EXIT_FAILURE);

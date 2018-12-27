@@ -29,7 +29,7 @@ std::string RestartStreamInfo::GetStreamID() const {
 
 common::Error RestartStreamInfo::DoDeSerialize(json_object* serialized) {
   RestartStreamInfo inf;
-  json_object* jid = NULL;
+  json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(serialized, STREAM_ID_FIELD, &jid);
   if (!jid_exists) {
     return common::make_error_inval();

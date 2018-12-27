@@ -50,7 +50,7 @@ Element* build_mux_video_scale(common::draw::Size sz, ILinker* linker, Element* 
   linker->ElementAdd(capsfilter);
 
   GstCaps* cap_width_height =
-      gst_caps_new_simple("video/x-raw", "width", G_TYPE_INT, sz.width, "height", G_TYPE_INT, sz.height, NULL);
+      gst_caps_new_simple("video/x-raw", "width", G_TYPE_INT, sz.width, "height", G_TYPE_INT, sz.height, nullptr);
   capsfilter->SetCaps(cap_width_height);
   gst_caps_unref(cap_width_height);
 

@@ -14,7 +14,6 @@
 
 #include "stream/elements/encoders/video_encoders.h"
 
-#include <stddef.h>  // for NULL
 #include <string.h>
 #include <string>  // for string
 
@@ -71,7 +70,7 @@ Element* setup_encoder_str_params(const video_encoders_str_args_t& video_str_arg
     std::string value = it->second;
     DEBUG_LOG() << "Installing parametr for " << enc_name << "," << param << " = " << value;
     if (key == X264_ENC_PARAM("profile")) {
-      GstCaps* capsavc = gst_caps_new_simple("video/x-h264", "profile", G_TYPE_STRING, value.c_str(), NULL);
+      GstCaps* capsavc = gst_caps_new_simple("video/x-h264", "profile", G_TYPE_STRING, value.c_str(), nullptr);
       ElementCapsFilter* caps =
           new ElementCapsFilter(common::MemSPrintf(VIDEO_X264ENC_CAPS_FILTER_PROFILE_NAME_1U, encoder_id));
       linker->ElementAdd(caps);
@@ -80,7 +79,7 @@ Element* setup_encoder_str_params(const video_encoders_str_args_t& video_str_arg
       linker->ElementLink(last, caps);
       last = caps;
     } else if (key == X264_ENC_PARAM("stream-format")) {
-      GstCaps* capsavc = gst_caps_new_simple("video/x-h264", "stream-format", G_TYPE_STRING, value.c_str(), NULL);
+      GstCaps* capsavc = gst_caps_new_simple("video/x-h264", "stream-format", G_TYPE_STRING, value.c_str(), nullptr);
       ElementCapsFilter* caps =
           new ElementCapsFilter(common::MemSPrintf(VIDEO_X264ENC_CAPS_FILTER_STREAM_FORMAT_NAME_1U, encoder_id));
       linker->ElementAdd(caps);
@@ -111,7 +110,7 @@ Element* build_video_scale(int width, int height, ILinker* linker, Element* link
   linker->ElementAdd(capsfilter);
 
   GstCaps* cap_width_height =
-      gst_caps_new_simple("video/x-raw", "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, NULL);
+      gst_caps_new_simple("video/x-raw", "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr);
   capsfilter->SetCaps(cap_width_height);
   gst_caps_unref(cap_width_height);
 
@@ -128,7 +127,7 @@ Element* build_video_framerate(int framerate, ILinker* linker, Element* link_to,
   linker->ElementAdd(videorate);
   linker->ElementAdd(capsfilter);
 
-  GstCaps* cap_framerate = gst_caps_new_simple("video/x-raw", "framerate", GST_TYPE_FRACTION, framerate, 1, NULL);
+  GstCaps* cap_framerate = gst_caps_new_simple("video/x-raw", "framerate", GST_TYPE_FRACTION, framerate, 1, nullptr);
   capsfilter->SetCaps(cap_framerate);
   gst_caps_unref(cap_framerate);
 

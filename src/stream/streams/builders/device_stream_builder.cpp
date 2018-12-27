@@ -52,8 +52,8 @@ Connector DeviceStreamBuilder::BuildInput() {
         new elements::ElementCapsFilter(common::MemSPrintf(VIDEO_CAPS_DEVICE_NAME_1U, 0));
     ElementAdd(capsfilter);
 
-    GstCaps* cap_width_height =
-        gst_caps_new_simple("video/x-raw", "width", G_TYPE_INT, VIDEO_WIDTH, "height", G_TYPE_INT, VIDEO_HEIGHT, NULL);
+    GstCaps* cap_width_height = gst_caps_new_simple("video/x-raw", "width", G_TYPE_INT, VIDEO_WIDTH, "height",
+                                                    G_TYPE_INT, VIDEO_HEIGHT, nullptr);
     capsfilter->SetCaps(cap_width_height);
     gst_caps_unref(cap_width_height);
 

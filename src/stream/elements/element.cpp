@@ -14,8 +14,6 @@
 
 #include "stream/elements/element.h"
 
-#include <stddef.h>  // for NULL
-
 #include <gst/gstelement.h>  // for GstElement
 
 #include "stream/gstreamer_utils.h"  // for make_element_safe
@@ -112,51 +110,51 @@ void Element::UnRegisterCallback(gulong signal_id) {
 }
 
 void Element::SetProperty(const char* property, bool val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, gfloat val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, gdouble val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, gint8 val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, guint8 val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, gint16 val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, guint16 val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, gint val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, guint val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, gint64 val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, guint64 val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, const char* val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetProperty(const char* property, const std::string& val) {
@@ -164,11 +162,11 @@ void Element::SetProperty(const char* property, const std::string& val) {
 }
 
 void Element::SetProperty(const char* property, void* val) {
-  g_object_set(element_, property, val, NULL);
+  g_object_set(element_, property, val, nullptr);
 }
 
 void Element::SetFractionProperty(const char* property, gint num, gint den) {
-  g_object_set(element_, property, num, den, NULL);
+  g_object_set(element_, property, num, den, nullptr);
 }
 
 GValue Element::GetProperty(const char* property, GType type) const {

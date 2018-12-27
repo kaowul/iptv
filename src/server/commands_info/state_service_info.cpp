@@ -71,49 +71,49 @@ common::Error StateServiceInfo::SerializeFields(json_object* out) const {
 
 common::Error StateServiceInfo::DoDeSerialize(json_object* serialized) {
   StateServiceInfo inf;
-  json_object* jjobs_directory = NULL;
+  json_object* jjobs_directory = nullptr;
   json_bool jjobs_directory_exists =
       json_object_object_get_ex(serialized, STATE_SERVICE_INFO_JOBS_DIRECTORY_FIELD, &jjobs_directory);
   if (jjobs_directory_exists) {
     inf.jobs_directory_ = json_object_get_string(jjobs_directory);
   }
 
-  json_object* jtimeshifts_directory = NULL;
+  json_object* jtimeshifts_directory = nullptr;
   json_bool jtimeshifts_directory_exists =
       json_object_object_get_ex(serialized, STATE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD, &jtimeshifts_directory);
   if (jtimeshifts_directory_exists) {
     inf.timeshifts_directory_ = json_object_get_string(jtimeshifts_directory);
   }
 
-  json_object* jhls_directory = NULL;
+  json_object* jhls_directory = nullptr;
   json_bool jhls_directory_exists =
       json_object_object_get_ex(serialized, STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD, &jhls_directory);
   if (jhls_directory_exists) {
     inf.hls_directory_ = json_object_get_string(jhls_directory);
   }
 
-  json_object* jads_directory = NULL;
+  json_object* jads_directory = nullptr;
   json_bool jads_directory_exists =
       json_object_object_get_ex(serialized, STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD, &jads_directory);
   if (jads_directory_exists) {
     inf.ads_directory_ = json_object_get_string(jads_directory);
   }
 
-  json_object* jplaylists_directory = NULL;
+  json_object* jplaylists_directory = nullptr;
   json_bool jplaylists_directory_exists =
       json_object_object_get_ex(serialized, STATE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD, &jplaylists_directory);
   if (jplaylists_directory_exists) {
     inf.playlists_directory_ = json_object_get_string(jplaylists_directory);
   }
 
-  json_object* jdvb_directory = NULL;
+  json_object* jdvb_directory = nullptr;
   json_bool jdvb_directory_exists =
       json_object_object_get_ex(serialized, STATE_SERVICE_INFO_DVB_DIRECTORY_FIELD, &jdvb_directory);
   if (jdvb_directory_exists) {
     inf.dvb_directory_ = json_object_get_string(jdvb_directory);
   }
 
-  json_object* jcapture_card_directory = NULL;
+  json_object* jcapture_card_directory = nullptr;
   json_bool jcapture_card_directory_exists =
       json_object_object_get_ex(serialized, STATE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD, &jcapture_card_directory);
   if (jcapture_card_directory_exists) {

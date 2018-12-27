@@ -164,7 +164,7 @@ int main(int argc, char** argv, char** envp) {
                                                                   // system
   NOTICE_LOG() << "Running " PROJECT_VERSION_HUMAN << " in " << (run_as_daemon ? "daemon" : "common") << " mode";
 
-  for (char** env = envp; *env != NULL; env++) {
+  for (char** env = envp; *env != nullptr; env++) {
     char* cur_env = *env;
     INFO_LOG() << cur_env;
   }

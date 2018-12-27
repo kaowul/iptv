@@ -55,7 +55,7 @@ bool ConvertFromString(const std::string& output_urls, iptv_cloud::output_t* out
     return false;
   }
 
-  json_object* jurls = NULL;
+  json_object* jurls = nullptr;
   json_bool jurls_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_URLS, &jurls);
   if (!jurls_exists) {
     json_object_put(obj);
@@ -104,7 +104,7 @@ bool ConvertFromString(const std::string& input_urls, iptv_cloud::input_t* out) 
     return false;
   }
 
-  json_object* jurls = NULL;
+  json_object* jurls = nullptr;
   json_bool jurls_exists = json_object_object_get_ex(obj, FIELD_INPUT_URLS, &jurls);
   if (!jurls_exists) {
     json_object_put(obj);

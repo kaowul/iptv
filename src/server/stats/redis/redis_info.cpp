@@ -38,7 +38,7 @@ common::Error RedisInfo::SerializeFields(json_object* out) const {
 common::Error RedisInfo::DoDeSerialize(json_object* serialized) {
   UNUSED(serialized);
   RedisInfo inf;
-  json_object* jhost = NULL;
+  json_object* jhost = nullptr;
   json_bool jhost_exists = json_object_object_get_ex(serialized, FIELD_REDIS_HOST_FIELD, &jhost);
   if (jhost_exists) {
     std::string host_str = json_object_get_string(jhost);
@@ -48,7 +48,7 @@ common::Error RedisInfo::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  json_object* junix = NULL;
+  json_object* junix = nullptr;
   json_bool junix_exists = json_object_object_get_ex(serialized, FIELD_REDIS_UNIX_SOCKET_FIELD, &junix);
   if (junix_exists) {
     inf.config_.redis_unix_socket = json_object_get_string(junix);

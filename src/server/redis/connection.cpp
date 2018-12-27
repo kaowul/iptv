@@ -27,10 +27,10 @@ struct redisContext* redis_connect(const redis_configuration_t& config) {
   const std::string unix_path = config.redis_unix_socket;
 
   if (!redis_host.IsValid() && unix_path.empty()) {
-    return NULL;
+    return nullptr;
   }
 
-  struct redisContext* redis = NULL;
+  struct redisContext* redis = nullptr;
   std::string host_str = redis_host.GetHost();
   if (unix_path.empty()) {
     redis = redisConnect(host_str.c_str(), redis_host.GetPort());
@@ -40,7 +40,7 @@ struct redisContext* redis_connect(const redis_configuration_t& config) {
       if (redis) {
         ERROR_LOG() << "Redis UNIX connection error: " << redis->errstr << ", path: " << unix_path;
         redisFree(redis);
-        redis = NULL;
+        redis = nullptr;
       }
       redis = redisConnect(host_str.c_str(), redis_host.GetPort());
     }
@@ -50,12 +50,12 @@ struct redisContext* redis_connect(const redis_configuration_t& config) {
     if (redis) {
       ERROR_LOG() << "Redis connection error: " << redis->errstr;
       redisFree(redis);
-      return NULL;
+      return nullptr;
     }
 
     ERROR_LOG() << "Failed connect to redis host: " << common::ConvertToString(redis_host)
                 << " unix path: " << unix_path;
-    return NULL;
+    return nullptr;
   }
 
   return redis;
@@ -63,7 +63,7 @@ struct redisContext* redis_connect(const redis_configuration_t& config) {
 
 }  // namespace
 
-RedisConnection::RedisConnection() : connection_(NULL) {}
+RedisConnection::RedisConnection() : connection_(nullptr) {}
 
 redis_configuration_t RedisConnection::GetConfig() const {
   return config_;
@@ -143,7 +143,7 @@ bool RedisConnection::Connect() {
 
   DisConnect();
   connection_ = redis_connect(config_);
-  return connection_ != NULL;
+  return connection_ != nullptr;
 }
 
 void RedisConnection::DisConnect() {
@@ -152,11 +152,11 @@ void RedisConnection::DisConnect() {
   }
 
   redisFree(connection_);
-  connection_ = NULL;
+  connection_ = nullptr;
 }
 
 bool RedisConnection::IsConnected() const {
-  return connection_ != NULL && !connection_->err;
+  return connection_ && !connection_->err;
 }
 
 }  // namespace redis

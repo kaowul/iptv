@@ -28,7 +28,7 @@ std::string StopStreamInfo::GetStreamID() const {
 }
 
 common::Error StopStreamInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jid = NULL;
+  json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(serialized, STREAM_ID_FIELD, &jid);
   if (!jid_exists) {
     return common::make_error_inval();

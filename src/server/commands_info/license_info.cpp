@@ -30,7 +30,7 @@ common::Error LicenseInfo::SerializeFields(json_object* out) const {
 
 common::Error LicenseInfo::DoDeSerialize(json_object* serialized) {
   LicenseInfo inf;
-  json_object* jlicense = NULL;
+  json_object* jlicense = nullptr;
   json_bool jlicense_exists = json_object_object_get_ex(serialized, LICENSE_INFO_KEY_FIELD, &jlicense);
   if (jlicense_exists) {
     inf.license_ = json_object_get_string(jlicense);

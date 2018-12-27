@@ -92,25 +92,25 @@ class StreamServer : public common::libev::IoLoop {
     ExecInLoopThread(cb);
   }
 
-  virtual const char* ClassName() const override { return "StreamServer"; }
+  const char* ClassName() const override { return "StreamServer"; }
 
-  virtual common::libev::IoChild* CreateChild() override {
+  common::libev::IoChild* CreateChild() override {
     NOTREACHED();
     return nullptr;
   }
 
-  virtual common::libev::IoClient* CreateClient(const common::net::socket_info& info) override {
+  common::libev::IoClient* CreateClient(const common::net::socket_info& info) override {
     UNUSED(info);
     NOTREACHED();
     return nullptr;
   }
 
-  virtual void Started(common::libev::LibEvLoop* loop) override {
+  void Started(common::libev::LibEvLoop* loop) override {
     RegisterClient(command_client_);
     base_class::Started(loop);
   }
 
-  virtual void Stopped(common::libev::LibEvLoop* loop) override {
+  void Stopped(common::libev::LibEvLoop* loop) override {
     UnRegisterClient(command_client_);
     base_class::Stopped(loop);
   }
@@ -185,7 +185,7 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
     }
   }
 
-  streams_init(0, NULL, enc);
+  streams_init(0, nullptr, enc);
 }
 
 ProcessWrapper::~ProcessWrapper() {
@@ -351,7 +351,7 @@ common::ErrnoError ProcessWrapper::StreamDataRecived(common::libev::IoClient* cl
 
   int argc;
   sds* argv = sdssplitargslong(cmd_str.c_str(), &argc);
-  if (argv == NULL) {
+  if (argv == nullptr) {
     const std::string error_str = "PROBLEM PARSING INNER COMMAND: " + input_command;
     return common::make_errno_error(error_str, EAGAIN);
   }

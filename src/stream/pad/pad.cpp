@@ -56,55 +56,55 @@ bool Pad::IsLinked() const {
 }
 
 bool Pad::IsValid() const {
-  return pad_ != NULL;
+  return pad_ != nullptr;
 }
 
 void Pad::SetProperty(const char* property, bool val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, gfloat val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, gdouble val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, gint8 val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, guint8 val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, gint16 val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, guint16 val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, gint val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, guint val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, gint64 val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, guint64 val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, const char* val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 void Pad::SetProperty(const char* property, const std::string& val) {
@@ -112,7 +112,7 @@ void Pad::SetProperty(const char* property, const std::string& val) {
 }
 
 void Pad::SetProperty(const char* property, void* val) {
-  g_object_set(pad_, property, val, NULL);
+  g_object_set(pad_, property, val, nullptr);
 }
 
 }  // namespace pad
