@@ -36,7 +36,6 @@ common::Error RedisInfo::SerializeFields(json_object* out) const {
 }
 
 common::Error RedisInfo::DoDeSerialize(json_object* serialized) {
-  UNUSED(serialized);
   RedisInfo inf;
   json_object* jhost = nullptr;
   json_bool jhost_exists = json_object_object_get_ex(serialized, FIELD_REDIS_HOST_FIELD, &jhost);

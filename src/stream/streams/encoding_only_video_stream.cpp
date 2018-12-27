@@ -14,6 +14,8 @@
 
 #include "stream/streams/encoding_only_video_stream.h"
 
+#include <string>
+
 #include "stream/gstreamer_utils.h"
 
 #include "stream/streams/builders/encoding_only_video_stream_builder.h"
@@ -37,9 +39,6 @@ IBaseBuilder* EncodingOnlyVideoStream::CreateBuilder() {
 }
 
 gboolean EncodingOnlyVideoStream::HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad, GstCaps* caps) {
-  UNUSED(elem);
-  UNUSED(pad);
-
   UNUSED(elem);
   UNUSED(pad);
 

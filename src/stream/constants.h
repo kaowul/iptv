@@ -86,4 +86,4 @@
 
 #define DECKLINK_VIDEO_MODE_FILELD "decklink_video_mode"
 
-extern const common::media::Rational unknown_aspect_ratio;
+extern const common::media::Rational kUnknownAspectRatio;

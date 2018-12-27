@@ -54,8 +54,8 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
 
   // channel_id_t not empty
   IBaseStream(Config* config, IStreamClient* client, StreamStruct* stats);
-  virtual const char* ClassName() const override;
-  virtual ~IBaseStream();
+  const char* ClassName() const override;
+  ~IBaseStream() override;
 
   ExitStatus Exec();
   void Restart();

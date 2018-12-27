@@ -298,7 +298,6 @@ void ProcessWrapper::Restart() {
 
 void ProcessWrapper::PreLooped(common::libev::IoLoop* loop) {
   UNUSED(loop);
-
   if (ttl_sec_) {
     ttl_master_timer_ = loop_->CreateTimer(ttl_sec_, false);
     NOTICE_LOG() << "Set stream ttl: " << ttl_sec_;
@@ -419,18 +418,14 @@ common::ErrnoError ProcessWrapper::HandleRequestCommand(common::libev::IoClient*
                                                         protocol::sequance_id_t id,
                                                         int argc,
                                                         char* argv[]) {
-  UNUSED(id);
-  UNUSED(argc);
   char* command = argv[0];
-
   if (IS_EQUAL_COMMAND(command, STOP_STREAM)) {
     return HandleRequestStopStream(client, id, argc, argv);
   } else if (IS_EQUAL_COMMAND(command, RESTART_STREAM)) {
     return HandleRequestRestartStream(client, id, argc, argv);
-  } else {
-    WARNING_LOG() << "Received unknown command: " << command;
   }
 
+  WARNING_LOG() << "Received unknown command: " << command;
   return common::ErrnoError();
 }
 

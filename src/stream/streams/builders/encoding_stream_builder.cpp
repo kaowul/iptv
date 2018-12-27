@@ -177,7 +177,7 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
     }
 
     common::media::Rational rat = conf->GetAspectRatio();
-    if (rat != unknown_aspect_ratio) {
+    if (rat != kUnknownAspectRatio) {
       elements::video::ElementAspectRatio* aspect_ratio =
           new elements::video::ElementAspectRatio(common::MemSPrintf(ASPECT_RATIO_NAME_1U, video_id));
       aspect_ratio->SetAspectRatio(rat.num, rat.den);

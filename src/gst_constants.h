@@ -187,11 +187,11 @@
 #define SUPPORTED_VIDEO_PARSERS_COUNT 3
 #define SUPPORTED_AUDIO_PARSERS_COUNT 3
 
-extern const std::array<const char*, SUPPORTED_VIDEO_PARSERS_COUNT> supported_video_parsers;
-extern const std::array<const char*, SUPPORTED_AUDIO_PARSERS_COUNT> supported_audio_parsers;
+extern const std::array<const char*, SUPPORTED_VIDEO_PARSERS_COUNT> kSupportedVideoParsers;
+extern const std::array<const char*, SUPPORTED_AUDIO_PARSERS_COUNT> kSupportedAudioParsers;
 
 #define SUPPORTED_VIDEO_ENCODERS_COUNT 9
 #define SUPPORTED_AUDIO_ENCODERS_COUNT 3
 
-extern const std::array<const char*, SUPPORTED_VIDEO_ENCODERS_COUNT> supported_video_encoders;
-extern const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> supported_audio_encoders;
+extern const std::array<const char*, SUPPORTED_VIDEO_ENCODERS_COUNT> kSupportedVideoEncoders;
+extern const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> kSupportedAudioEncoders;

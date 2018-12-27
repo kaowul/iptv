@@ -418,8 +418,7 @@ void ProcessSlaveWrapper::PreLooped(common::libev::IoLoop* server) {
 }
 
 void ProcessSlaveWrapper::Accepted(common::libev::IoClient* client) {
-  DaemonClient* dclient = static_cast<DaemonClient*>(client);
-  UNUSED(dclient);
+  UNUSED(client);  // DaemonClient
 }
 
 void ProcessSlaveWrapper::Moved(common::libev::IoLoop* server, common::libev::IoClient* client) {
@@ -669,8 +668,7 @@ void ProcessSlaveWrapper::DataReceived(common::libev::IoClient* client) {
 }
 
 void ProcessSlaveWrapper::DataReadyToWrite(common::libev::IoClient* client) {
-  DaemonClient* dclient = static_cast<DaemonClient*>(client);
-  UNUSED(dclient);
+  UNUSED(client);  // DaemonClient
 }
 
 void ProcessSlaveWrapper::PostLooped(common::libev::IoLoop* server) {
@@ -1163,8 +1161,6 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(DaemonClient
                                                                     protocol::sequance_id_t id,
                                                                     int argc,
                                                                     char* argv[]) {
-  UNUSED(id);
-  UNUSED(argc);
   char* command = argv[0];
 
   if (IS_EQUAL_COMMAND(command, CLIENT_START_STREAM)) {
@@ -1179,10 +1175,9 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(DaemonClient
     return HandleRequestClientStopService(dclient, id, argc, argv);
   } else if (IS_EQUAL_COMMAND(command, CLIENT_ACTIVATE)) {
     return HandleRequestClientActivate(dclient, id, argc, argv);
-  } else {
-    WARNING_LOG() << "Received unknown command: " << command;
   }
 
+  WARNING_LOG() << "Received unknown command: " << command;
   return common::ErrnoError();
 }
 
@@ -1201,17 +1196,15 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStreamsCommand(pipe::PipeCl
                                                                     protocol::sequance_id_t id,
                                                                     int argc,
                                                                     char* argv[]) {
-  UNUSED(id);
-  UNUSED(argc);
   char* command = argv[0];
 
   if (IS_EQUAL_COMMAND(command, CHANGED_SOURCES_STREAM)) {
     return HandleRequestChangedSourcesStream(pclient, id, argc, argv);
   } else if (IS_EQUAL_COMMAND(command, STATISTIC_STREAM)) {
     return HandleRequestStatisticStream(pclient, id, argc, argv);
-  } else {
-    WARNING_LOG() << "Received unknown command: " << command;
   }
+
+  WARNING_LOG() << "Received unknown command: " << command;
   return common::ErrnoError();
 }
 

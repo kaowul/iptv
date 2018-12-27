@@ -32,8 +32,6 @@ namespace stream {
 namespace elements {
 namespace encoders {
 
-std::vector<std::string> GetAvailibleAudioCodecs();
-
 template <SupportedElements el>
 class ElementAudioEncoder : public ElementEx<el> {
  public:

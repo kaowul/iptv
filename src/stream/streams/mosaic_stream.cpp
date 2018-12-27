@@ -57,7 +57,6 @@ void MosaicStream::ConnectCairoSignals(elements::video::ElementCairoOverlay* cai
 }
 
 gboolean MosaicStream::HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad, GstCaps* caps) {
-  UNUSED(elem);
   UNUSED(pad);
 
   std::string type_title;

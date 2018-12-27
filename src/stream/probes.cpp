@@ -116,7 +116,6 @@ void Probe::destroy_callback_probe(gpointer user_data) {
 }
 
 GstPadProbeReturn Probe::source_callback_probe_buffer(GstPad* pad, GstPadProbeInfo* info, gpointer user_data) {
-  UNUSED(pad);
   Probe* probe = reinterpret_cast<Probe*>(user_data);
   IBaseStream* stream = probe->stream_;
   GstPadProbeInfo* checked_info = stream->CheckProbeData(probe, info);

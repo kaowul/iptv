@@ -20,6 +20,11 @@
 
 #include <gst/base/gstbasesrc.h>  // for GstBaseSrc
 
+#include <map>
+#include <vector>
+#include <string>
+#include <memory>
+
 #include <common/time.h>
 
 #include "stream/gstreamer_utils.h"
@@ -810,8 +815,6 @@ GstBusSyncReply IBaseStream::sync_bus_callback(GstBus* bus, GstMessage* message,
 }
 
 gboolean IBaseStream::async_bus_callback(GstBus* bus, GstMessage* message, gpointer user_data) {
-  UNUSED(bus);
-
   IBaseStream* stream = reinterpret_cast<IBaseStream*>(user_data);
   return stream->HandleAsyncBusMessageReceived(bus, message);
 }
@@ -821,14 +824,12 @@ bool IBaseStream::DumpIntoFile(const common::file_system::ascii_file_string_path
     return false;
   }
 
-  dumper::IDumper* dumper = dumper::DumpersFactory::GetInstance().CreateDumper(path);
+  std::unique_ptr<dumper::IDumper> dumper(dumper::DumpersFactory::GetInstance().CreateDumper(path));
   if (!dumper) {
     return false;
   }
 
-  bool res = dumper->Dump(GST_BIN(pipeline_), path);
-  delete dumper;
-  return res;
+  return dumper->Dump(GST_BIN(pipeline_), path);
 }
 
 }  // namespace stream

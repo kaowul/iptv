@@ -14,14 +14,14 @@
 
 #include "gst_constants.h"
 
-const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> supported_video_parsers = {
+const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> kSupportedVideoParsers = {
     {TS_PARSE, H264_PARSE, H265_PARSE}};
 
-const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> supported_audio_parsers = {
+const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> kSupportedAudioParsers = {
     {MPEG_AUDIO_PARSE, AAC_PARSE, AC3_PARSE}};
 
-const std::array<const char*, SUPPORTED_VIDEO_ENCODERS_COUNT> supported_video_encoders = {
+const std::array<const char*, SUPPORTED_VIDEO_ENCODERS_COUNT> kSupportedVideoEncoders = {
     {EAVC_ENC, OPEN_H264_ENC, X264_ENC, NV_H264_ENC, VAAPI_H264_ENC, VAAPI_MPEG2_ENC, MFX_H264_ENC, X265_ENC,
      MSDK_H264_ENC}};
-const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> supported_audio_encoders = {
+const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> kSupportedAudioEncoders = {
     {LAME_MP3_ENC, FAAC, VOAAC_ENC}};

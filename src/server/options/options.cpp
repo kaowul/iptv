@@ -102,7 +102,7 @@ Validity validate_timeshift_delay(const std::string& value) {  // in minutes
 
 Validity validate_video_parser(const std::string& value) {
   for (size_t i = 0; i < SUPPORTED_VIDEO_PARSERS_COUNT; ++i) {
-    const char* parser = supported_video_parsers[i];
+    const char* parser = kSupportedVideoParsers[i];
     if (value == parser) {
       return Validity::VALID;
     }
@@ -112,7 +112,7 @@ Validity validate_video_parser(const std::string& value) {
 
 Validity validate_audio_parser(const std::string& value) {
   for (size_t i = 0; i < SUPPORTED_AUDIO_PARSERS_COUNT; ++i) {
-    const char* parser = supported_audio_parsers[i];
+    const char* parser = kSupportedAudioParsers[i];
     if (value == parser) {
       return Validity::VALID;
     }
@@ -122,7 +122,7 @@ Validity validate_audio_parser(const std::string& value) {
 
 Validity validate_video_codec(const std::string& value) {
   for (size_t i = 0; i < SUPPORTED_VIDEO_ENCODERS_COUNT; ++i) {
-    const char* codec = supported_video_encoders[i];
+    const char* codec = kSupportedVideoEncoders[i];
     if (value == codec) {
       return Validity::VALID;
     }
@@ -132,7 +132,7 @@ Validity validate_video_codec(const std::string& value) {
 
 Validity validate_audio_codec(const std::string& value) {
   for (size_t i = 0; i < SUPPORTED_AUDIO_ENCODERS_COUNT; ++i) {
-    const char* codec = supported_audio_encoders[i];
+    const char* codec = kSupportedAudioEncoders[i];
     if (value == codec) {
       return Validity::VALID;
     }

@@ -30,18 +30,6 @@ namespace stream {
 namespace elements {
 namespace encoders {
 
-std::vector<std::string> GetAvailibleAudioCodecs() {
-  std::vector<std::string> res;
-  for (size_t i = 0; i < SUPPORTED_AUDIO_ENCODERS_COUNT; ++i) {
-    const char* codec = supported_audio_encoders[i];
-    GstElementFactory* factory = gst_element_factory_find(codec);
-    if (factory) {
-      res.push_back(codec);
-    }
-  }
-  return res;
-}
-
 void ElementFAAC::SetRateControl(guint brtype) {
   SetProperty("rate-control", brtype);
 }

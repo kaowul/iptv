@@ -299,7 +299,7 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       }
 
       common::media::Rational rat = config->GetAspectRatio();
-      if (rat != unknown_aspect_ratio) {
+      if (rat != kUnknownAspectRatio) {
         elements::video::ElementAspectRatio* aspect_ratio =
             new elements::video::ElementAspectRatio(common::MemSPrintf(ASPECT_RATIO_NAME_1U, i));
         aspect_ratio->SetAspectRatio(rat.num, rat.den);

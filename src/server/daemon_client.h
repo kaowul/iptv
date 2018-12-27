@@ -25,7 +25,7 @@ class DaemonClient : public common::libev::tcp::TcpClient {
  public:
   typedef common::libev::tcp::TcpClient base_class;
   DaemonClient(common::libev::IoLoop* server, const common::net::socket_info& info);
-  virtual ~DaemonClient();
+  ~DaemonClient() override;
 
   bool IsVerified() const;
   void SetVerified(bool verif);

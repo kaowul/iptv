@@ -32,7 +32,9 @@ common::Error StopServiceInfo::SerializeFields(json_object* obj) const {
 common::Error StopServiceInfo::DoDeSerialize(json_object* serialized) {
   StopServiceInfo inf;
   common::Error err = inf.base_class::DoDeSerialize(serialized);
-  UNUSED(err);
+  if (err) {
+    return err;
+  }
 
   json_object* jlicense = nullptr;
   json_bool jdelay_exists = json_object_object_get_ex(serialized, STOP_SERVICE_INFO_DELAY_FIELD, &jlicense);
