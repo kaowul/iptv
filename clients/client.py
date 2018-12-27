@@ -8,7 +8,7 @@ SERVER_PORT = 6317
 def print_usage():
     print("Usage:\n"
           "[required] argv[1] key\n"
-          "[required] argv[2] input uri"
+          "[required] argv[2] input uri\n"
           "[optional] argv[3] host\n"
           "[optional] argv[4] port\n")
 
