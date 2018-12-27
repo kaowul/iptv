@@ -18,7 +18,7 @@ Visit our site: [www.fastotv.com](http://www.fastotv.com)
 
 Gstreamer Pipelines
 ==========
-### [Encode](https://fastotv.com/pipelines/encode.html)
+### [Encode (h264/aac)](https://fastotv.com/pipelines/encode.html)
 
 Contribute
 ==========
