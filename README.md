@@ -19,6 +19,8 @@ Visit our site: [fastotv.com](https://fastotv.com)
 Gstreamer Pipelines
 ==========
 ### [Encode (h264/aac)](https://fastotv.com/pipelines/encode.html)
+### [Relay](https://fastotv.com/pipelines/relay.html)
+### [Timeshift recorder](https://fastotv.com/pipelines/timeshift_rec.html)
 
 Contribute
 ==========

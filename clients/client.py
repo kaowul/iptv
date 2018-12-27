@@ -17,9 +17,10 @@ cmd_array = ['0 1234 activate_request {"license_key":"%s"}\r\n',
              '0 1235 stop_service {"license_key":"%s", "delay":1}\r\n',
              '0 1236 state_service {"license_key":"%s","jobs_directory":"/home/sasha", "timeshifts_directory":"/root", "hls_directory":"/home/sasha/1", "ads_directory":"/home/sasha/2", "playlists_directory":"/home/sasha/3", "dvb_directory":"/home/sasha/4", "capture_card_directory":"/home/sasha/5"}\r\n',
              '0 1237 start_stream {"license_key":"%s", "command_line": "feedback_dir=~/test/1 log_level=6","config": {"id": "test_1","audio_bitrate": 92,"audio_codec": "faac", "delay_time": 0,"input": {"urls": [{"id": 170,"uri": "%s"}]},"output": {"urls": [{"id": 80,"uri": "tcp://localhost:1935"}]},"type": "encoding","video_bitrate": 1700,"video_codec": "x264enc","volume": 1.0}}\r\n',
-             '0 1238 start_stream {"license_key":"%s", "command_line": "feedback_dir=~/test/2 log_level=6","config": {"id": "test_1","input": {"urls": [{"id": 1,"uri": "%s"}]},"timeshift_dir": "/var/www/html/live/14","type": "timeshift_recorder"}}\r\n',
-             '0 1239 stop_stream {"license_key":"%s", "id": "test_1"}\r\n',
-             '0 1240 restart_stream {"license_key":"%s", "id": "test_1"}\r\n']
+             '0 1238 start_stream {"license_key":"%s", "command_line": "feedback_dir=~/test/2 log_level=6","config": {"id": "test_1","input": {"urls": [{"id": 170,"uri": "%s"}]},"output": {"urls": [{"id": 80,"uri": "tcp://localhost:1935"}]},"type": "relay"}}\r\n',
+             '0 1239 start_stream {"license_key":"%s", "command_line": "feedback_dir=~/test/3 log_level=6","config": {"id": "test_1","input": {"urls": [{"id": 1,"uri": "%s"}]},"timeshift_dir": "/var/www/html/live/14","type": "timeshift_recorder"}}\r\n',
+             '0 1240 stop_stream {"license_key":"%s", "id": "test_1"}\r\n',
+             '0 1241 restart_stream {"license_key":"%s", "id": "test_1"}\r\n']
 
 
 def isdigit(value):
@@ -69,10 +70,11 @@ if __name__ == "__main__":
           '0 - activate client\n'
           '1 - stop daemon\n'
           '2 - state daemon\n'
-          '3 - start stream\n'
-          '4 - start stream time\n'
-          '5 - stop stream\n'
-          '6 - restart stream\n\n'
+          '3 - start encode stream\n'
+          '4 - start relay stream\n'
+          '5 - start timerecord stream\n'
+          '6 - stop stream\n'
+          '7 - restart stream\n\n'
           'text commands:\n'
           'quit - exit from client')
 
@@ -107,7 +109,7 @@ if __name__ == "__main__":
 
                 cmd_number = int(data)
                 cmd_template = cmd_array[cmd_number]
-                if cmd_number == 3 or cmd_number == 4:
+                if cmd_number == 3 or cmd_number == 4 or cmd_number == 5:
                     data = cmd_template % (key, input_uri)
                 else:
                     data = cmd_template % key
