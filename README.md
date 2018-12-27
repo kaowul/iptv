@@ -16,9 +16,9 @@ Free IPTV cloud server
 
 Visit our site: [www.fastotv.com](http://www.fastotv.com)
 
-Pipelines
+Gstreamer Pipelines
 ==========
-[Encode](https://fastotv.com/pipelines/encode.html)
+### [Encode](https://fastotv.com/pipelines/encode.html)
 
 Contribute
 ==========
