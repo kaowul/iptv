@@ -1,6 +1,18 @@
 About IPTV cloud
 ===============
 Free IPTV cloud server
+### Features:
+* Encode/Transcode
+* Relay
+* Timeshift
+* Catchups
+* Playlist
+* Stream Post Processing
+* Mozaic
+* Many Outputs
+* Physical Inputs
+* Streaming Protocols
+* File Formats
 
 Visit our site: [www.fastotv.com](http://www.fastotv.com)
 
