@@ -182,8 +182,8 @@ class BuildRequest(object):
     def build_glib(self, version):
         glib_version_short = version[:version.rfind('.')]
         compiler_flags = utils.CompileInfo([], [])
-        self.build('{0}/{1}/glib-{2}.{3}'.format(GLIB_SRC_ROOT, glib_version_short, version, GLIB_ARCH_EXT),
-                   compiler_flags)
+        utils.build_from_sources_autogen('{0}/{1}/glib-{2}.{3}'.format(GLIB_SRC_ROOT, glib_version_short, 
+                                         version, GLIB_ARCH_EXT), compiler_flags, g_script_path, self.prefix_path_)
 
     def build_gstreamer(self, version):
         compiler_flags = utils.CompileInfo([], ['--disable-debug'])
