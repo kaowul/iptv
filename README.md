@@ -14,6 +14,7 @@ Free IPTV cloud server
 * Physical Inputs
 * Streaming Protocols
 * File Formats
+* Public API, client server communication via [JSON RPC](https://www.jsonrpc.org/specification)
 
 Visit our site: [fastotv.com](https://fastotv.com)
 
