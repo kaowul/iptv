@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "protocol/protocol.h"
 
 // daemon
@@ -42,6 +44,7 @@ protocol::responce_t StopServiceResponceFail(protocol::sequance_id_t id, const s
 protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::serializet_t params);
 
 protocol::responce_t ActivateResponceSuccess(protocol::sequance_id_t id);
+protocol::responce_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
 protocol::responce_t StateServiceResponceSuccess(protocol::sequance_id_t id, protocol::serializet_t msg);
 

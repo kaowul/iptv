@@ -1099,17 +1099,21 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(DaemonClient
     ActivateInfo activate_info;
     common::Error err_des = activate_info.DeSerialize(jactivate);
     json_object_put(jactivate);
+    ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
     if (err_des) {
       const std::string err_str = err_des->GetDescription();
+      protocol::responce_t resp = ActivateResponceFail(req->id, err_str);
+      pdclient->WriteResponce(resp);
       return common::make_errno_error(err_str, EAGAIN);
     }
 
     bool is_active = activate_info.GetLicense() == license_key_;
     if (!is_active) {
+      protocol::responce_t resp = ActivateResponceFail(req->id, "Wrong license key.");
+      pdclient->WriteResponce(resp);
       return common::make_errno_error_inval();
     }
 
-    ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
     protocol::responce_t resp = ActivateResponceSuccess(req->id);
     pdclient->WriteResponce(resp);
     dclient->SetVerified(true);

@@ -37,6 +37,10 @@ protocol::responce_t ActivateResponceSuccess(protocol::sequance_id_t id) {
   return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
+protocol::responce_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+  return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+}
+
 protocol::responce_t StateServiceResponceSuccess(protocol::sequance_id_t id, protocol::serializet_t msg) {
   return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage(msg));
 }
