@@ -14,15 +14,22 @@
 
 #pragma once
 
-#include <common/protocols/three_way_handshake/commands.h>
+#include <common/protocols/json_rpc/json_rpc.h>
+
+#define OK_RESULT "OK"
 
 namespace iptv_cloud {
 namespace protocol {
 
-typedef common::protocols::three_way_handshake::cmd_responce_t responce_t;
-typedef common::protocols::three_way_handshake::cmd_request_t request_t;
-typedef common::protocols::three_way_handshake::cmd_seq_t sequance_id_t;
+typedef common::protocols::json_rpc::JsonRPCResponce responce_t;
+typedef common::protocols::json_rpc::JsonRPCRequest request_t;
+typedef common::protocols::json_rpc::json_rpc_request_params params_t;
+typedef std::string sequance_id_t;
 typedef std::string serializet_t;
+
+common::protocols::json_rpc::JsonRPCMessage MakeSuccessMessage(const std::string& text = OK_RESULT);
+common::protocols::json_rpc::JsonRPCError MakeServerErrorFromText(const std::string& error_text);
+common::protocols::json_rpc::JsonRPCError MakeInternalErrorFromText(const std::string& error_text);
 
 }  // namespace protocol
 }  // namespace iptv_cloud

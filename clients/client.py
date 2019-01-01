@@ -13,14 +13,14 @@ def print_usage():
           "[optional] argv[4] port\n")
 
 
-cmd_array = ['0 1234 activate_request {"license_key":"%s"}\r\n',
-             '0 1235 stop_service {"license_key":"%s", "delay":1}\r\n',
-             '0 1236 state_service {"license_key":"%s","jobs_directory":"/home/sasha", "timeshifts_directory":"/root", "hls_directory":"/home/sasha/1", "ads_directory":"/home/sasha/2", "playlists_directory":"/home/sasha/3", "dvb_directory":"/home/sasha/4", "capture_card_directory":"/home/sasha/5"}\r\n',
-             '0 1237 start_stream {"license_key":"%s", "command_line": "feedback_dir=~/test/1 log_level=6","config": {"id": "test_1","audio_bitrate": 92,"audio_codec": "faac", "delay_time": 0,"input": {"urls": [{"id": 170,"uri": "%s"}]},"output": {"urls": [{"id": 80,"uri": "tcp://localhost:1935"}]},"type": "encoding","video_bitrate": 1700,"video_codec": "x264enc","volume": 1.0}}\r\n',
-             '0 1238 start_stream {"license_key":"%s", "command_line": "feedback_dir=~/test/2 log_level=6","config": {"id": "test_1","input": {"urls": [{"id": 170,"uri": "%s"}]},"output": {"urls": [{"id": 80,"uri": "tcp://localhost:1935"}]},"type": "relay"}}\r\n',
-             '0 1239 start_stream {"license_key":"%s", "command_line": "feedback_dir=~/test/3 log_level=6","config": {"id": "test_1","input": {"urls": [{"id": 1,"uri": "%s"}]},"timeshift_dir": "/var/www/html/live/14","type": "timeshift_recorder"}}\r\n',
-             '0 1240 stop_stream {"license_key":"%s", "id": "test_1"}\r\n',
-             '0 1241 restart_stream {"license_key":"%s", "id": "test_1"}\r\n']
+cmd_array = ['{"jsonrpc": "2.0", "method": "activate_request", "id": 11, "params": {"license_key":"%s"}}',
+             '{"jsonrpc": "2.0", "method": "stop_service", "id": 12, "params": {"license_key":"%s", "delay":1}}',
+             '{"jsonrpc": "2.0", "method": "state_service", "id": 13, "params": {"license_key":"%s","jobs_directory":"/home/sasha", "timeshifts_directory":"/root", "hls_directory":"/home/sasha/1", "ads_directory":"/home/sasha/2", "playlists_directory":"/home/sasha/3", "dvb_directory":"/home/sasha/4", "capture_card_directory":"/home/sasha/5"}}',
+             '{"jsonrpc": "2.0", "method": "start_stream", "id": 14, "params": {"license_key":"%s", "command_line": "feedback_dir=~/test/1 log_level=6","config": {"id": "test_1","audio_bitrate": 92,"audio_codec": "faac", "delay_time": 0,"input": {"urls": [{"id": 170,"uri": "%s"}]},"output": {"urls": [{"id": 80,"uri": "tcp://localhost:1935"}]},"type": "encoding","video_bitrate": 1700,"video_codec": "x264enc","volume": 1.0}}}',
+             '{"jsonrpc": "2.0", "method": "start_stream", "id": 15, "params": {"license_key":"%s", "command_line": "feedback_dir=~/test/2 log_level=6","config": {"id": "test_1","input": {"urls": [{"id": 170,"uri": "%s"}]},"output": {"urls": [{"id": 80,"uri": "tcp://localhost:1935"}]},"type": "relay"}}}',
+             '{"jsonrpc": "2.0", "method": "start_stream", "id": 16, "params": {"license_key":"%s", "command_line": "feedback_dir=~/test/3 log_level=6","config": {"id": "test_1","input": {"urls": [{"id": 1,"uri": "%s"}]},"timeshift_dir": "/var/www/html/live/14","type": "timeshift_recorder"}}}',
+             '{"jsonrpc": "2.0", "method": "stop_stream", "id": 17, "params": {"license_key":"%s", "id": "test_1"}}',
+             '{"jsonrpc": "2.0", "method": "restart_stream", "id": 18, "params": {"license_key":"%s", "id": "test_1"}}']
 
 
 def isdigit(value):
@@ -94,7 +94,7 @@ if __name__ == "__main__":
                 else:
                     # print data
                     var = data[4:]
-                    sys.stdout.write(var.decode())
+                    print(var.decode())
 
             # user entered a message
             else:

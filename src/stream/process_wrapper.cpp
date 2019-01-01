@@ -24,10 +24,6 @@
 #include <common/system_info/system_info.h>
 #include <common/time.h>
 
-extern "C" {
-#include "sds_fasto.h"  // for sdsfreesplitres, sds
-}
-
 #include "stream/ibase_stream.h"
 
 #include "gst_constants.h"
@@ -333,48 +329,35 @@ common::ErrnoError ProcessWrapper::StreamDataRecived(common::libev::IoClient* cl
   std::string input_command;
   protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
   common::ErrnoError err = pclient->ReadCommand(&input_command);
-  if (err) {  // i don't want handle spam, comand must be formated according
+  if (err) {  // i don't want handle spam, command must be formated according
               // protocol
     return err;
   }
 
-  common::protocols::three_way_handshake::cmd_id_t seq;
-  protocol::sequance_id_t id;
-  std::string cmd_str;
-
-  common::Error err_parse = common::protocols::three_way_handshake::ParseCommand(input_command, &seq, &id, &cmd_str);
+  protocol::request_t* req = nullptr;
+  protocol::responce_t* resp = nullptr;
+  common::Error err_parse = common::protocols::json_rpc::ParseJsonRPC(input_command, &req, &resp);
   if (err_parse) {
     const std::string err_str = err_parse->GetDescription();
     return common::make_errno_error(err_str, EAGAIN);
   }
 
-  int argc;
-  sds* argv = sdssplitargslong(cmd_str.c_str(), &argc);
-  if (argv == nullptr) {
-    const std::string error_str = "PROBLEM PARSING INNER COMMAND: " + input_command;
-    return common::make_errno_error(error_str, EAGAIN);
-  }
-
-  INFO_LOG() << "HANDLE INNER COMMAND client[" << pclient->GetFormatedName()
-             << "] seq: " << common::protocols::three_way_handshake::CmdIdToString(seq) << ", id:" << id
-             << ", cmd: " << cmd_str;
-  if (seq == REQUEST_COMMAND) {
-    err = HandleRequestCommand(client, id, argc, argv);
+  if (req) {
+    err = HandleRequestCommand(pclient, req);
     if (err) {
       DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
     }
-  } else if (seq == RESPONCE_COMMAND) {
-    err = HandleResponceCommand(client, id, argc, argv);
+    delete req;
+  } else if (resp) {
+    err = HandleResponceCommand(pclient, resp);
     if (err) {
       DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
     }
+    delete resp;
   } else {
-    DNOTREACHED();
-    sdsfreesplitres(argv, argc);
+    NOTREACHED();
     return common::make_errno_error("Invalid command type.", EINVAL);
   }
-
-  sdsfreesplitres(argv, argc);
   return common::ErrnoError();
 }
 
@@ -414,29 +397,20 @@ void ProcessWrapper::ChildStatusChanged(common::libev::IoChild* child, int statu
   UNUSED(status);
 }
 
-common::ErrnoError ProcessWrapper::HandleRequestCommand(common::libev::IoClient* client,
-                                                        protocol::sequance_id_t id,
-                                                        int argc,
-                                                        char* argv[]) {
-  char* command = argv[0];
-  if (IS_EQUAL_COMMAND(command, STOP_STREAM)) {
-    return HandleRequestStopStream(client, id, argc, argv);
-  } else if (IS_EQUAL_COMMAND(command, RESTART_STREAM)) {
-    return HandleRequestRestartStream(client, id, argc, argv);
+common::ErrnoError ProcessWrapper::HandleRequestCommand(common::libev::IoClient* client, protocol::request_t* req) {
+  if (req->method == STOP_STREAM) {
+    return HandleRequestStopStream(client, req);
+  } else if (req->method == RESTART_STREAM) {
+    return HandleRequestRestartStream(client, req);
   }
 
-  WARNING_LOG() << "Received unknown command: " << command;
+  WARNING_LOG() << "Received unknown command: " << req->method;
   return common::ErrnoError();
 }
 
-common::ErrnoError ProcessWrapper::HandleResponceCommand(common::libev::IoClient* client,
-                                                         protocol::sequance_id_t id,
-                                                         int argc,
-                                                         char* argv[]) {
+common::ErrnoError ProcessWrapper::HandleResponceCommand(common::libev::IoClient* client, protocol::responce_t* resp) {
   UNUSED(client);
-  UNUSED(id);
-  UNUSED(argc);
-  UNUSED(argv);
+  UNUSED(resp);
   return common::ErrnoError();
 }
 
@@ -450,13 +424,11 @@ protocol::sequance_id_t ProcessWrapper::NextRequestID() {
   return hexed;
 }
 
-common::ErrnoError ProcessWrapper::HandleRequestStopStream(common::libev::IoClient* client,
-                                                           protocol::sequance_id_t id,
-                                                           int argc,
-                                                           char* argv[]) {
+common::ErrnoError ProcessWrapper::HandleRequestStopStream(common::libev::IoClient* client, protocol::request_t* req) {
   protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
-  if (argc > 1) {
-    json_object* jstop_info = json_tokener_parse(argv[1]);
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jstop_info = json_tokener_parse(params_ptr);
     if (!jstop_info) {
       return common::make_errno_error_inval();
     }
@@ -469,7 +441,7 @@ common::ErrnoError ProcessWrapper::HandleRequestStopStream(common::libev::IoClie
       return common::make_errno_error(err_str, EAGAIN);
     }
 
-    protocol::responce_t resp = StopStreamResponceSuccess(id);
+    protocol::responce_t resp = StopStreamResponceSuccess(req->id);
     pclient->WriteResponce(resp);
 
     Stop();
@@ -480,12 +452,11 @@ common::ErrnoError ProcessWrapper::HandleRequestStopStream(common::libev::IoClie
 }
 
 common::ErrnoError ProcessWrapper::HandleRequestRestartStream(common::libev::IoClient* client,
-                                                              protocol::sequance_id_t id,
-                                                              int argc,
-                                                              char* argv[]) {
+                                                              protocol::request_t* req) {
   protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
-  if (argc > 1) {
-    json_object* jrestart_info = json_tokener_parse(argv[1]);
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jrestart_info = json_tokener_parse(params_ptr);
     if (!jrestart_info) {
       return common::make_errno_error_inval();
     }
@@ -498,7 +469,7 @@ common::ErrnoError ProcessWrapper::HandleRequestRestartStream(common::libev::IoC
       return common::make_errno_error(err_str, EAGAIN);
     }
 
-    protocol::responce_t resp = RestartStreamResponceSuccess(id);
+    protocol::responce_t resp = RestartStreamResponceSuccess(req->id);
     pclient->WriteResponce(resp);
 
     Restart();

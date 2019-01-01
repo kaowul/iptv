@@ -39,7 +39,7 @@ namespace server {
 protocol::responce_t StopServiceResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t StopServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::serializet_t msg);
+protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::serializet_t params);
 
 protocol::responce_t ActivateResponceSuccess(protocol::sequance_id_t id);
 

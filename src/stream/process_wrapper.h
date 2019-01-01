@@ -46,25 +46,17 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
 
  protected:
   virtual common::ErrnoError HandleRequestCommand(common::libev::IoClient* client,
-                                                  protocol::sequance_id_t id,
-                                                  int argc,
-                                                  char* argv[]) WARN_UNUSED_RESULT;
+                                                  protocol::request_t* req) WARN_UNUSED_RESULT;
   virtual common::ErrnoError HandleResponceCommand(common::libev::IoClient* client,
-                                                   protocol::sequance_id_t id,
-                                                   int argc,
-                                                   char* argv[]) WARN_UNUSED_RESULT;
+                                                   protocol::responce_t* resp) WARN_UNUSED_RESULT;
 
  private:
   protocol::sequance_id_t NextRequestID();
 
   common::ErrnoError HandleRequestStopStream(common::libev::IoClient* client,
-                                             protocol::sequance_id_t id,
-                                             int argc,
-                                             char* argv[]) WARN_UNUSED_RESULT;
+                                             protocol::request_t* req) WARN_UNUSED_RESULT;
   common::ErrnoError HandleRequestRestartStream(common::libev::IoClient* client,
-                                                protocol::sequance_id_t id,
-                                                int argc,
-                                                char* argv[]) WARN_UNUSED_RESULT;
+                                                protocol::request_t* req) WARN_UNUSED_RESULT;
 
   void Stop();
   void Restart();

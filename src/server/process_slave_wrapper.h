@@ -18,7 +18,6 @@
 
 #include <common/libev/io_loop_observer.h>
 #include <common/net/types.h>
-#include <common/protocols/three_way_handshake/commands.h>
 
 #include "stats/istat.h"
 
@@ -64,22 +63,14 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   virtual void PostLooped(common::libev::IoLoop* server) override;
 
   virtual common::ErrnoError HandleRequestServiceCommand(DaemonClient* dclient,
-                                                         protocol::sequance_id_t id,
-                                                         int argc,
-                                                         char* argv[]) WARN_UNUSED_RESULT;
+                                                         protocol::request_t* req) WARN_UNUSED_RESULT;
   virtual common::ErrnoError HandleResponceServiceCommand(DaemonClient* dclient,
-                                                          protocol::sequance_id_t id,
-                                                          int argc,
-                                                          char* argv[]) WARN_UNUSED_RESULT;
+                                                          protocol::responce_t* resp) WARN_UNUSED_RESULT;
 
   virtual common::ErrnoError HandleRequestStreamsCommand(pipe::PipeClient* pclient,
-                                                         protocol::sequance_id_t id,
-                                                         int argc,
-                                                         char* argv[]) WARN_UNUSED_RESULT;
+                                                         protocol::request_t* req) WARN_UNUSED_RESULT;
   virtual common::ErrnoError HandleResponceStreamsCommand(pipe::PipeClient* pclient,
-                                                          protocol::sequance_id_t id,
-                                                          int argc,
-                                                          char* argv[]) WARN_UNUSED_RESULT;
+                                                          protocol::responce_t* resp) WARN_UNUSED_RESULT;
 
  private:
   ChildStream* FindChildByID(const std::string& cid) const;
@@ -93,41 +84,21 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   common::ErrnoError CreateChildStream(common::libev::IoLoop* server, const StartStreamInfo& start_info);
 
   common::ErrnoError HandleRequestChangedSourcesStream(pipe::PipeClient* pclient,
-                                                       protocol::sequance_id_t id,
-                                                       int argc,
-                                                       char* argv[]) WARN_UNUSED_RESULT;
+                                                       protocol::request_t* req) WARN_UNUSED_RESULT;
 
   common::ErrnoError HandleRequestStatisticStream(pipe::PipeClient* pclient,
-                                                  protocol::sequance_id_t id,
-                                                  int argc,
-                                                  char* argv[]) WARN_UNUSED_RESULT;
+                                                  protocol::request_t* req) WARN_UNUSED_RESULT;
 
-  common::ErrnoError HandleRequestClientStartStream(DaemonClient* dclient,
-                                                    protocol::sequance_id_t id,
-                                                    int argc,
-                                                    char* argv[]) WARN_UNUSED_RESULT;
-  common::ErrnoError HandleRequestClientStopStream(DaemonClient* dclient,
-                                                   protocol::sequance_id_t id,
-                                                   int argc,
-                                                   char* argv[]) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientStartStream(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientStopStream(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
   common::ErrnoError HandleRequestClientRestartStream(DaemonClient* dclient,
-                                                      protocol::sequance_id_t id,
-                                                      int argc,
-                                                      char* argv[]) WARN_UNUSED_RESULT;
+                                                      protocol::request_t* req) WARN_UNUSED_RESULT;
 
   // service
   common::ErrnoError HandleRequestClientStateService(DaemonClient* dclient,
-                                                     protocol::sequance_id_t id,
-                                                     int argc,
-                                                     char* argv[]) WARN_UNUSED_RESULT;
-  common::ErrnoError HandleRequestClientActivate(DaemonClient* dclient,
-                                                 protocol::sequance_id_t id,
-                                                 int argc,
-                                                 char* argv[]) WARN_UNUSED_RESULT;
-  common::ErrnoError HandleRequestClientStopService(DaemonClient* dclient,
-                                                    protocol::sequance_id_t id,
-                                                    int argc,
-                                                    char* argv[]) WARN_UNUSED_RESULT;
+                                                     protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientActivate(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientStopService(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
 
   void ReadConfig();
   void ClearStat();

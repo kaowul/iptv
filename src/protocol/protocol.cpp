@@ -152,11 +152,21 @@ common::ErrnoError WriteMessage(common::libev::IoClient* client, const std::stri
 }
 
 common::ErrnoError WriteRequest(common::libev::IoClient* client, const request_t& request) {
-  return WriteMessage(client, request.GetCmd());
+  std::string request_str;
+  common::Error err = common::protocols::json_rpc::MakeJsonRPCRequest(request, &request_str);
+  if (err) {
+    return common::make_errno_error(err->GetDescription(), err->GetErrorCode());
+  }
+  return WriteMessage(client, request_str);
 }
 
 common::ErrnoError WriteResponce(common::libev::IoClient* client, const responce_t& responce) {
-  return WriteMessage(client, responce.GetCmd());
+  std::string responce_str;
+  common::Error err = common::protocols::json_rpc::MakeJsonRPCResponce(responce, &responce_str);
+  if (err) {
+    return common::make_errno_error(err->GetDescription(), err->GetErrorCode());
+  }
+  return WriteMessage(client, responce_str);
 }
 }  // namespace detail
 

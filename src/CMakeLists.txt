@@ -50,11 +50,6 @@ SET(STREAM_COMMANDS_INFO_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/stream_struct_info.cpp
 )
 
-SET(SDS_SOURCES
-  ${CMAKE_SOURCE_DIR}/src/third-party/sds/sds.c
-  ${CMAKE_SOURCE_DIR}/src/third-party/sds/sds_fasto.c
-)
-
 FIND_PACKAGE(Common REQUIRED)
 FIND_PACKAGE(JSON-C REQUIRED)
 

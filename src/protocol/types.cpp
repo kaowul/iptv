@@ -15,5 +15,27 @@
 #include "protocol/types.h"
 
 namespace iptv_cloud {
-namespace protocol {}  // namespace protocol
+namespace protocol {
+
+common::protocols::json_rpc::JsonRPCMessage MakeSuccessMessage(const std::string& text) {
+  common::protocols::json_rpc::JsonRPCMessage msg;
+  msg.result = text;
+  return msg;
+}
+
+common::protocols::json_rpc::JsonRPCError MakeServerErrorFromText(const std::string& error_text) {
+  common::protocols::json_rpc::JsonRPCError err;
+  err.code = common::protocols::json_rpc::JSON_RPC_SERVER_ERROR;
+  err.message = error_text;
+  return err;
+}
+
+common::protocols::json_rpc::JsonRPCError MakeInternalErrorFromText(const std::string& error_text) {
+  common::protocols::json_rpc::JsonRPCError err;
+  err.code = common::protocols::json_rpc::JSON_RPC_INTERNAL_ERROR;
+  err.message = error_text;
+  return err;
+}
+
+}  // namespace protocol
 }  // namespace iptv_cloud

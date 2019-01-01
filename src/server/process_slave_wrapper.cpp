@@ -31,10 +31,6 @@
 #include <common/net/net.h>
 #include <common/sys_byteorder.h>
 
-extern "C" {
-#include "sds_fasto.h"  // for sdsfreesplitres, sds
-}
-
 #include "options/options.h"
 
 #include "child_stream.h"
@@ -549,44 +545,31 @@ common::ErrnoError ProcessSlaveWrapper::DaemonDataReceived(DaemonClient* dclient
                  // protocol
   }
 
-  common::protocols::three_way_handshake::cmd_id_t seq;
-  protocol::sequance_id_t id;
-  std::string cmd_str;
-
-  common::Error err_parse = common::protocols::three_way_handshake::ParseCommand(input_command, &seq, &id, &cmd_str);
+  protocol::request_t* req = nullptr;
+  protocol::responce_t* resp = nullptr;
+  common::Error err_parse = common::protocols::json_rpc::ParseJsonRPC(input_command, &req, &resp);
   if (err_parse) {
     const std::string err_str = err_parse->GetDescription();
     return common::make_errno_error(err_str, EAGAIN);
   }
 
-  int argc;
-  sds* argv = sdssplitargslong(cmd_str.c_str(), &argc);
-  if (argv == nullptr) {
-    const std::string error_str = "PROBLEM PARSING INNER COMMAND: " + input_command;
-    return common::make_errno_error(error_str, EAGAIN);
-  }
-
-  INFO_LOG() << "HANDLE INNER COMMAND client[" << pclient->GetFormatedName()
-             << "] seq: " << common::protocols::three_way_handshake::CmdIdToString(seq) << ", id:" << id
-             << ", cmd: " << cmd_str;
-
-  if (seq == REQUEST_COMMAND) {
-    err = HandleRequestServiceCommand(dclient, id, argc, argv);
+  if (req) {
+    err = HandleRequestServiceCommand(dclient, req);
     if (err) {
       DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
     }
-  } else if (seq == RESPONCE_COMMAND) {
-    err = HandleResponceServiceCommand(dclient, id, argc, argv);
+    delete req;
+  } else if (resp) {
+    err = HandleResponceServiceCommand(dclient, resp);
     if (err) {
       DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
     }
+    delete resp;
   } else {
-    DNOTREACHED();
-    sdsfreesplitres(argv, argc);
+    NOTREACHED();
     return common::make_errno_error("Invalid command type.", EINVAL);
   }
 
-  sdsfreesplitres(argv, argc);
   return common::ErrnoError();
 }
 
@@ -596,45 +579,34 @@ common::ErrnoError ProcessSlaveWrapper::PipeDataReceived(pipe::PipeClient* pipe_
   pipe::ProtocoledPipeClient* pclient = static_cast<pipe::ProtocoledPipeClient*>(pipe_client);
   common::ErrnoError err = pclient->ReadCommand(&input_command);
   if (err) {
-    return err;  // i don't want handle spam, comand must be foramated according
+    return err;  // i don't want handle spam, command must be foramated according
                  // protocol
   }
 
-  common::protocols::three_way_handshake::cmd_id_t seq;
-  protocol::sequance_id_t id;
-  std::string cmd_str;
-
-  common::Error err_parse = common::protocols::three_way_handshake::ParseCommand(input_command, &seq, &id, &cmd_str);
+  protocol::request_t* req = nullptr;
+  protocol::responce_t* resp = nullptr;
+  common::Error err_parse = common::protocols::json_rpc::ParseJsonRPC(input_command, &req, &resp);
   if (err_parse) {
     const std::string err_str = err_parse->GetDescription();
     return common::make_errno_error(err_str, EAGAIN);
   }
 
-  int argc;
-  sds* argv = sdssplitargslong(cmd_str.c_str(), &argc);
-  if (argv == nullptr) {
-    const std::string error_str = "PROBLEM PARSING INNER COMMAND: " + input_command;
-    return common::make_errno_error(error_str, EAGAIN);
-  }
-
-  INFO_LOG() << "HANDLE INNER COMMAND client[" << pclient->GetFormatedName()
-             << "] seq: " << common::protocols::three_way_handshake::CmdIdToString(seq) << ", id:" << id
-             << ", cmd: " << cmd_str;
-
-  if (seq == REQUEST_COMMAND) {
-    err = HandleRequestStreamsCommand(pipe_client, id, argc, argv);
+  if (req) {
+    err = HandleRequestStreamsCommand(pipe_client, req);
     if (err) {
       DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
     }
-  } else if (seq == RESPONCE_COMMAND) {
-    err = HandleResponceStreamsCommand(pipe_client, id, argc, argv);
+    delete req;
+  } else if (resp) {
+    err = HandleResponceStreamsCommand(pipe_client, resp);
     if (err) {
       DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
     }
+    delete resp;
   } else {
     NOTREACHED();
+    return common::make_errno_error("Invalid command type.", EINVAL);
   }
-  sdsfreesplitres(argv, argc);
   return common::ErrnoError();
 }
 
@@ -684,12 +656,11 @@ void ProcessSlaveWrapper::PostLooped(common::libev::IoLoop* server) {
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(DaemonClient* dclient,
-                                                                       protocol::sequance_id_t id,
-                                                                       int argc,
-                                                                       char* argv[]) {
+                                                                       protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
-  if (argc > 1) {
-    json_object* jstop = json_tokener_parse(argv[1]);
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jstop = json_tokener_parse(params_ptr);
     if (!jstop) {
       return common::make_errno_error_inval();
     }
@@ -710,7 +681,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(DaemonCli
     if (cleanup_timer_ != INVALID_TIMER_ID) {
       // in progress
       ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
-      protocol::responce_t resp = StopServiceResponceFail(id, "Stop service in progress...");
+      protocol::responce_t resp = StopServiceResponceFail(req->id, "Stop service in progress...");
       pdclient->WriteResponce(resp);
 
       return common::ErrnoError();
@@ -723,7 +694,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(DaemonCli
     }
 
     ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
-    protocol::responce_t resp = StopServiceResponceSuccess(id);
+    protocol::responce_t resp = StopServiceResponceSuccess(req->id);
     pdclient->WriteResponce(resp);
 
     cleanup_timer_ = loop_->CreateTimer(cleanup_seconds, false);
@@ -878,12 +849,11 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::PipeClient* pclient,
-                                                                          protocol::sequance_id_t id,
-                                                                          int argc,
-                                                                          char* argv[]) {
+                                                                          protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
-  if (argc > 1) {
-    json_object* jrequest_changed_sources = json_tokener_parse(argv[1]);
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jrequest_changed_sources = json_tokener_parse(params_ptr);
     if (!jrequest_changed_sources) {
       return common::make_errno_error_inval();
     }
@@ -897,7 +867,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::
     }
 
     pipe::ProtocoledPipeClient* pdclient = static_cast<pipe::ProtocoledPipeClient*>(pclient);
-    protocol::responce_t resp = ChangedSourcesStreamResponceSuccess(id);
+    protocol::responce_t resp = ChangedSourcesStreamResponceSuccess(req->id);
     pdclient->WriteResponce(resp);
 
     std::string changed_str;
@@ -924,12 +894,11 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::PipeClient* pclient,
-                                                                     protocol::sequance_id_t id,
-                                                                     int argc,
-                                                                     char* argv[]) {
+                                                                     protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
-  if (argc > 1) {
-    json_object* jrequest_stat = json_tokener_parse(argv[1]);
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jrequest_stat = json_tokener_parse(params_ptr);
     if (!jrequest_stat) {
       return common::make_errno_error_inval();
     }
@@ -950,7 +919,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::PipeC
     }
 
     pipe::ProtocoledPipeClient* pdclient = static_cast<pipe::ProtocoledPipeClient*>(pclient);
-    protocol::responce_t resp = StatisticStreamResponceSuccess(id);
+    protocol::responce_t resp = StatisticStreamResponceSuccess(req->id);
     pdclient->WriteResponce(resp);
 
     auto struc = stat.GetStreamStruct();
@@ -962,16 +931,15 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::PipeC
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStartStream(DaemonClient* dclient,
-                                                                       protocol::sequance_id_t id,
-                                                                       int argc,
-                                                                       char* argv[]) {
+                                                                       protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
   if (!dclient->IsVerified()) {
     return common::make_errno_error_inval();
   }
 
-  if (argc > 1) {
-    json_object* jstart_info = json_tokener_parse(argv[1]);
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jstart_info = json_tokener_parse(params_ptr);
     if (!jstart_info) {
       return common::make_errno_error_inval();
     }
@@ -988,12 +956,12 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStartStream(DaemonCli
     common::libev::IoLoop* server = dclient->GetServer();
     common::ErrnoError err = CreateChildStream(server, start_info);
     if (err) {
-      protocol::responce_t resp = StartStreamResponceFail(id, err->GetDescription());
+      protocol::responce_t resp = StartStreamResponceFail(req->id, err->GetDescription());
       pdclient->WriteResponce(resp);
       return err;
     }
 
-    protocol::responce_t resp = StartStreamResponceSuccess(id);
+    protocol::responce_t resp = StartStreamResponceSuccess(req->id);
     pdclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -1011,17 +979,15 @@ protocol::sequance_id_t ProcessSlaveWrapper::NextRequestID() {
   return hexed;
 }
 
-common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopStream(DaemonClient* dclient,
-                                                                      protocol::sequance_id_t id,
-                                                                      int argc,
-                                                                      char* argv[]) {
+common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopStream(DaemonClient* dclient, protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
   if (!dclient->IsVerified()) {
     return common::make_errno_error_inval();
   }
 
-  if (argc > 1) {
-    json_object* jstop_info = json_tokener_parse(argv[1]);
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jstop_info = json_tokener_parse(params_ptr);
     if (!jstop_info) {
       return common::make_errno_error_inval();
     }
@@ -1037,13 +1003,13 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopStream(DaemonClie
     ChildStream* chan = FindChildByID(stop_info.GetStreamID());
     ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
     if (!chan) {
-      protocol::responce_t resp = StopStreamResponceFail(id, "Stream not found.");
+      protocol::responce_t resp = StopStreamResponceFail(req->id, "Stream not found.");
       pdclient->WriteResponce(resp);
       return common::ErrnoError();
     }
 
     chan->SendStop(NextRequestID());
-    protocol::responce_t resp = StopStreamResponceSuccess(id);
+    protocol::responce_t resp = StopStreamResponceSuccess(req->id);
     pdclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -1052,16 +1018,15 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopStream(DaemonClie
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestClientRestartStream(DaemonClient* dclient,
-                                                                         protocol::sequance_id_t id,
-                                                                         int argc,
-                                                                         char* argv[]) {
+                                                                         protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
   if (!dclient->IsVerified()) {
     return common::make_errno_error_inval();
   }
 
-  if (argc > 1) {
-    json_object* jrestart_info = json_tokener_parse(argv[1]);
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jrestart_info = json_tokener_parse(params_ptr);
     if (!jrestart_info) {
       return common::make_errno_error_inval();
     }
@@ -1077,13 +1042,13 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientRestartStream(DaemonC
     ChildStream* chan = FindChildByID(restart_info.GetStreamID());
     ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
     if (!chan) {
-      protocol::responce_t resp = RestartStreamResponceFail(id, "Stream not found.");
+      protocol::responce_t resp = RestartStreamResponceFail(req->id, "Stream not found.");
       pdclient->WriteResponce(resp);
       return common::ErrnoError();
     }
 
     chan->SendRestart(NextRequestID());
-    protocol::responce_t resp = RestartStreamResponceSuccess(id);
+    protocol::responce_t resp = RestartStreamResponceSuccess(req->id);
     pdclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -1092,15 +1057,14 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientRestartStream(DaemonC
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStateService(DaemonClient* dclient,
-                                                                        protocol::sequance_id_t id,
-                                                                        int argc,
-                                                                        char* argv[]) {
+                                                                        protocol::request_t* req) {
   if (!dclient->IsVerified()) {
     return common::make_errno_error_inval();
   }
 
-  if (argc > 1) {
-    json_object* jservice_state = json_tokener_parse(argv[1]);
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jservice_state = json_tokener_parse(params_ptr);
     if (!jservice_state) {
       return common::make_errno_error_inval();
     }
@@ -1116,7 +1080,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStateService(DaemonCl
     ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
     Directories dirs(state_info);
     std::string resp_str = MakeDirectoryResponce(dirs);
-    protocol::responce_t resp = StateServiceResponceSuccess(id, resp_str);
+    protocol::responce_t resp = StateServiceResponceSuccess(req->id, resp_str);
     pdclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -1124,12 +1088,10 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStateService(DaemonCl
   return common::make_errno_error_inval();
 }
 
-common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(DaemonClient* dclient,
-                                                                    protocol::sequance_id_t id,
-                                                                    int argc,
-                                                                    char* argv[]) {
-  if (argc > 1) {
-    json_object* jactivate = json_tokener_parse(argv[1]);
+common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(DaemonClient* dclient, protocol::request_t* req) {
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jactivate = json_tokener_parse(params_ptr);
     if (!jactivate) {
       return common::make_errno_error_inval();
     }
@@ -1148,7 +1110,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(DaemonClient
     }
 
     ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
-    protocol::responce_t resp = ActivateResponceSuccess(id);
+    protocol::responce_t resp = ActivateResponceSuccess(req->id);
     pdclient->WriteResponce(resp);
     dclient->SetVerified(true);
     return common::ErrnoError();
@@ -1157,65 +1119,48 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(DaemonClient
   return common::make_errno_error_inval();
 }
 
-common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(DaemonClient* dclient,
-                                                                    protocol::sequance_id_t id,
-                                                                    int argc,
-                                                                    char* argv[]) {
-  char* command = argv[0];
-
-  if (IS_EQUAL_COMMAND(command, CLIENT_START_STREAM)) {
-    return HandleRequestClientStartStream(dclient, id, argc, argv);
-  } else if (IS_EQUAL_COMMAND(command, CLIENT_STOP_STREAM)) {
-    return HandleRequestClientStopStream(dclient, id, argc, argv);
-  } else if (IS_EQUAL_COMMAND(command, CLIENT_RESTART_STREAM)) {
-    return HandleRequestClientRestartStream(dclient, id, argc, argv);
-  } else if (IS_EQUAL_COMMAND(command, CLIENT_STATE_SERVICE)) {
-    return HandleRequestClientStateService(dclient, id, argc, argv);
-  } else if (IS_EQUAL_COMMAND(command, CLIENT_STOP_SERVICE)) {
-    return HandleRequestClientStopService(dclient, id, argc, argv);
-  } else if (IS_EQUAL_COMMAND(command, CLIENT_ACTIVATE)) {
-    return HandleRequestClientActivate(dclient, id, argc, argv);
+common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(DaemonClient* dclient, protocol::request_t* req) {
+  if (req->method == CLIENT_START_STREAM) {
+    return HandleRequestClientStartStream(dclient, req);
+  } else if (req->method == CLIENT_STOP_STREAM) {
+    return HandleRequestClientStopStream(dclient, req);
+  } else if (req->method == CLIENT_RESTART_STREAM) {
+    return HandleRequestClientRestartStream(dclient, req);
+  } else if (req->method == CLIENT_STATE_SERVICE) {
+    return HandleRequestClientStateService(dclient, req);
+  } else if (req->method == CLIENT_STOP_SERVICE) {
+    return HandleRequestClientStopService(dclient, req);
+  } else if (req->method == CLIENT_ACTIVATE) {
+    return HandleRequestClientActivate(dclient, req);
   }
 
-  WARNING_LOG() << "Received unknown command: " << command;
+  WARNING_LOG() << "Received unknown method: " << req->method;
   return common::ErrnoError();
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleResponceServiceCommand(DaemonClient* dclient,
-                                                                     protocol::sequance_id_t id,
-                                                                     int argc,
-                                                                     char* argv[]) {
+                                                                     protocol::responce_t* resp) {
   UNUSED(dclient);
-  UNUSED(id);
-  UNUSED(argc);
-  UNUSED(argv);
+  UNUSED(resp);
   return common::ErrnoError();
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestStreamsCommand(pipe::PipeClient* pclient,
-                                                                    protocol::sequance_id_t id,
-                                                                    int argc,
-                                                                    char* argv[]) {
-  char* command = argv[0];
-
-  if (IS_EQUAL_COMMAND(command, CHANGED_SOURCES_STREAM)) {
-    return HandleRequestChangedSourcesStream(pclient, id, argc, argv);
-  } else if (IS_EQUAL_COMMAND(command, STATISTIC_STREAM)) {
-    return HandleRequestStatisticStream(pclient, id, argc, argv);
+                                                                    protocol::request_t* req) {
+  if (req->method == CHANGED_SOURCES_STREAM) {
+    return HandleRequestChangedSourcesStream(pclient, req);
+  } else if (req->method == STATISTIC_STREAM) {
+    return HandleRequestStatisticStream(pclient, req);
   }
 
-  WARNING_LOG() << "Received unknown command: " << command;
+  WARNING_LOG() << "Received unknown command: " << req->method;
   return common::ErrnoError();
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleResponceStreamsCommand(pipe::PipeClient* pclient,
-                                                                     protocol::sequance_id_t id,
-                                                                     int argc,
-                                                                     char* argv[]) {
+                                                                     protocol::responce_t* resp) {
   UNUSED(pclient);
-  UNUSED(id);
-  UNUSED(argc);
-  UNUSED(argv);
+  UNUSED(resp);
   return common::ErrnoError();
 }
 
