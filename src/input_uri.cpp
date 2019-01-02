@@ -14,28 +14,31 @@
 
 #include "input_uri.h"
 
+#include <string>
+
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
 
 #include <common/sprintf.h>
 
+#include "constants.h"
+
+#define FIELD_INPUT_ID "id"
+#define FIELD_INPUT_URI "uri"
+
+#define FIELD_RELAY_AUDIO "relay_audio"
+#define FIELD_RELAY_VIDEO "relay_video"
+#define FIELD_MUTE_AUDIO "mute"
+#define FIELD_VOLUME_AUDIO "volume"
+
+#define TEST_URL "test"
+
 namespace iptv_cloud {
 
-InputUri::InputUri()
-    : id_(0),
-      input_(),
-      volume_(DEFAULT_INPUTURI_AUDIO_VOLUME),
-      mute_(DEFAULT_INPUTURI_AUDIO_MUTE),
-      relay_video_(false),
-      relay_audio_(false) {}
+InputUri::InputUri() : InputUri(0, common::uri::Url()) {}
 
 InputUri::InputUri(stream_id_t id, const common::uri::Url& input)
-    : id_(id),
-      input_(input),
-      volume_(DEFAULT_INPUTURI_AUDIO_VOLUME),
-      mute_(DEFAULT_INPUTURI_AUDIO_MUTE),
-      relay_video_(false),
-      relay_audio_(false) {}
+    : id_(id), input_(input), volume_(DEFAULT_AUDIO_VOLUME), mute_(false), relay_video_(false), relay_audio_(false) {}
 
 bool InputUri::GetRelayVideo() const {
   return relay_video_;

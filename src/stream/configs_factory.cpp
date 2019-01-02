@@ -17,9 +17,9 @@
 #include <map>
 #include <string>
 
+#include "constants.h"
 #include "gst_constants.h"
 
-#include "stream/constants.h"
 #include "stream/streams/configs/encoding_config.h"
 #include "stream/streams/configs/relay_config.h"
 

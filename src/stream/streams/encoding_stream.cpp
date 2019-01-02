@@ -18,9 +18,9 @@
 
 #include <common/sprintf.h>
 
+#include "constants.h"
 #include "gst_constants.h"
 
-#include "stream/constants.h"
 #include "stream/elements/parser/audio_parsers.h"
 #include "stream/elements/parser/video_parsers.h"
 #include "stream/gstreamer_utils.h"

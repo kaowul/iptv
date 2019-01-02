@@ -1,5 +1,4 @@
 SET(GLOBAL_HEADERS
-  ${CMAKE_SOURCE_DIR}/src/stream/constants.h
   ${CMAKE_SOURCE_DIR}/src/stream/gst_types.h
   ${CMAKE_SOURCE_DIR}/src/stream/stypes.h
 
@@ -20,7 +19,6 @@ SET(GLOBAL_HEADERS
   ${CMAKE_SOURCE_DIR}/src/stream/config.h
 )
 SET(GLOBAL_SOURCES
-  ${CMAKE_SOURCE_DIR}/src/stream/constants.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/gst_types.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/stypes.cpp
 

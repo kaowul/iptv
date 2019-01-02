@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <common/draw/types.h>
 
 #include "stream/streams/configs/audio_video_config.h"
@@ -23,6 +25,8 @@
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
+
+extern const common::media::Rational kDefaultAspectRatio;
 
 class EncodingConfig : public AudioVideoConfig {
  public:

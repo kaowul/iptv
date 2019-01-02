@@ -20,14 +20,6 @@
 
 #include "types.h"
 
-#define FIELD_OUTPUT_ID "id"
-#define FIELD_OUTPUT_URI "uri"
-#define FIELD_OUTPUT_HTTP_ROOT "http_root"
-#define FIELD_OUTPUT_WIDTH "width"
-#define FIELD_OUTPUT_HEIGHT "height"
-#define FIELD_OUTPUT_VIDEO_BITRATE "video_bitrate"
-#define FIELD_OUTPUT_AUDIO_BITRATE "audio_bitrate"
-
 namespace iptv_cloud {
 
 class OutputUri {

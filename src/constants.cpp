@@ -12,6 +12,4 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/constants.h"
-
-const common::media::Rational kUnknownAspectRatio = {DEFAULT_ASPECT_RATIO_NUM, DEFAULT_ASPECT_RATIO_DEN};
+#include "constants.h"

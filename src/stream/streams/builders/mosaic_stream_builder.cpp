@@ -15,11 +15,12 @@
 #include "stream/streams/builders/mosaic_stream_builder.h"
 
 #include <string.h>
+#include <string>
 
 #include "stream/gstreamer_utils.h"  // for pad_get_type
 
+#include "constants.h"
 #include "gst_constants.h"
-#include "stream/constants.h"
 
 #include "stream/elements/audio/audio.h"
 #include "stream/elements/encoders/audio_encoders.h"
@@ -164,11 +165,11 @@ bool MosaicStreamBuilder::InitPipeline() {
         volume_t vol = uri.GetVolume();
         bool mute = uri.GetMute();
         if (sink_pad->IsValid()) {
-          if (vol != DEFAULT_INPUTURI_AUDIO_VOLUME) {
+          if (vol != DEFAULT_AUDIO_VOLUME) {
             sink_pad->SetProperty("volume", vol);
           }
-          if (mute != DEFAULT_INPUTURI_AUDIO_MUTE) {
-            sink_pad->SetProperty("mute", mute);
+          if (mute) {
+            sink_pad->SetProperty("mute", true);
           }
         }
         delete sink_pad;
@@ -299,7 +300,7 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       }
 
       common::media::Rational rat = config->GetAspectRatio();
-      if (rat != kUnknownAspectRatio) {
+      if (rat != kDefaultAspectRatio) {
         elements::video::ElementAspectRatio* aspect_ratio =
             new elements::video::ElementAspectRatio(common::MemSPrintf(ASPECT_RATIO_NAME_1U, i));
         aspect_ratio->SetAspectRatio(rat.num, rat.den);

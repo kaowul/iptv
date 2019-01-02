@@ -14,7 +14,13 @@
 
 #include "stream/streams/configs/relay_config.h"
 
-#include "stream/constants.h"
+#include <string>
+
+#include "constants.h"
+#include "gst_constants.h"
+
+#define DEFAULT_VIDEO_PARSER H264_PARSE
+#define DEFAULT_AUDIO_PARSER AAC_PARSE
 
 namespace iptv_cloud {
 namespace stream {

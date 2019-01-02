@@ -7,6 +7,7 @@ SET(SOURCE_ROOT ${CMAKE_SOURCE_DIR}/src)
 # for sources only absolute paths
 SET(GLOBAL_COMMON_HEADERS
   ${CMAKE_SOURCE_DIR}/src/gst_constants.h
+  ${CMAKE_SOURCE_DIR}/src/constants.h
   ${CMAKE_SOURCE_DIR}/src/output_uri.h
   ${CMAKE_SOURCE_DIR}/src/inputs_outputs.h
   ${CMAKE_SOURCE_DIR}/src/input_uri.h
@@ -17,6 +18,7 @@ SET(GLOBAL_COMMON_HEADERS
 )
 SET(GLOBAL_COMMON_SOURCES
   ${CMAKE_SOURCE_DIR}/src/gst_constants.cpp
+  ${CMAKE_SOURCE_DIR}/src/constants.cpp
   ${CMAKE_SOURCE_DIR}/src/output_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/inputs_outputs.cpp
   ${CMAKE_SOURCE_DIR}/src/input_uri.cpp

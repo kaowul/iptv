@@ -15,15 +15,18 @@
 #include "server/options/options.h"
 
 #include <limits>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <json-c/json_tokener.h>
 #include <json-c/linkhash.h>
 
 #include <common/file_system/file_system.h>
 
+#include "constants.h"
 #include "gst_constants.h"
 #include "inputs_outputs.h"
-#include "stream/constants.h"
 
 #include "server/stats/stat_credentials.h"
 

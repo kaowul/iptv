@@ -20,8 +20,8 @@
 
 #include "stream/gstreamer_utils.h"  // for pad_get_type
 
+#include "constants.h"
 #include "gst_constants.h"
-#include "stream/constants.h"
 
 #include "stream/elements/parser/video_parsers.h"
 

@@ -31,12 +31,10 @@
 #include <common/net/net.h>
 
 #include "child_stream.h"
+#include "constants.h"
 #include "inputs_outputs.h"
 #include "stream_commands.h"
 
-#include "options/options.h"
-
-#include "stream/constants.h"
 #include "stream/main_wrapper.h"
 
 #include "pipe/pipe_client.h"
@@ -49,6 +47,7 @@
 #include "server/daemon_client.h"
 #include "server/daemon_commands.h"
 #include "server/daemon_server.h"
+#include "server/options/options.h"
 #include "server/stream_struct_utils.h"
 
 #include "stream_commands_info/changed_sources_info.h"
@@ -769,9 +768,9 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
       _exit(EXIT_FAILURE);
     }
 
-    char* error;
     stream_exec_t stream_exec_func = reinterpret_cast<stream_exec_t>(dlsym(handle, "stream_exec"));
-    if ((error = dlerror()) != nullptr) {
+    char* error = dlerror();
+    if (error) {
       ERROR_LOG() << "Failed to load start stream function error: " << error;
       dlclose(handle);
       _exit(EXIT_FAILURE);

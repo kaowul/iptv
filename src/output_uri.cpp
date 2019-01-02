@@ -19,18 +19,19 @@
 
 #include <common/sprintf.h>
 
-#include "stream/constants.h"
+#include "constants.h"
+
+#define FIELD_OUTPUT_ID "id"
+#define FIELD_OUTPUT_URI "uri"
+#define FIELD_OUTPUT_HTTP_ROOT "http_root"
+#define FIELD_OUTPUT_WIDTH "width"
+#define FIELD_OUTPUT_HEIGHT "height"
+#define FIELD_OUTPUT_VIDEO_BITRATE "video_bitrate"
+#define FIELD_OUTPUT_AUDIO_BITRATE "audio_bitrate"
 
 namespace iptv_cloud {
 
-OutputUri::OutputUri()
-    : id_(0),
-      output_(),
-      http_root_(),
-      width_(DEFAULT_VIDEO_WIDTH),
-      height_(DEFAULT_VIDEO_HEIGHT),
-      audio_bitrate_(DEFAULT_AUDIO_BITRATE),
-      video_bitrate_(DEFAULT_VIDEO_BITRATE) {}
+OutputUri::OutputUri() : OutputUri(0, common::uri::Url()) {}
 
 OutputUri::OutputUri(stream_id_t id, const common::uri::Url& output)
     : id_(id),

@@ -14,8 +14,6 @@
 
 #pragma once
 
-#include <common/media/types.h>
-
 #define TS_EXTENSION "ts"
 #define M3U8_EXTENSION "m3u8"
 
@@ -27,6 +25,7 @@
 #define FEEDBACK_DIR_FIELD "feedback_dir"  // required
 #define LOG_LEVEL_FIELD "log_level"
 
+#define DEFAULT_AUDIO_VOLUME 1.0
 #define DEFAULT_VIDEO_BITRATE 0
 #define DEFAULT_AUDIO_BITRATE 0
 #define DEFAULT_VOLUME 1
@@ -35,10 +34,6 @@
 #define DEFAULT_VIDEO_HEIGHT 0
 #define DEFAULT_VIDEO_WIDTH 0
 #define DEFAULT_LOGO_ALPHA 1
-#define DEFAULT_VIDEO_PARSER "h264parse"
-#define DEFAULT_AUDIO_PARSER "aacparse"
-#define DEFAULT_VIDEO_ENCODER "x264enc"
-#define DEFAULT_AUDIO_ENCODER "faac"
 #define DEFAULT_AUDIO_SELECT -1
 #define DEFAULT_DECKLINK_VIDEO_MODE 1
 
@@ -85,5 +80,3 @@
 #define ASPECT_RATIO_FIELD "aspect_ratio"
 
 #define DECKLINK_VIDEO_MODE_FILELD "decklink_video_mode"
-
-extern const common::media::Rational kUnknownAspectRatio;

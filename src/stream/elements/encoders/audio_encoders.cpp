@@ -20,8 +20,8 @@
 #include <gst/gstcaps.h>
 #include <gst/gstelementfactory.h>
 
-#include "gst_constants.h"     // for VOAAC_ENC
-#include "stream/constants.h"  // for AUDIO_CODEC, DEFAULT_VOLUME, UDB_...
+#include "constants.h"      // for AUDIO_CODEC, DEFAULT_VOLUME, UDB_...
+#include "gst_constants.h"  // for VOAAC_ENC
 
 #include "stream/elements/audio/audio.h"
 

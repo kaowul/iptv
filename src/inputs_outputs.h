@@ -35,9 +35,6 @@ bool read_output(const utils::ArgsMap& config, output_t* output);
 }  // namespace iptv_cloud
 
 namespace common {
-std::string ConvertToString(const iptv_cloud::output_t& value);  // json
 bool ConvertFromString(const std::string& output_urls, iptv_cloud::output_t* out);
-
-std::string ConvertToString(const iptv_cloud::input_t& value);  // json
 bool ConvertFromString(const std::string& input_urls, iptv_cloud::input_t* out);
 }  // namespace common

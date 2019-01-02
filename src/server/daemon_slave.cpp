@@ -48,8 +48,6 @@
 
 namespace {
 
-const int default_log_file_size_kb = 1024;
-
 bool create_license_key(std::string* license_key) {
 #if HARDWARE_LICENSE_ALGO == 0
   static const common::license::ALGO_TYPE license_algo = common::license::HDD;

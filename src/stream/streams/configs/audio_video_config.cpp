@@ -14,7 +14,7 @@
 
 #include "stream/streams/configs/audio_video_config.h"
 
-#include "stream/constants.h"
+#include "constants.h"
 
 namespace iptv_cloud {
 namespace stream {

@@ -14,7 +14,7 @@
 
 #include "stream/streams/builders/timeshift_player_stream_builder.h"
 
-#include "stream/constants.h"
+#include "constants.h"
 
 #include "stream/elements/sources/multifilesrc.h"
 

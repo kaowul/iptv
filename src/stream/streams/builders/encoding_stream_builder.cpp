@@ -14,9 +14,11 @@
 
 #include "stream/streams/builders/encoding_stream_builder.h"
 
+#include <string>
+
 #include <common/sprintf.h>
 
-#include "stream/constants.h"
+#include "constants.h"
 
 #include "stream/elements/audio/audio.h"
 #include "stream/elements/encoders/audio_encoders.h"
@@ -177,7 +179,7 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
     }
 
     common::media::Rational rat = conf->GetAspectRatio();
-    if (rat != kUnknownAspectRatio) {
+    if (rat != kDefaultAspectRatio) {
       elements::video::ElementAspectRatio* aspect_ratio =
           new elements::video::ElementAspectRatio(common::MemSPrintf(ASPECT_RATIO_NAME_1U, video_id));
       aspect_ratio->SetAspectRatio(rat.num, rat.den);

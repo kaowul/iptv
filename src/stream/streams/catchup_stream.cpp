@@ -14,9 +14,9 @@
 
 #include "stream/streams/catchup_stream.h"
 
-#include "stream/constants.h"
-
 #include <algorithm>
+
+#include "constants.h"
 
 #include "utils/m3u8_reader.h"
 #include "utils/m3u8_writer.h"

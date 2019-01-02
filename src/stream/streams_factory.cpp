@@ -14,7 +14,9 @@
 
 #include "stream/streams_factory.h"
 
-#include "stream/constants.h"  // for TYPE_FIELD, INPUT_FIELD, TIMESHIFT_DIR_FIELD
+#include <string>
+
+#include "constants.h"  // for TYPE_FIELD, INPUT_FIELD, TIMESHIFT_DIR_FIELD
 
 #include "stream/streams/catchup_stream.h"
 #include "stream/streams/device_stream.h"

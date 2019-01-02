@@ -14,22 +14,11 @@
 
 #pragma once
 
+#include <string>
+
 #include <common/uri/url.h>
 
 #include "types.h"
-
-#define FIELD_INPUT_ID "id"
-#define FIELD_INPUT_URI "uri"
-
-#define FIELD_RELAY_AUDIO "relay_audio"
-#define FIELD_RELAY_VIDEO "relay_video"
-#define FIELD_MUTE_AUDIO "mute"
-#define FIELD_VOLUME_AUDIO "volume"
-
-#define TEST_URL "test"
-
-#define DEFAULT_INPUTURI_AUDIO_VOLUME 1.0
-#define DEFAULT_INPUTURI_AUDIO_MUTE 0
 
 namespace iptv_cloud {
 

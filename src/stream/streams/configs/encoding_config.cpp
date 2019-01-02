@@ -14,12 +14,21 @@
 
 #include "stream/streams/configs/encoding_config.h"
 
-#include "stream/constants.h"
+#include <string>
+
+#include "constants.h"
+#include "gst_constants.h"
+
 #include "stream/gst_types.h"
+
+#define DEFAULT_VIDEO_ENCODER X264_ENC
+#define DEFAULT_AUDIO_ENCODER FAAC
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
+
+const common::media::Rational kDefaultAspectRatio = {DEFAULT_ASPECT_RATIO_NUM, DEFAULT_ASPECT_RATIO_DEN};
 
 EncodingConfig::EncodingConfig(const base_class& config)
     : base_class(config),
@@ -39,7 +48,7 @@ EncodingConfig::EncodingConfig(const base_class& config)
       logo_pos_point_(),
       logo_alpha_(DEFAULT_LOGO_ALPHA),
       decklink_video_mode_(DEFAULT_DECKLINK_VIDEO_MODE),
-      aspect_ratio_{DEFAULT_ASPECT_RATIO_NUM, DEFAULT_ASPECT_RATIO_DEN} {}
+      aspect_ratio_(kDefaultAspectRatio) {}
 
 void EncodingConfig::SetVolume(volume_t volume) {
   volume_ = volume;

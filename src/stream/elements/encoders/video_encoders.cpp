@@ -20,8 +20,8 @@
 #include <gst/gstelementfactory.h>
 #include <gst/gstvalue.h>
 
+#include "constants.h"
 #include "gst_constants.h"
-#include "stream/constants.h"
 
 #include "stream/elements/video/video.h"
 

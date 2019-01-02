@@ -19,31 +19,11 @@
 
 #include <common/convert2string.h>
 
-#include "stream/constants.h"  // for INPUT_FIELD
+#include "constants.h"  // for INPUT_FIELD
 
 #include "utils/arg_converter.h"
 
 namespace common {
-
-std::string ConvertToString(const iptv_cloud::output_t& value) {
-  json_object* output = json_object_new_object();
-  json_object* jurls = json_object_new_array();
-  for (size_t i = 0; i < value.size(); ++i) {
-    iptv_cloud::OutputUri uri = value[i];
-    json_object* jurl = json_object_new_object();
-    json_object_object_add(jurl, FIELD_OUTPUT_ID, json_object_new_int64(uri.GetID()));
-    const std::string url_str = common::ConvertToString(uri.GetOutput());
-    json_object_object_add(jurl, FIELD_OUTPUT_URI, json_object_new_string(url_str.c_str()));
-    const common::file_system::ascii_directory_string_path http_root = uri.GetHttpRoot();
-    const std::string http_root_str = http_root.GetPath();
-    json_object_object_add(jurl, FIELD_OUTPUT_HTTP_ROOT, json_object_new_string(http_root_str.c_str()));
-    json_object_array_add(jurls, jurl);  // urls
-  }
-  json_object_object_add(output, FIELD_OUTPUT_URLS, jurls);
-  std::string res = json_object_get_string(output);
-  json_object_put(output);
-  return res;
-}
 
 bool ConvertFromString(const std::string& output_urls, iptv_cloud::output_t* out) {
   if (!out) {
@@ -75,23 +55,6 @@ bool ConvertFromString(const std::string& output_urls, iptv_cloud::output_t* out
   json_object_put(obj);
   *out = output;
   return true;
-}
-
-std::string ConvertToString(const iptv_cloud::input_t& value) {
-  json_object* input = json_object_new_object();
-  json_object* jurls = json_object_new_array();
-  for (size_t i = 0; i < value.size(); ++i) {
-    iptv_cloud::InputUri uri = value[i];
-    json_object* jurl = json_object_new_object();
-    json_object_object_add(jurl, FIELD_INPUT_ID, json_object_new_int64(uri.GetID()));
-    const std::string url_str = common::ConvertToString(uri.GetInput());
-    json_object_object_add(jurl, FIELD_INPUT_URI, json_object_new_string(url_str.c_str()));
-    json_object_array_add(jurls, jurl);  // urls
-  }
-  json_object_object_add(input, FIELD_OUTPUT_URLS, jurls);
-  std::string res = json_object_get_string(input);
-  json_object_put(input);
-  return res;
 }
 
 bool ConvertFromString(const std::string& input_urls, iptv_cloud::input_t* out) {
