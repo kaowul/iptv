@@ -34,8 +34,8 @@ class ServerPingInfo : public common::serializer::JsonSerializer<ServerPingInfo>
   timestamp_t GetTimeStamp() const;
 
  protected:
-  virtual common::Error DoDeSerialize(json_object* serialized) override;
-  virtual common::Error SerializeFields(json_object* obj) const override;
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* obj) const override;
 
  private:
   timestamp_t timestamp_;  // utc time
@@ -48,8 +48,8 @@ class ClientPingInfo : public common::serializer::JsonSerializer<ClientPingInfo>
   timestamp_t GetTimeStamp() const;
 
  protected:
-  virtual common::Error DoDeSerialize(json_object* serialized) override;
-  virtual common::Error SerializeFields(json_object* obj) const override;
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* obj) const override;
 
  private:
   timestamp_t timestamp_;  // utc time

@@ -11,6 +11,7 @@
     You should have received a copy of the GNU General Public License
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #pragma once
 
 #include <common/serializer/json_serializer.h>
@@ -23,8 +24,8 @@ class RestartInfo : public common::serializer::JsonSerializer<RestartInfo> {
   RestartInfo();
 
  protected:
-  virtual common::Error DoDeSerialize(json_object* serialized) override;
-  virtual common::Error SerializeFields(json_object* out) const override;
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
 };
 
 }  // namespace iptv_cloud

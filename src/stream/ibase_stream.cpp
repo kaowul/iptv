@@ -80,30 +80,24 @@ void RedirectGstLog(GstDebugCategory* category,
   UNUSED(data);
   UNUSED(object);
 
-  switch (level) {
-    case GST_LEVEL_ERROR:
-      ERROR_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
+  if (level == GST_LEVEL_ERROR) {
+    ERROR_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
+                << gst_debug_message_get(message);
+  } else if (level == GST_LEVEL_WARNING) {
+    WARNING_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
                   << gst_debug_message_get(message);
-      break;
-    case GST_LEVEL_WARNING:
-      WARNING_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
-                    << gst_debug_message_get(message);
-      break;
-    case GST_LEVEL_FIXME:
-      NOTICE_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
-                   << gst_debug_message_get(message);
-      break;
-    case GST_LEVEL_INFO:
-    case GST_LEVEL_LOG:
-      INFO_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
+  } else if (level == GST_LEVEL_FIXME) {
+    NOTICE_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
                  << gst_debug_message_get(message);
-      break;
-    case GST_LEVEL_DEBUG:
-      DEBUG_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
-                  << gst_debug_message_get(message);
-      break;
-    default:
-      break;
+  } else if (level == GST_LEVEL_INFO) {
+    INFO_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
+               << gst_debug_message_get(message);
+  } else if (level == GST_LEVEL_LOG) {
+    INFO_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
+               << gst_debug_message_get(message);
+  } else if (level == GST_LEVEL_DEBUG) {
+    DEBUG_LOG() << gst_debug_category_get_name(category) << " " << file << ":" << line << " " << function << " "
+                << gst_debug_message_get(message);
   }
 }
 
@@ -641,61 +635,39 @@ gboolean IBaseStream::HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* mes
 
   GstMessageType type = GST_MESSAGE_TYPE(message);
   GstObject* src = GST_MESSAGE_SRC(message);
-  switch (type) {
-    case GST_MESSAGE_BUFFERING: {
-      HandleBufferingMessage(message);
-      break;
-    }
-    case GST_MESSAGE_CLOCK_LOST: {
-      GstClock* clock = nullptr;
-      gst_message_parse_clock_lost(message, &clock);
-      INFO_LOG() << GetID() << " ASYNC GST_MESSAGE_CLOCK_LOST: " << GST_OBJECT_NAME(clock);
-      break;
-    }
-    case GST_MESSAGE_DURATION_CHANGED: {
-      input_t input = api_->GetInput();
-      for (size_t i = 0; i < input.size(); ++i) {
-        common::uri::Url input_url = input[i].GetInput();
-        if (input_url.GetScheme() == common::uri::Url::http) {
-          GstBaseSrc* basesrc = reinterpret_cast<GstBaseSrc*>(src);
-          UpdateStats(probe_in_[i], basesrc->segment.duration);
-        }
+  if (type == GST_MESSAGE_BUFFERING) {
+    HandleBufferingMessage(message);
+  } else if (type == GST_MESSAGE_CLOCK_LOST) {
+    GstClock* clock = nullptr;
+    gst_message_parse_clock_lost(message, &clock);
+    INFO_LOG() << GetID() << " ASYNC GST_MESSAGE_CLOCK_LOST: " << GST_OBJECT_NAME(clock);
+  } else if (type == GST_MESSAGE_DURATION_CHANGED) {
+    input_t input = api_->GetInput();
+    for (size_t i = 0; i < input.size(); ++i) {
+      common::uri::Url input_url = input[i].GetInput();
+      if (input_url.GetScheme() == common::uri::Url::http) {
+        GstBaseSrc* basesrc = reinterpret_cast<GstBaseSrc*>(src);
+        UpdateStats(probe_in_[i], basesrc->segment.duration);
       }
-      break;
     }
-    case GST_MESSAGE_STATE_CHANGED: {
-      GstObject* pipeline = GST_OBJECT(pipeline_);
-      if (src == pipeline) {
-        GstState old_state, new_state, pending_state;
-        gst_message_parse_state_changed(message, &old_state, &new_state, &pending_state);
-        switch (new_state) {
-          case GST_STATE_NULL: {
-            SetStatus(SNULL);
-            break;
-          }
-          case GST_STATE_READY: {
-            SetStatus(SREADY);
-            break;
-          }
-          case GST_STATE_PLAYING: {
-            SetStatus(SPLAYING);
-            break;
-          }
-          default:
-            break;
-        }
+  } else if (type == GST_MESSAGE_STATE_CHANGED) {
+    GstObject* pipeline = GST_OBJECT(pipeline_);
+    if (src == pipeline) {
+      GstState old_state, new_state, pending_state;
+      gst_message_parse_state_changed(message, &old_state, &new_state, &pending_state);
+      if (new_state == GST_STATE_NULL) {
+        SetStatus(SNULL);
+      } else if (new_state == GST_STATE_READY) {
+        SetStatus(SREADY);
+      } else if (new_state == GST_STATE_PLAYING) {
+        SetStatus(SPLAYING);
       }
-      break;
     }
-    case GST_MESSAGE_EOS: {
-      WARNING_LOG() << GetID() << " Received end of stream: " << GST_OBJECT_NAME(src);
-      if (client_) {
-        client_->OnPipelineEOS(this);
-      }
-      break;
+  } else if (type == GST_MESSAGE_EOS) {
+    WARNING_LOG() << GetID() << " Received end of stream: " << GST_OBJECT_NAME(src);
+    if (client_) {
+      client_->OnPipelineEOS(this);
     }
-    default:
-      break;
   }
 
   if (client_) {

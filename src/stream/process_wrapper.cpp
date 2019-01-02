@@ -20,7 +20,6 @@
 
 #include <common/file_system/file_system.h>
 #include <common/file_system/string_path_utils.h>
-#include <common/sys_byteorder.h>
 #include <common/system_info/system_info.h>
 #include <common/time.h>
 
@@ -415,13 +414,8 @@ common::ErrnoError ProcessWrapper::HandleResponceCommand(common::libev::IoClient
 }
 
 protocol::sequance_id_t ProcessWrapper::NextRequestID() {
-  const seq_id_t next_id = id_++;
-  char bytes[sizeof(seq_id_t)];
-  const seq_id_t stabled = common::NetToHost64(next_id);  // for human readable hex
-  memcpy(&bytes, &stabled, sizeof(seq_id_t));
-  protocol::sequance_id_t hexed;
-  common::utils::hex::encode(std::string(bytes, sizeof(seq_id_t)), true, &hexed);
-  return hexed;
+  const protocol::seq_id_t next_id = id_++;
+  return protocol::MakeRequestID(next_id);
 }
 
 common::ErrnoError ProcessWrapper::HandleRequestStopStream(common::libev::IoClient* client, protocol::request_t* req) {

@@ -11,9 +11,12 @@
     You should have received a copy of the GNU General Public License
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #pragma once
 
 #include <common/serializer/json_serializer.h>
+
+#include "types.h"
 
 namespace iptv_cloud {
 namespace server {
@@ -21,17 +24,19 @@ namespace server {
 class RestartStreamInfo : public common::serializer::JsonSerializer<RestartStreamInfo> {
  public:
   typedef JsonSerializer<RestartStreamInfo> base_class;
-  RestartStreamInfo();
-  explicit RestartStreamInfo(const std::string& stream_id);
+  typedef channel_id_t stream_id_t;
 
-  std::string GetStreamID() const;
+  RestartStreamInfo();
+  explicit RestartStreamInfo(stream_id_t stream_id);
+
+  stream_id_t GetStreamID() const;
 
  protected:
-  virtual common::Error DoDeSerialize(json_object* serialized) override;
-  virtual common::Error SerializeFields(json_object* out) const override;
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
 
  private:
-  std::string stream_id_;
+  stream_id_t stream_id_;
 };
 
 }  // namespace server

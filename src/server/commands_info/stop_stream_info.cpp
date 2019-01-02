@@ -21,9 +21,9 @@ namespace server {
 
 StopStreamInfo::StopStreamInfo() : base_class(), stream_id_() {}
 
-StopStreamInfo::StopStreamInfo(const std::string& stream_id) : stream_id_(stream_id) {}
+StopStreamInfo::StopStreamInfo(stream_id_t stream_id) : stream_id_(stream_id) {}
 
-std::string StopStreamInfo::GetStreamID() const {
+StopStreamInfo::stream_id_t StopStreamInfo::GetStreamID() const {
   return stream_id_;
 }
 

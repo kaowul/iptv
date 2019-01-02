@@ -129,89 +129,77 @@ GstPadProbeReturn Probe::source_callback_probe_buffer(GstPad* pad, GstPadProbeIn
     stream->UpdateStats(probe, gst_buffer_get_size(buffer));
   } else if (GST_IS_EVENT(data)) {
     GstEvent* event = GST_EVENT(data);
-    DEBUG_LOG() << stream->GetID() << " Source[" << probe->id_ << "] event: " << GST_EVENT_TYPE_NAME(event);
+    const gchar* event_name = GST_EVENT_TYPE_NAME(event);
+    GstEventType event_type = GST_EVENT_TYPE(event);
+    DEBUG_LOG() << stream->GetID() << " Source[" << probe->id_ << "] event: " << event_name;
 
-    switch (GST_EVENT_TYPE(event)) {
-      case GST_EVENT_FLUSH_START: {
-        /* getting two flush_start in a row seems to be okay
-           fail_if (consist->flushing, "Received another FLUSH_START");
-        */
-        probe->consistency_.flushing = TRUE;
-        break;
+    if (event_type == GST_EVENT_FLUSH_START) {
+      /* getting two flush_start in a row seems to be okay
+     fail_if (consist->flushing, "Received another FLUSH_START");
+  */
+      probe->consistency_.flushing = TRUE;
+    } else if (event_type == GST_EVENT_FLUSH_STOP) {
+      /* Receiving a flush-stop is only valid after receiving a flush-start */
+      if (!probe->consistency_.flushing) {
+        INFO_LOG() << stream->GetID() << " Received a FLUSH_STOP without a FLUSH_START on pad " << pad;
       }
-      case GST_EVENT_FLUSH_STOP: {
-        /* Receiving a flush-stop is only valid after receiving a flush-start */
-        if (!probe->consistency_.flushing) {
-          INFO_LOG() << stream->GetID() << " Received a FLUSH_STOP without a FLUSH_START on pad " << pad;
-        }
-        if (probe->consistency_.eos) {
-          INFO_LOG() << stream->GetID() << " Received a FLUSH_STOP after an EOS on pad " << pad;
-        }
-        probe->consistency_.flushing = probe->consistency_.expect_flush = FALSE;
-        break;
+      if (probe->consistency_.eos) {
+        INFO_LOG() << stream->GetID() << " Received a FLUSH_STOP after an EOS on pad " << pad;
       }
-      case GST_EVENT_STREAM_START: {
-        if (probe->consistency_.saw_serialized_event && !probe->consistency_.saw_stream_start) {
-          INFO_LOG() << stream->GetID() << " Got a STREAM_START event after a serialized event on pad " << pad;
-        }
-        probe->consistency_.saw_stream_start = TRUE;
-        break;
+      probe->consistency_.flushing = probe->consistency_.expect_flush = FALSE;
+    } else if (event_type == GST_EVENT_STREAM_START) {
+      if (probe->consistency_.saw_serialized_event && !probe->consistency_.saw_stream_start) {
+        INFO_LOG() << stream->GetID() << " Got a STREAM_START event after a serialized event on pad " << pad;
       }
-      case GST_EVENT_CAPS: {
-        /* ok to have these before segment event */
-        /* FIXME check order more precisely, if so spec'ed somehow ? */
-        GstCaps* caps = nullptr;
-        gst_event_parse_caps(event, &caps);
-        if (caps) {
-          GstStructure* pad_struct = gst_caps_get_structure(caps, 0);
-          if (pad_struct) {
-            gchar* structure_text = gst_structure_to_string(pad_struct);
-            INFO_LOG() << stream->GetID() << " Source[" << probe->id_ << "] caps are: " << structure_text;
-            g_free(structure_text);
-          }
+      probe->consistency_.saw_stream_start = TRUE;
+    } else if (event_type == GST_EVENT_CAPS) {
+      /* ok to have these before segment event */
+      /* FIXME check order more precisely, if so spec'ed somehow ? */
+      GstCaps* caps = nullptr;
+      gst_event_parse_caps(event, &caps);
+      if (caps) {
+        GstStructure* pad_struct = gst_caps_get_structure(caps, 0);
+        if (pad_struct) {
+          gchar* structure_text = gst_structure_to_string(pad_struct);
+          INFO_LOG() << stream->GetID() << " Source[" << probe->id_ << "] caps are: " << structure_text;
+          g_free(structure_text);
         }
-        break;
       }
-      case GST_EVENT_SEGMENT: {
-        if (probe->consistency_.expect_flush && probe->consistency_.flushing) {
-          INFO_LOG() << stream->GetID() << " Received SEGMENT while in a flushing seek on pad " << pad;
-        }
-        const GstSegment* segment = nullptr;
-        gst_event_parse_segment(event, &segment);
-        probe->consistency_.segment = TRUE;
-        probe->consistency_.eos = FALSE;
-        break;
+    } else if (event_type == GST_EVENT_SEGMENT) {
+      if (probe->consistency_.expect_flush && probe->consistency_.flushing) {
+        INFO_LOG() << stream->GetID() << " Received SEGMENT while in a flushing seek on pad " << pad;
       }
-      case GST_EVENT_EOS: {
-        /* FIXME : not 100% sure about whether two eos in a row is valid */
-        if (probe->consistency_.eos) {
-          INFO_LOG() << stream->GetID() << " Received EOS just after another EOS on pad " << pad;
-        }
-        probe->consistency_.eos = TRUE;
-        probe->consistency_.segment = FALSE;
-        break;
+      const GstSegment* segment = nullptr;
+      gst_event_parse_segment(event, &segment);
+      probe->consistency_.segment = TRUE;
+      probe->consistency_.eos = FALSE;
+    } else if (event_type == GST_EVENT_EOS) {
+      /* FIXME : not 100% sure about whether two eos in a row is valid */
+      if (probe->consistency_.eos) {
+        INFO_LOG() << stream->GetID() << " Received EOS just after another EOS on pad " << pad;
       }
-      case GST_EVENT_TAG:
+      probe->consistency_.eos = TRUE;
+      probe->consistency_.segment = FALSE;
+    } else {
+      if (event_type == GST_EVENT_SEGMENT) {
         DEBUG_LOG() << stream->GetID() << " event tag: " << gst_event_get_structure(event);
-      /* fall through */
-      default:
-        if (GST_EVENT_IS_SERIALIZED(event) && GST_EVENT_IS_DOWNSTREAM(event)) {
-          if (probe->consistency_.eos) {
-            INFO_LOG() << stream->GetID() << " Event received after EOS";
-          }
-          if (!probe->consistency_.segment) {
-            INFO_LOG() << stream->GetID() << " Event " << GST_EVENT_TYPE_NAME(event)
-                       << " received before segment on pad " << pad;
-          }
+      }
+
+      if (GST_EVENT_IS_SERIALIZED(event) && GST_EVENT_IS_DOWNSTREAM(event)) {
+        if (probe->consistency_.eos) {
+          INFO_LOG() << stream->GetID() << " Event received after EOS";
         }
-        /* FIXME : Figure out what to do for other events */
-        break;
+        if (!probe->consistency_.segment) {
+          INFO_LOG() << stream->GetID() << " Event " << event_name << " received before segment on pad " << pad;
+        }
+      }
+      /* FIXME : Figure out what to do for other events */
     }
 
     if (GST_EVENT_IS_SERIALIZED(event)) {
-      if (!probe->consistency_.saw_stream_start && GST_EVENT_TYPE(event) != GST_EVENT_STREAM_START) {
-        INFO_LOG() << stream->GetID() << " Got a serialized event (" << GST_EVENT_TYPE_NAME(event)
-                   << ") before a STREAM_START on pad" << pad;
+      if (!probe->consistency_.saw_stream_start && event_type != GST_EVENT_STREAM_START) {
+        INFO_LOG() << stream->GetID() << " Got a serialized event (" << event_name << ") before a STREAM_START on pad"
+                   << pad;
       }
       probe->consistency_.saw_serialized_event = TRUE;
     }
@@ -245,53 +233,42 @@ GstPadProbeReturn Probe::sink_callback_probe_buffer(GstPad* pad, GstPadProbeInfo
     }
   } else if (GST_IS_EVENT(data)) {
     GstEvent* event = GST_EVENT(data);
-    DEBUG_LOG() << stream->GetID() << " Sink[" << probe->id_ << "] event: " << GST_EVENT_TYPE_NAME(event);
-    switch (GST_EVENT_TYPE(event)) {
-      case GST_EVENT_SEEK: {
-        GstSeekFlags flags;
-        gst_event_parse_seek(event, nullptr, nullptr, &flags, nullptr, nullptr, nullptr, nullptr);
-        probe->consistency_.expect_flush = ((flags & GST_SEEK_FLAG_FLUSH) == GST_SEEK_FLAG_FLUSH);
-        break;
-      }
-      case GST_EVENT_CAPS: {
-        /* ok to have these before segment event */
-        /* FIXME check order more precisely, if so spec'ed somehow ? */
-        GstCaps* caps = nullptr;
-        gst_event_parse_caps(event, &caps);
-        if (caps) {
-          GstStructure* pad_struct = gst_caps_get_structure(caps, 0);
-          if (pad_struct) {
-            gchar* structure_text = gst_structure_to_string(pad_struct);
-            INFO_LOG() << stream->GetID() << " Sink[" << probe->id_ << "] caps are: " << structure_text;
-            g_free(structure_text);
-          }
+    const gchar* event_name = GST_EVENT_TYPE_NAME(event);
+    GstEventType event_type = GST_EVENT_TYPE(event);
+
+    DEBUG_LOG() << stream->GetID() << " Sink[" << probe->id_ << "] event: " << event_name;
+    if (event_type == GST_EVENT_SEEK) {
+      GstSeekFlags flags;
+      gst_event_parse_seek(event, nullptr, nullptr, &flags, nullptr, nullptr, nullptr, nullptr);
+      probe->consistency_.expect_flush = ((flags & GST_SEEK_FLAG_FLUSH) == GST_SEEK_FLAG_FLUSH);
+    } else if (event_type == GST_EVENT_CAPS) {
+      /* ok to have these before segment event */
+      /* FIXME check order more precisely, if so spec'ed somehow ? */
+      GstCaps* caps = nullptr;
+      gst_event_parse_caps(event, &caps);
+      if (caps) {
+        GstStructure* pad_struct = gst_caps_get_structure(caps, 0);
+        if (pad_struct) {
+          gchar* structure_text = gst_structure_to_string(pad_struct);
+          INFO_LOG() << stream->GetID() << " Sink[" << probe->id_ << "] caps are: " << structure_text;
+          g_free(structure_text);
         }
-        break;
       }
-      case GST_EVENT_SEGMENT: {
-        if (probe->consistency_.expect_flush && probe->consistency_.flushing) {
-          INFO_LOG() << stream->GetID() << " Received SEGMENT while in a flushing seek on pad " << pad;
-        }
-        probe->consistency_.segment = TRUE;
-        probe->consistency_.eos = FALSE;
-        break;
+    } else if (event_type == GST_EVENT_SEGMENT) {
+      if (probe->consistency_.expect_flush && probe->consistency_.flushing) {
+        INFO_LOG() << stream->GetID() << " Received SEGMENT while in a flushing seek on pad " << pad;
       }
-      case GST_EVENT_EOS: {
-        /* FIXME : not 100% sure about whether two eos in a row is valid */
-        if (probe->consistency_.eos) {
-          INFO_LOG() << stream->GetID() << " Received EOS just after another EOS on pad " << pad;
-        }
-        probe->consistency_.eos = TRUE;
-        probe->consistency_.segment = FALSE;
-        break;
+      probe->consistency_.segment = TRUE;
+      probe->consistency_.eos = FALSE;
+    } else if (event_type == GST_EVENT_EOS) {
+      /* FIXME : not 100% sure about whether two eos in a row is valid */
+      if (probe->consistency_.eos) {
+        INFO_LOG() << stream->GetID() << " Received EOS just after another EOS on pad " << pad;
       }
-      case GST_EVENT_CUSTOM_DOWNSTREAM: {
-        break;
-      }
-      default:
-        /* FIXME : Figure out what to do for other events */
-        break;
+      probe->consistency_.eos = TRUE;
+      probe->consistency_.segment = FALSE;
     }
+
     stream->HandleProbeEvent(probe, event);
   } else {
     GstPadProbeType pt = GST_PAD_PROBE_INFO_TYPE(checked_info);

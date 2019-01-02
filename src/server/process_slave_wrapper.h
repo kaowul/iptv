@@ -14,12 +14,15 @@
 
 #pragma once
 
+#include <string>
 #include <thread>
 
 #include <common/libev/io_loop_observer.h>
 #include <common/net/types.h>
 
 #include "stats/istat.h"
+
+#include "types.h"
 
 #include "protocol/types.h"
 
@@ -35,9 +38,13 @@ class DaemonClient;
 
 class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
  public:
-  typedef uint64_t seq_id_t;
-  enum { node_stats_send_seconds = 10, ping_timeout_clients_seconds = 60, cleanup_seconds = 5 };
-  ProcessSlaveWrapper(const std::string& licensy_key);
+  enum {
+    node_stats_send_seconds = 10,
+    ping_timeout_clients_seconds = 60,
+    cleanup_seconds = 5,
+    activate_request_id = 0
+  };
+  explicit ProcessSlaveWrapper(const std::string& licensy_key);
   virtual ~ProcessSlaveWrapper();
 
   static int SendStopDaemonRequest(const std::string& license);
@@ -47,20 +54,20 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   std::string GetLogPath() const;
 
  protected:
-  virtual void PreLooped(common::libev::IoLoop* server) override;
-  virtual void Accepted(common::libev::IoClient* client) override;
-  virtual void Moved(common::libev::IoLoop* server,
-                     common::libev::IoClient* client) override;  // owner server, now client is orphan
-  virtual void Closed(common::libev::IoClient* client) override;
-  virtual void TimerEmited(common::libev::IoLoop* server, common::libev::timer_id_t id) override;
+  void PreLooped(common::libev::IoLoop* server) override;
+  void Accepted(common::libev::IoClient* client) override;
+  void Moved(common::libev::IoLoop* server,
+             common::libev::IoClient* client) override;  // owner server, now client is orphan
+  void Closed(common::libev::IoClient* client) override;
+  void TimerEmited(common::libev::IoLoop* server, common::libev::timer_id_t id) override;
 
-  virtual void Accepted(common::libev::IoChild* child) override;
-  virtual void Moved(common::libev::IoLoop* server, common::libev::IoChild* child) override;
-  virtual void ChildStatusChanged(common::libev::IoChild* child, int status) override;
+  void Accepted(common::libev::IoChild* child) override;
+  void Moved(common::libev::IoLoop* server, common::libev::IoChild* child) override;
+  void ChildStatusChanged(common::libev::IoChild* child, int status) override;
 
-  virtual void DataReceived(common::libev::IoClient* client) override;
-  virtual void DataReadyToWrite(common::libev::IoClient* client) override;
-  virtual void PostLooped(common::libev::IoLoop* server) override;
+  void DataReceived(common::libev::IoClient* client) override;
+  void DataReadyToWrite(common::libev::IoClient* client) override;
+  void PostLooped(common::libev::IoLoop* server) override;
 
   virtual common::ErrnoError HandleRequestServiceCommand(DaemonClient* dclient,
                                                          protocol::request_t* req) WARN_UNUSED_RESULT;
@@ -73,7 +80,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
                                                           protocol::responce_t* resp) WARN_UNUSED_RESULT;
 
  private:
-  ChildStream* FindChildByID(const std::string& cid) const;
+  ChildStream* FindChildByID(channel_id_t cid) const;
 
   struct NodeStats;
   common::ErrnoError DaemonDataReceived(DaemonClient* dclient) WARN_UNUSED_RESULT;
@@ -118,7 +125,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   common::libev::IoLoop* loop_;
 
   const std::string license_key_;
-  std::atomic<seq_id_t> id_;
+  std::atomic<protocol::seq_id_t> id_;
   common::libev::timer_id_t ping_client_id_timer_;
   common::libev::timer_id_t node_stats_timer_;
   common::libev::timer_id_t cleanup_timer_;

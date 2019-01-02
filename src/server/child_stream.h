@@ -36,7 +36,7 @@ class ChildStream : public common::libev::IoChild {
   common::ErrnoError SendStop(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
   common::ErrnoError SendRestart(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
 
-  channel_id_t GetChannelId() const;
+  channel_id_t GetChannelID() const;
 
   bool Equals(const ChildStream& stream) const;
 

@@ -19,14 +19,12 @@
 #include <common/sprintf.h>
 
 #include "gst_constants.h"
+
 #include "stream/constants.h"
-#include "stream/gstreamer_utils.h"
-
-#include "stream/pad/pad.h"
-
 #include "stream/elements/parser/audio_parsers.h"
 #include "stream/elements/parser/video_parsers.h"
-
+#include "stream/gstreamer_utils.h"
+#include "stream/pad/pad.h"
 #include "stream/streams/builders/encoding_stream_builder.h"
 
 namespace iptv_cloud {
@@ -83,20 +81,20 @@ GValueArray* EncodingStream::HandleAutoplugSort(GstElement* bin, GstPad* pad, Gs
     for (guint i = 0; i < factories->n_values; ++i) {
       GValue* val = g_value_array_get_nth(factories, i);
       gpointer factory = gvalue_cast<gpointer>(val);
-      const std::string factoryName = gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory));
-      if (factoryName == elements::ElementVaapiDecodebin::GetPluginName()) {  // VAAPI_DECODEBIN
-                                                                              // not worked
-        DEBUG_LOG() << "skip: " << factoryName;
-      } else if (factoryName == elements::ElementAvdecH264::GetPluginName() &&
+      const std::string factory_name = gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory));
+      if (factory_name == elements::ElementVaapiDecodebin::GetPluginName()) {  // VAAPI_DECODEBIN
+                                                                               // not worked
+        DEBUG_LOG() << "skip: " << factory_name;
+      } else if (factory_name == elements::ElementAvdecH264::GetPluginName() &&
                  (is_gpu && !econf->IsMfxGpu())) {  // skip cpu decoder for vaapi
-        DEBUG_LOG() << "skip: " << factoryName;
-      } else if (factoryName == elements::ElementMFXH264Decode::GetPluginName() &&
+        DEBUG_LOG() << "skip: " << factory_name;
+      } else if (factory_name == elements::ElementMFXH264Decode::GetPluginName() &&
                  (!is_gpu || !econf->IsMfxGpu())) {  // skip mfx
                                                      // decoder if
                                                      // not vaapi
-        DEBUG_LOG() << "skip: " << factoryName;
+        DEBUG_LOG() << "skip: " << factory_name;
       } else {
-        DEBUG_LOG() << "not skip: " << factoryName;
+        DEBUG_LOG() << "not skip: " << factory_name;
         GValue val = make_gvalue(factory);
         g_value_array_append(result, &val);
         g_value_unset(&val);
@@ -260,6 +258,7 @@ void EncodingStream::HandleDecodeBinElementAdded(GstBin* bin, GstElement* elemen
 
 void EncodingStream::HandleDecodeBinElementRemoved(GstBin* bin, GstElement* element) {
   UNUSED(bin);
+
   const std::string element_plugin_name = elements::Element::GetPluginName(element);
   DEBUG_LOG() << "decodebin removed element: " << element_plugin_name;
 }

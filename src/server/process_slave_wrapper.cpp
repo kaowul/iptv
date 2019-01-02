@@ -29,7 +29,6 @@
 #include <common/file_system/file_system.h>
 #include <common/file_system/string_path_utils.h>
 #include <common/net/net.h>
-#include <common/sys_byteorder.h>
 
 #include "child_stream.h"
 #include "inputs_outputs.h"
@@ -315,7 +314,7 @@ ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key)
       start_time_(common::time::current_mstime() / 1000),
       loop_(),
       license_key_(license_key),
-      id_(),
+      id_(activate_request_id + 1),
       ping_client_id_timer_(INVALID_TIMER_ID),
       node_stats_timer_(INVALID_TIMER_ID),
       cleanup_timer_(INVALID_TIMER_ID),
@@ -333,7 +332,7 @@ int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
     return EXIT_FAILURE;
   }
 
-  protocol::request_t req = StopServiceRequest("1", stop_str);
+  protocol::request_t req = StopServiceRequest(protocol::MakeRequestID(activate_request_id + 1), stop_str);
   common::net::HostAndPort host = GetServerHostAndPort();
   common::net::socket_info client_info;
   common::ErrnoError err = common::net::connect(host, common::net::ST_SOCK_STREAM, 0, &client_info);
@@ -498,7 +497,7 @@ void ProcessSlaveWrapper::Moved(common::libev::IoLoop* server, common::libev::Io
 void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int status) {
   ChildStream* channel = static_cast<ChildStream*>(child);
 
-  INFO_LOG() << "Successful finished children id: " << channel->GetChannelId();
+  INFO_LOG() << "Successful finished children id: " << channel->GetChannelID();
   int stabled_status = EXIT_SUCCESS;
   int signal_number = 0;
 
@@ -510,19 +509,19 @@ void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int 
   if (WIFSIGNALED(status)) {
     signal_number = WTERMSIG(status);
   }
-  INFO_LOG() << "Stream id: " << channel->GetChannelId()
+  INFO_LOG() << "Stream id: " << channel->GetChannelID()
              << ", exit with status: " << (stabled_status ? "FAILURE" : "SUCCESS") << ", signal: " << signal_number;
 
   loop_->UnRegisterChild(child);
   delete child;
 }
 
-ChildStream* ProcessSlaveWrapper::FindChildByID(const std::string& cid) const {
+ChildStream* ProcessSlaveWrapper::FindChildByID(channel_id_t cid) const {
   auto childs = loop_->GetChilds();
-  for (size_t i = 0; i < childs.size(); ++i) {
-    ChildStream* lchan = static_cast<ChildStream*>(childs[i]);
-    if (lchan->GetChannelId() == cid) {
-      return lchan;
+  for (auto* child : childs) {
+    ChildStream* channel = static_cast<ChildStream*>(child);
+    if (channel->GetChannelID() == cid) {
+      return channel;
     }
   }
 
@@ -617,10 +616,10 @@ void ProcessSlaveWrapper::DataReceived(common::libev::IoClient* client) {
     if (err) {
       DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
       auto childs = loop_->GetChilds();
-      for (size_t i = 0; i < childs.size(); ++i) {
-        ChildStream* lchan = static_cast<ChildStream*>(childs[i]);
-        if (pipe_client == lchan->GetPipe()) {
-          lchan->SetPipe(nullptr);
+      for (auto* child : childs) {
+        ChildStream* channel = static_cast<ChildStream*>(child);
+        if (pipe_client == channel->GetPipe()) {
+          channel->SetPipe(nullptr);
           break;
         }
       }
@@ -682,9 +681,9 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(DaemonCli
     }
 
     auto childs = loop_->GetChilds();
-    for (size_t i = 0; i < childs.size(); ++i) {
-      ChildStream* chan = static_cast<ChildStream*>(childs[i]);
-      chan->SendStop(NextRequestID());
+    for (auto* child : childs) {
+      ChildStream* channel = static_cast<ChildStream*>(child);
+      channel->SendStop(NextRequestID());
     }
 
     ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
@@ -964,13 +963,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStartStream(DaemonCli
 }
 
 protocol::sequance_id_t ProcessSlaveWrapper::NextRequestID() {
-  const seq_id_t next_id = id_++;
-  char bytes[sizeof(seq_id_t)];
-  const seq_id_t stabled = common::NetToHost64(next_id);  // for human readable hex
-  memcpy(&bytes, &stabled, sizeof(seq_id_t));
-  protocol::sequance_id_t hexed;
-  common::utils::hex::encode(std::string(bytes, sizeof(seq_id_t)), true, &hexed);
-  return hexed;
+  const protocol::seq_id_t next_id = id_++;
+  return protocol::MakeRequestID(next_id);
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopStream(DaemonClient* dclient, protocol::request_t* req) {

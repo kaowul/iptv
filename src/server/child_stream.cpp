@@ -30,7 +30,7 @@ ChildStream::~ChildStream() {
   FreeSharedStreamStruct(&mem_);
 }
 
-channel_id_t ChildStream::GetChannelId() const {
+channel_id_t ChildStream::GetChannelID() const {
   return mem_->id;
 }
 

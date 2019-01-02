@@ -32,7 +32,6 @@ namespace stream {
 
 class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream::IStreamClient {
  public:
-  typedef uint64_t seq_id_t;
   enum constants : uint32_t { restart_attempts = 10, restart_after_frozen_sec = 60 };
 
   ProcessWrapper(const std::string& process_name,
@@ -118,7 +117,7 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
   //
   IBaseStream* origin_;
 
-  std::atomic<seq_id_t> id_;
+  std::atomic<protocol::seq_id_t> id_;
 };
 
 }  // namespace stream

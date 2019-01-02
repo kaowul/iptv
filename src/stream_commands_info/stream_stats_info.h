@@ -29,8 +29,8 @@ class StreamStatsInfo : public common::serializer::JsonSerializer<StreamStatsInf
   StreamStats GetStats() const;
 
  protected:
-  virtual common::Error DoDeSerialize(json_object* serialized) override;
-  virtual common::Error SerializeFields(json_object* out) const override;
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
 
  private:
   StreamStats stats_;

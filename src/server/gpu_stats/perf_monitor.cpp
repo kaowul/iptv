@@ -50,13 +50,13 @@ IPerfMonitor::~IPerfMonitor() {}
 
 IPerfMonitor* CreatePerfMonitor(int* load) {
   if (IsNvidiaGpuAvailable()) {
-#ifdef HAVE_NVML
+#if defined(HAVE_NVML)
     return new NvidiaMonitor(load);
 #else
     return nullptr;
 #endif
   } else if (IsIntelGpuAvailable()) {
-#ifdef HAVE_CTT_METRICS
+#if defined(HAVE_CTT_METRICS)
     return new IntelMonitor(load);
 #else
     return nullptr;

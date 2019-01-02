@@ -39,8 +39,8 @@ class StreamStructInfo : public common::serializer::JsonSerializer<StreamStructI
   time_t GetTime() const;
 
  protected:
-  virtual common::Error SerializeFields(json_object* out) const override;
-  virtual common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
+  common::Error DoDeSerialize(json_object* serialized) override;
 
  private:
   stream_struct_t stream_struct_;

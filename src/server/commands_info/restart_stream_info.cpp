@@ -21,9 +21,9 @@ namespace server {
 
 RestartStreamInfo::RestartStreamInfo() : base_class(), stream_id_() {}
 
-RestartStreamInfo::RestartStreamInfo(const std::string& stream_id) : stream_id_(stream_id) {}
+RestartStreamInfo::RestartStreamInfo(stream_id_t stream_id) : stream_id_(stream_id) {}
 
-std::string RestartStreamInfo::GetStreamID() const {
+RestartStreamInfo::stream_id_t RestartStreamInfo::GetStreamID() const {
   return stream_id_;
 }
 

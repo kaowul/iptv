@@ -35,17 +35,17 @@ class SrcDecodeBinStream : public IBaseStream {
   SrcDecodeBinStream(Config* config, IStreamClient* client, StreamStruct* stats);
   virtual ~SrcDecodeBinStream();
 
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
 
  protected:
-  virtual void OnInpudSrcPadCreated(common::uri::Url::scheme scheme, pad::Pad* src_pad, element_id_t id) override;
-  virtual void OnOutputSinkPadCreated(common::uri::Url::scheme scheme, pad::Pad* sink_pad, element_id_t id) override;
+  void OnInpudSrcPadCreated(common::uri::Url::scheme scheme, pad::Pad* src_pad, element_id_t id) override;
+  void OnOutputSinkPadCreated(common::uri::Url::scheme scheme, pad::Pad* sink_pad, element_id_t id) override;
   virtual void OnDecodebinCreated(elements::ElementDecodebin* decodebin);
 
-  virtual IBaseBuilder* CreateBuilder() override = 0;
+  IBaseBuilder* CreateBuilder() override = 0;
 
-  virtual void PreLoop() override;
-  virtual void PostLoop(ExitStatus status) override;
+  void PreLoop() override;
+  void PostLoop(ExitStatus status) override;
 
   virtual void ConnectDecodebinSignals(elements::ElementDecodebin* decodebin);
 

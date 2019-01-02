@@ -11,7 +11,10 @@
     You should have received a copy of the GNU General Public License
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #pragma once
+
+#include <string>
 
 #include <common/time.h>
 
@@ -29,8 +32,8 @@ class StopServiceInfo : public LicenseInfo {
   common::time64_t GetDelay() const;
 
  protected:
-  virtual common::Error DoDeSerialize(json_object* serialized) override;
-  virtual common::Error SerializeFields(json_object* obj) const override;
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* obj) const override;
 
  private:
   common::time64_t delay_;

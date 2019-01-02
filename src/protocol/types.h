@@ -25,12 +25,15 @@ namespace protocol {
 
 typedef common::protocols::json_rpc::JsonRPCResponce responce_t;
 typedef common::protocols::json_rpc::JsonRPCRequest request_t;
+typedef uint64_t seq_id_t;
 typedef std::string sequance_id_t;
 typedef common::protocols::json_rpc::json_rpc_request_params serializet_params_t;
 
 common::protocols::json_rpc::JsonRPCMessage MakeSuccessMessage(const std::string& result = OK_RESULT);
 common::protocols::json_rpc::JsonRPCError MakeServerErrorFromText(const std::string& error_text);
 common::protocols::json_rpc::JsonRPCError MakeInternalErrorFromText(const std::string& error_text);
+
+sequance_id_t MakeRequestID(seq_id_t sid);
 
 }  // namespace protocol
 }  // namespace iptv_cloud

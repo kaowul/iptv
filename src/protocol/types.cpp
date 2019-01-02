@@ -14,7 +14,12 @@
 
 #include "protocol/types.h"
 
+#include <string.h>
+
 #include <string>
+
+#include <common/convert2string.h>
+#include <common/sys_byteorder.h>
 
 namespace iptv_cloud {
 namespace protocol {
@@ -37,6 +42,15 @@ common::protocols::json_rpc::JsonRPCError MakeInternalErrorFromText(const std::s
   err.code = common::protocols::json_rpc::JSON_RPC_INTERNAL_ERROR;
   err.message = error_text;
   return err;
+}
+
+sequance_id_t MakeRequestID(seq_id_t sid) {
+  char bytes[sizeof(seq_id_t)];
+  const seq_id_t stabled = common::NetToHost64(sid);  // for human readable hex
+  memcpy(&bytes, &stabled, sizeof(seq_id_t));
+  protocol::sequance_id_t hexed;
+  common::utils::hex::encode(std::string(bytes, sizeof(seq_id_t)), true, &hexed);
+  return hexed;
 }
 
 }  // namespace protocol
