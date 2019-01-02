@@ -14,6 +14,8 @@
 
 #include "server/commands_info/state_service_info.h"
 
+#include <string>
+
 namespace iptv_cloud {
 namespace server {
 
@@ -22,7 +24,6 @@ StateServiceInfo::StateServiceInfo()
       jobs_directory_(),
       timeshifts_directory_(),
       hls_directory_(),
-      ads_directory_(),
       playlists_directory_(),
       dvb_directory_(),
       capture_card_directory_() {}
@@ -37,10 +38,6 @@ std::string StateServiceInfo::GetTimeshiftsDirectory() const {
 
 std::string StateServiceInfo::GetHlsDirectory() const {
   return hls_directory_;
-}
-
-std::string StateServiceInfo::GetAdsDirectory() const {
-  return ads_directory_;
 }
 
 std::string StateServiceInfo::GetPlaylistsDirectory() const {
@@ -60,7 +57,6 @@ common::Error StateServiceInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, STATE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD,
                          json_object_new_string(timeshifts_directory_.c_str()));
   json_object_object_add(out, STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD, json_object_new_string(hls_directory_.c_str()));
-  json_object_object_add(out, STATE_SERVICE_INFO_ADS_DIRECTORY_FIELD, json_object_new_string(ads_directory_.c_str()));
   json_object_object_add(out, STATE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD,
                          json_object_new_string(playlists_directory_.c_str()));
   json_object_object_add(out, STATE_SERVICE_INFO_DVB_DIRECTORY_FIELD, json_object_new_string(dvb_directory_.c_str()));
@@ -90,13 +86,6 @@ common::Error StateServiceInfo::DoDeSerialize(json_object* serialized) {
       json_object_object_get_ex(serialized, STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD, &jhls_directory);
   if (jhls_directory_exists) {
     inf.hls_directory_ = json_object_get_string(jhls_directory);
-  }
-
-  json_object* jads_directory = nullptr;
-  json_bool jads_directory_exists =
-      json_object_object_get_ex(serialized, STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD, &jads_directory);
-  if (jads_directory_exists) {
-    inf.ads_directory_ = json_object_get_string(jads_directory);
   }
 
   json_object* jplaylists_directory = nullptr;

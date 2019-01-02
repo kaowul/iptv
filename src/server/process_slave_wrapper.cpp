@@ -31,28 +31,25 @@
 #include <common/net/net.h>
 #include <common/sys_byteorder.h>
 
-#include "options/options.h"
-
 #include "child_stream.h"
 #include "inputs_outputs.h"
-
-#include "stream/constants.h"
-
-#include "stream/main_wrapper.h"
-
 #include "stream_commands.h"
 
-#include "pipe/pipe_client.h"
+#include "options/options.h"
 
-#include "server/daemon_client.h"
-#include "server/daemon_server.h"
+#include "stream/constants.h"
+#include "stream/main_wrapper.h"
+
+#include "pipe/pipe_client.h"
 
 #include "server/commands_info/activate_info.h"
 #include "server/commands_info/restart_stream_info.h"
 #include "server/commands_info/state_service_info.h"
 #include "server/commands_info/stop_service_info.h"
 #include "server/commands_info/stop_stream_info.h"
+#include "server/daemon_client.h"
 #include "server/daemon_commands.h"
+#include "server/daemon_server.h"
 #include "server/stream_struct_utils.h"
 
 #include "stream_commands_info/changed_sources_info.h"
@@ -155,7 +152,6 @@ struct Directories {
       : job_dir(sinf.GetJobsDirectory(), STATE_SERVICE_INFO_JOBS_DIRECTORY_FIELD),
         timeshift_dir(sinf.GetTimeshiftsDirectory(), STATE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD),
         hls_dir(sinf.GetHlsDirectory(), STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD),
-        ads_dir(sinf.GetAdsDirectory(), STATE_SERVICE_INFO_ADS_DIRECTORY_FIELD),
         playlist_dir(sinf.GetPlaylistsDirectory(), STATE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD),
         dvb_dir(sinf.GetDvbDirectory(), STATE_SERVICE_INFO_DVB_DIRECTORY_FIELD),
         capture_card_dir(sinf.GetCaptureDirectory(), STATE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD) {}
@@ -163,14 +159,13 @@ struct Directories {
   const DirectoryState job_dir;
   const DirectoryState timeshift_dir;
   const DirectoryState hls_dir;
-  const DirectoryState ads_dir;
   const DirectoryState playlist_dir;
   const DirectoryState dvb_dir;
   const DirectoryState capture_card_dir;
 
   bool IsValid() const {
-    return job_dir.is_valid && timeshift_dir.is_valid && hls_dir.is_valid && ads_dir.is_valid &&
-           playlist_dir.is_valid && dvb_dir.is_valid && capture_card_dir.is_valid;
+    return job_dir.is_valid && timeshift_dir.is_valid && hls_dir.is_valid && playlist_dir.is_valid &&
+           dvb_dir.is_valid && capture_card_dir.is_valid;
   }
 };
 
@@ -179,7 +174,6 @@ std::string MakeDirectoryResponce(const Directories& dirs) {
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.job_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.timeshift_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.hls_dir));
-  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.ads_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.playlist_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.dvb_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.capture_card_dir));
@@ -339,7 +333,7 @@ int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
     return EXIT_FAILURE;
   }
 
-  protocol::request_t req = StopServiceRequest("0", stop_str);
+  protocol::request_t req = StopServiceRequest("1", stop_str);
   common::net::HostAndPort host = GetServerHostAndPort();
   common::net::socket_info client_info;
   common::ErrnoError err = common::net::connect(host, common::net::ST_SOCK_STREAM, 0, &client_info);
@@ -1109,7 +1103,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(DaemonClient
 
     bool is_active = activate_info.GetLicense() == license_key_;
     if (!is_active) {
-      protocol::responce_t resp = ActivateResponceFail(req->id, "Wrong license key.");
+      protocol::responce_t resp = ActivateResponceFail(req->id, "Wrong license key");
       pdclient->WriteResponce(resp);
       return common::make_errno_error_inval();
     }

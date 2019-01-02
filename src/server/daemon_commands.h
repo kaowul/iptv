@@ -28,10 +28,8 @@
 #define CLIENT_ACTIVATE "activate_request"  // { "key": "XXXXXXXXXXXXXXXXXX"}
 #define CLIENT_STOP_SERVICE "stop_service"  // {"delay": 0 }
 #define CLIENT_STATE_SERVICE \
-  "state_service"  // { "cmd": "save_directory", "jobs_directory": "",
-                   // "timeshifts_directory": "", "hls_directory": "",
-                   // "ads_directory": "", "playlists_directory": "",
-                   // "dvb_directory": "", "capture_card_directory": "" }
+  "state_service"  // { "jobs_directory": "", "timeshifts_directory": "", "hls_directory": "", "playlists_directory":
+                   // "", "dvb_directory": "", "capture_card_directory": "" }
 
 #define CLIENT_PING "client_ping"
 
