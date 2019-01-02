@@ -16,7 +16,7 @@
 
 namespace iptv_cloud {
 
-protocol::request_t RestartStreamRequest(protocol::sequance_id_t id, protocol::params_t params) {
+protocol::request_t RestartStreamRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
   protocol::request_t req;
   req.id = id;
   req.method = RESTART_STREAM;
@@ -28,7 +28,7 @@ protocol::responce_t RestartStreamResponceSuccess(protocol::sequance_id_t id) {
   return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::request_t StopStreamRequest(protocol::sequance_id_t id, protocol::serializet_t params) {
+protocol::request_t StopStreamRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
   protocol::request_t req;
   req.id = id;
   req.method = STOP_STREAM;
@@ -40,7 +40,7 @@ protocol::responce_t StopStreamResponceSuccess(protocol::sequance_id_t id) {
   return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::request_t ChangedSourcesStreamRequest(protocol::sequance_id_t id, protocol::serializet_t params) {
+protocol::request_t ChangedSourcesStreamRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
   protocol::request_t req;
   req.id = id;
   req.method = CHANGED_SOURCES_STREAM;
@@ -52,7 +52,7 @@ protocol::responce_t ChangedSourcesStreamResponceSuccess(protocol::sequance_id_t
   return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::request_t StatisticStreamRequest(protocol::sequance_id_t id, protocol::serializet_t params) {
+protocol::request_t StatisticStreamRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
   protocol::request_t req;
   req.id = id;
   req.method = STATISTIC_STREAM;

@@ -77,7 +77,7 @@ bool PrepareStatus(StreamStruct* stats, StreamStatus st, double cpu_load, std::s
 class StreamServer : public common::libev::IoLoop {
  public:
   typedef common::libev::IoLoop base_class;
-  StreamServer(common::libev::IoClient* command_client, common::libev::IoLoopObserver* observer = nullptr)
+  explicit StreamServer(common::libev::IoClient* command_client, common::libev::IoLoopObserver* observer = nullptr)
       : base_class(new common::libev::LibEvLoop, observer),
         command_client_(static_cast<protocol::protocol_client_t*>(command_client)) {
     CHECK(command_client);
@@ -534,13 +534,13 @@ void ProcessWrapper::OnSyncMessageReceived(IBaseStream* stream, GstMessage* mess
 
 void ProcessWrapper::OnInputChanged(const InputUri& uri) {
   ChangedSouresInfo ch(uri);
-  std::string changed_str;
-  common::Error err = ch.SerializeToString(&changed_str);
+  std::string changed_json;
+  common::Error err = ch.SerializeToString(&changed_json);
   if (err) {
     return;
   }
 
-  protocol::request_t req = ChangedSourcesStreamRequest(NextRequestID(), changed_str);
+  protocol::request_t req = ChangedSourcesStreamRequest(NextRequestID(), changed_json);
   static_cast<StreamServer*>(loop_)->WriteRequest(req);
 }
 
@@ -553,9 +553,9 @@ void ProcessWrapper::OnPipelineCreated(IBaseStream* stream) {
 }
 
 void ProcessWrapper::DumpStreamStatus(StreamStruct* stat, StreamStatus st) {
-  std::string status;
-  if (PrepareStatus(stat, st, common::system_info::GetCpuLoad(getpid()), &status)) {
-    protocol::request_t req = StatisticStreamRequest(NextRequestID(), status);
+  std::string status_json;
+  if (PrepareStatus(stat, st, common::system_info::GetCpuLoad(getpid()), &status_json)) {
+    protocol::request_t req = StatisticStreamRequest(NextRequestID(), status_json);
     static_cast<StreamServer*>(loop_)->WriteRequest(req);
   }
 }

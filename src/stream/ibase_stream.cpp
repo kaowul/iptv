@@ -21,21 +21,21 @@
 #include <gst/base/gstbasesrc.h>  // for GstBaseSrc
 
 #include <map>
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include <common/time.h>
 
-#include "stream/gstreamer_utils.h"
-
 #include "dumpers/dumpers_factory.h"
+
+#include "stream/elements/element.h"
+#include "stream/gstreamer_utils.h"
 #include "stream/ibase_builder.h"
 #include "stream/probes.h"  // for Probe (ptr only), PROBE_IN, PROBE_OUT
 #include "stream_stats.h"
-#include "utils/utils.h"
 
-#include "stream/elements/element.h"
+#include "utils/utils.h"
 
 #define MIN_OUT_DATA 4 * 1024 * 60  // 4 kBps
 #define MIN_IN_DATA 4 * 1024 * 60   // 4 kBps

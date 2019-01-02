@@ -16,6 +16,9 @@
 
 #include <gst/gstevent.h>
 
+#include <string>
+#include <vector>
+
 #include "config.h"
 #include "ibase_builder_observer.h"
 #include "stream/gst_types.h"
@@ -103,10 +106,8 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
   void SetAudioInited(bool val);
   void SetVideoInited(bool val);
 
-  virtual void OnInpudSrcPadCreated(common::uri::Url::scheme scheme, pad::Pad* src_pad, element_id_t id) override = 0;
-  virtual void OnOutputSinkPadCreated(common::uri::Url::scheme scheme,
-                                      pad::Pad* sink_pad,
-                                      element_id_t id) override = 0;
+  void OnInpudSrcPadCreated(common::uri::Url::scheme scheme, pad::Pad* src_pad, element_id_t id) override = 0;
+  void OnOutputSinkPadCreated(common::uri::Url::scheme scheme, pad::Pad* sink_pad, element_id_t id) override = 0;
 
   virtual IBaseBuilder* CreateBuilder() = 0;
 
@@ -164,13 +165,13 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
 
   StreamStruct* const stats_;
 
-  DISALLOW_COPY_AND_ASSIGN(IBaseStream);
-
   ExitStatus last_exit_status_;
   bool is_live_;
 
   int flags_;
   int desire_flags_;
+
+  DISALLOW_COPY_AND_ASSIGN(IBaseStream);
 };
 
 }  // namespace stream

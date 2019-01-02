@@ -15,11 +15,13 @@
 #include "stream/dumpers/htmldump.h"
 
 #include <gst/gst.h>
+
 #include <fstream>
+#include <string>
 
 #include "stream/elements/element.h"
 
-#define JS_LIB "https://github.com/mdaines/viz.js/releases/download/v1.7.0/viz-lite.js"
+#define JS_LIB "https://github.com/mdaines/viz.js/releases/download/v1.8.2/viz-lite.js"
 
 namespace iptv_cloud {
 namespace stream {

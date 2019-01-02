@@ -40,7 +40,7 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
                  const utils::ArgsMap& config_args,
                  common::libev::IoClient* command_client,
                  StreamStruct* mem);
-  ~ProcessWrapper();
+  ~ProcessWrapper() override;
 
   int Exec();
 

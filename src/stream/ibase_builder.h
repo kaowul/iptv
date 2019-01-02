@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <gst/gstelement.h>
 
 #include <common/uri/url.h>
@@ -35,16 +37,16 @@ class Pad;
 class IBaseBuilder : public ILinker {
  public:
   IBaseBuilder(Config* api, IBaseBuilderObserver* observer);
-  virtual ~IBaseBuilder();
+  ~IBaseBuilder() override;
 
   bool CreatePipeLine(GstElement** pipeline, elements_line_t* elements) WARN_UNUSED_RESULT;
 
   elements::Element* GetElementByName(const std::string& name) const;
 
-  virtual bool ElementAdd(elements::Element* elem) override;
-  virtual bool ElementLink(elements::Element* src, elements::Element* dest) override;
-  virtual bool ElementRemove(elements::Element* elem) override;
-  virtual bool ElementLinkRemove(elements::Element* src, elements::Element* dest) override;
+  bool ElementAdd(elements::Element* elem) override;
+  bool ElementLink(elements::Element* src, elements::Element* dest) override;
+  bool ElementRemove(elements::Element* elem) override;
+  bool ElementLinkRemove(elements::Element* src, elements::Element* dest) override;
 
  protected:
   elements::Element* BuildGenericOutput(const OutputUri& output, element_id_t sink_id);

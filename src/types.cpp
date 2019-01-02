@@ -21,7 +21,7 @@
 
 namespace iptv_cloud {
 namespace {
-const std::array<const char*, NUM_STREAM_TYPES> stream_types = {
+const std::array<const char*, NUM_STREAM_TYPES> kStreamTypes = {
     {"screen", "relay", "encoding", "timeshift_player", "timeshift_recorder", "catchup"}};
 }
 
@@ -36,7 +36,7 @@ std::string ConvertToString(iptv_cloud::StreamType stream_type) {
     return std::string();
   }
 
-  return iptv_cloud::stream_types[stream_type];
+  return iptv_cloud::kStreamTypes[stream_type];
 }
 
 bool ConvertFromString(const std::string& from, iptv_cloud::StreamType* out) {
@@ -44,8 +44,8 @@ bool ConvertFromString(const std::string& from, iptv_cloud::StreamType* out) {
     return false;
   }
 
-  for (size_t i = 0; i < iptv_cloud::stream_types.size(); ++i) {
-    if (from == iptv_cloud::stream_types[i]) {
+  for (size_t i = 0; i < iptv_cloud::kStreamTypes.size(); ++i) {
+    if (from == iptv_cloud::kStreamTypes[i]) {
       *out = static_cast<iptv_cloud::StreamType>(i);
       return true;
     }

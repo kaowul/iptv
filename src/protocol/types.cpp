@@ -14,12 +14,14 @@
 
 #include "protocol/types.h"
 
+#include <string>
+
 namespace iptv_cloud {
 namespace protocol {
 
-common::protocols::json_rpc::JsonRPCMessage MakeSuccessMessage(const std::string& text) {
+common::protocols::json_rpc::JsonRPCMessage MakeSuccessMessage(const std::string& result) {
   common::protocols::json_rpc::JsonRPCMessage msg;
-  msg.result = text;
+  msg.result = result;
   return msg;
 }
 

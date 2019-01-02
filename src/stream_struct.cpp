@@ -14,6 +14,8 @@
 
 #include "stream_struct.h"
 
+#include <string>
+
 #include <common/time.h>
 
 #include "stream_stats.h"
@@ -21,11 +23,11 @@
 namespace common {
 
 std::string ConvertToString(iptv_cloud::StreamStatus st) {
-  static const std::string StreamStatuses[] = {
+  static const std::string kStreamStatuses[] = {
       "New", "Inited", "Started", "Ready", "Streaming", "Frozen", "Waiting",
   };
 
-  return StreamStatuses[st];
+  return kStreamStatuses[st];
 }
 
 }  // namespace common

@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "server/stats/istat.h"  // for IStat
 
 #include "server/redis/connection.h"  // for RedisConnection, redis_configuration_t...
@@ -26,7 +28,7 @@ namespace redis {
 class StatCredentials : public StatCredentialsBase {
  public:
   typedef iptv_cloud::server::redis::redis_configuration_t redis_configuration_t;
-  StatCredentials(const redis_configuration_t& conf);
+  explicit StatCredentials(const redis_configuration_t& conf);
   const redis_configuration_t& GetConf() const;
 
  private:
@@ -36,14 +38,15 @@ class StatCredentials : public StatCredentialsBase {
 class Stat : public IStat {
  public:
   typedef iptv_cloud::server::redis::RedisConnection RedisConnection;
-  Stat(StatCredentials* creds);  // take ownership
+  explicit Stat(StatCredentials* creds);  // take ownership
 
-  virtual bool SetKey(const std::string& key, const std::string& value) override;
-  virtual bool GetKey(const std::string& key, std::string* value) override;
+  bool SetKey(const std::string& key, const std::string& value) override;
+  bool GetKey(const std::string& key, std::string* value) override;
 
  private:
-  DISALLOW_COPY_AND_ASSIGN(Stat);
   RedisConnection rc_;
+
+  DISALLOW_COPY_AND_ASSIGN(Stat);
 };
 
 }  // namespace redis

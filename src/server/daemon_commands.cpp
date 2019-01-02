@@ -25,7 +25,7 @@ protocol::responce_t StopServiceResponceFail(protocol::sequance_id_t id, const s
   return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
-protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::serializet_t params) {
+protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
   protocol::request_t req;
   req.id = id;
   req.method = CLIENT_STOP_SERVICE;
@@ -41,8 +41,8 @@ protocol::responce_t ActivateResponceFail(protocol::sequance_id_t id, const std:
   return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
-protocol::responce_t StateServiceResponceSuccess(protocol::sequance_id_t id, protocol::serializet_t msg) {
-  return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage(msg));
+protocol::responce_t StateServiceResponceSuccess(protocol::sequance_id_t id, const std::string& result) {
+  return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage(result));
 }
 
 protocol::responce_t StartStreamResponceSuccess(protocol::sequance_id_t id) {
@@ -69,10 +69,11 @@ protocol::responce_t RestartStreamResponceFail(protocol::sequance_id_t id, const
   return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
-protocol::request_t PingRequest(protocol::sequance_id_t id) {
+protocol::request_t PingRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
   protocol::request_t req;
   req.id = id;
   req.method = CLIENT_PING;
+  req.params = params;
   return req;
 }
 

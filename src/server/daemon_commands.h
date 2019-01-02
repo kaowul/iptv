@@ -39,12 +39,13 @@ namespace server {
 protocol::responce_t StopServiceResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t StopServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::serializet_t params);
+protocol::request_t StopServiceRequest(protocol::sequance_id_t id,
+                                       protocol::serializet_params_t params = protocol::serializet_params_t());
 
 protocol::responce_t ActivateResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::responce_t StateServiceResponceSuccess(protocol::sequance_id_t id, protocol::serializet_t msg);
+protocol::responce_t StateServiceResponceSuccess(protocol::sequance_id_t id, const std::string& result);
 
 // streams
 protocol::responce_t StartStreamResponceSuccess(protocol::sequance_id_t id);
@@ -59,7 +60,8 @@ protocol::responce_t RestartStreamResponceFail(protocol::sequance_id_t id, const
 
 // requests
 // ping
-protocol::request_t PingRequest(protocol::sequance_id_t id);
+protocol::request_t PingRequest(protocol::sequance_id_t id,
+                                protocol::serializet_params_t params = protocol::serializet_params_t());
 protocol::responce_t PingResponceSuccsess(protocol::sequance_id_t id);
 protocol::responce_t PingResponceFail(protocol::sequance_id_t id,
                                       const std::string& error_text);  // escaped

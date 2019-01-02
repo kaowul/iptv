@@ -12,11 +12,14 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams_factory.h"
+#include "stream/configs_factory.h"
+
+#include <map>
+#include <string>
 
 #include "gst_constants.h"
-#include "stream/constants.h"
 
+#include "stream/constants.h"
 #include "stream/streams/configs/encoding_config.h"
 #include "stream/streams/configs/relay_config.h"
 
@@ -27,10 +30,14 @@ namespace stream {
 
 namespace {
 template <typename T>
-void CheckAndSetValue(const utils::ArgsMap& args, const std::string& name, std::map<std::string, T>& map) {
+void CheckAndSetValue(const utils::ArgsMap& args, const std::string& name, std::map<std::string, T>* map) {
+  if (!map) {
+    return;
+  }
+
   T result = T();
   if (utils::ArgsGetValue(args, name, &result)) {
-    map[name] = result;
+    map->insert(std::make_pair(name, result));
   }
 }
 
@@ -45,30 +52,30 @@ bool InitVideoEncodersWithArgs(const utils::ArgsMap& config,
   video_encoders_str_args_t video_encoder_str_args_;
 
   // nvh264enc
-  CheckAndSetValue(config, NV_H264_ENC_PRESET, video_encoder_args_);
+  CheckAndSetValue(config, NV_H264_ENC_PRESET, &video_encoder_args_);
 
   // mfxh264enc
-  CheckAndSetValue(config, MFX_H264_ENC_PRESET, video_encoder_args_);
-  CheckAndSetValue(config, MFX_H264_GOP_SIZE, video_encoder_args_);
+  CheckAndSetValue(config, MFX_H264_ENC_PRESET, &video_encoder_args_);
+  CheckAndSetValue(config, MFX_H264_GOP_SIZE, &video_encoder_args_);
 
   // x264enc
-  CheckAndSetValue(config, X264_ENC_SPEED_PRESET, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_THREADS, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_TUNE, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_KEY_INT_MAX, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_VBV_BUF_CAPACITY, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_RC_LOOKAHED, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_QP_MAX, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_PASS, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_ME, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_SLICED_THREADS, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_B_ADAPT, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_BYTE_STREAM, video_encoder_args_);
-  CheckAndSetValue(config, X264_ENC_QUANTIZER, video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_SPEED_PRESET, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_THREADS, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_TUNE, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_KEY_INT_MAX, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_VBV_BUF_CAPACITY, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_RC_LOOKAHED, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_QP_MAX, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_PASS, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_ME, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_SLICED_THREADS, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_B_ADAPT, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_BYTE_STREAM, &video_encoder_args_);
+  CheckAndSetValue(config, X264_ENC_QUANTIZER, &video_encoder_args_);
 
-  CheckAndSetValue(config, X264_ENC_PROFILE, video_encoder_str_args_);
-  CheckAndSetValue(config, X264_ENC_STREAM_FORMAT, video_encoder_str_args_);
-  CheckAndSetValue(config, X264_ENC_OPTION_STRING, video_encoder_str_args_);
+  CheckAndSetValue(config, X264_ENC_PROFILE, &video_encoder_str_args_);
+  CheckAndSetValue(config, X264_ENC_STREAM_FORMAT, &video_encoder_str_args_);
+  CheckAndSetValue(config, X264_ENC_OPTION_STRING, &video_encoder_str_args_);
 
   bool x264_enc_inter = false;
   if (utils::ArgsGetValue(config, X264_ENC_INTERLACED, &x264_enc_inter) && x264_enc_inter) {
@@ -81,42 +88,42 @@ bool InitVideoEncodersWithArgs(const utils::ArgsMap& config,
   }
 
   // vaapih264enc
-  CheckAndSetValue(config, VAAPI_H264_ENC_KEYFRAME_PERIOD, video_encoder_args_);
-  CheckAndSetValue(config, VAAPI_H264_ENC_TUNE, video_encoder_args_);
-  CheckAndSetValue(config, VAAPI_H264_ENC_MAX_BFRAMES, video_encoder_args_);
-  CheckAndSetValue(config, VAAPI_H264_ENC_NUM_SLICES, video_encoder_args_);
-  CheckAndSetValue(config, VAAPI_H264_ENC_INIT_QP, video_encoder_args_);
-  CheckAndSetValue(config, VAAPI_H264_ENC_MIN_QP, video_encoder_args_);
-  CheckAndSetValue(config, VAAPI_H264_ENC_RATE_CONTROL, video_encoder_args_);
-  CheckAndSetValue(config, VAAPI_H264_ENC_CABAC, video_encoder_args_);
-  CheckAndSetValue(config, VAAPI_H264_ENC_DCT8X8, video_encoder_args_);
-  CheckAndSetValue(config, VAAPI_H264_ENC_CPB_LENGTH, video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_KEYFRAME_PERIOD, &video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_TUNE, &video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_MAX_BFRAMES, &video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_NUM_SLICES, &video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_INIT_QP, &video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_MIN_QP, &video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_RATE_CONTROL, &video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_CABAC, &video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_DCT8X8, &video_encoder_args_);
+  CheckAndSetValue(config, VAAPI_H264_ENC_CPB_LENGTH, &video_encoder_args_);
 
   // openh264enc
-  CheckAndSetValue(config, OPEN_H264_ENC_MUTLITHREAD, video_encoder_args_);
-  CheckAndSetValue(config, OPEN_H264_ENC_COMPLEXITY, video_encoder_args_);
-  CheckAndSetValue(config, OPEN_H264_ENC_RATE_CONTROL, video_encoder_args_);
-  CheckAndSetValue(config, OPEN_H264_ENC_GOP_SIZE, video_encoder_args_);
+  CheckAndSetValue(config, OPEN_H264_ENC_MUTLITHREAD, &video_encoder_args_);
+  CheckAndSetValue(config, OPEN_H264_ENC_COMPLEXITY, &video_encoder_args_);
+  CheckAndSetValue(config, OPEN_H264_ENC_RATE_CONTROL, &video_encoder_args_);
+  CheckAndSetValue(config, OPEN_H264_ENC_GOP_SIZE, &video_encoder_args_);
 
   // eavcenc
-  CheckAndSetValue(config, EAVC_ENC_PRESET, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_PROFILE, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_PERFORMANCE, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_BITRATE_MODE, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_BITRATE_PASS, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_BITRATE_MAX, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_VBV_SIZE, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_PICTURE_MODE, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_ENTROPY_MODE, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_GOP_MAX_BCOUNT, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_GOP_MAX_LENGTH, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_GOP_MIN_LENGTH, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_LEVEL, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_DEBLOCK_MODE, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_DEBLOCK_ALPHA, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_DEBLOCK_BETA, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_INITIAL_DELAY, video_encoder_args_);
-  CheckAndSetValue(config, EAVC_ENC_FIELD_ORDER, video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_PRESET, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_PROFILE, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_PERFORMANCE, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_BITRATE_MODE, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_BITRATE_PASS, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_BITRATE_MAX, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_VBV_SIZE, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_PICTURE_MODE, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_ENTROPY_MODE, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_GOP_MAX_BCOUNT, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_GOP_MAX_LENGTH, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_GOP_MIN_LENGTH, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_LEVEL, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_DEBLOCK_MODE, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_DEBLOCK_ALPHA, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_DEBLOCK_BETA, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_INITIAL_DELAY, &video_encoder_args_);
+  CheckAndSetValue(config, EAVC_ENC_FIELD_ORDER, &video_encoder_args_);
   bool eabc_enc_gop = false;
   if (utils::ArgsGetValue(config, EAVC_ENC_GOP_ADAPTIVE, &eabc_enc_gop) && eabc_enc_gop) {
     video_encoder_args_[EAVC_ENC_GOP_ADAPTIVE] = 1;

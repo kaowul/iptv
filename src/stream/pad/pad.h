@@ -55,8 +55,8 @@ class Pad {
   void SetProperty(const char* property, void* val);
 
  private:
-  DISALLOW_COPY_AND_ASSIGN(Pad);
   GstPad* pad_;
+  DISALLOW_COPY_AND_ASSIGN(Pad);
 };
 
 }  // namespace pad

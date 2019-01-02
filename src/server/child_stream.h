@@ -44,10 +44,10 @@ class ChildStream : public common::libev::IoChild {
   void SetPipe(pipe::PipeClient* pipe);
 
  private:
-  DISALLOW_COPY_AND_ASSIGN(ChildStream);
-
   StreamStruct* mem_;
   pipe::PipeClient* pipe_client_;
+
+  DISALLOW_COPY_AND_ASSIGN(ChildStream);
 };
 
 inline bool operator==(const ChildStream& left, const ChildStream& right) {

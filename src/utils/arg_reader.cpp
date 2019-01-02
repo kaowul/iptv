@@ -14,6 +14,8 @@
 
 #include "utils/arg_reader.h"
 
+#include <utility>
+
 namespace iptv_cloud {
 namespace utils {
 
@@ -41,5 +43,6 @@ ArgsMap ParseCmd(int argc, char** argv) {
   }
   return args;
 }
+
 }  // namespace utils
 }  // namespace iptv_cloud

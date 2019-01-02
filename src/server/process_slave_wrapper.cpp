@@ -864,8 +864,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::
     protocol::responce_t resp = ChangedSourcesStreamResponceSuccess(req->id);
     pdclient->WriteResponce(resp);
 
-    std::string changed_str;
-    common::Error err_ser = ch_sources_info.SerializeToString(&changed_str);
+    std::string changed_json;
+    common::Error err_ser = ch_sources_info.SerializeToString(&changed_json);
     if (err_ser) {
       const std::string err_str = err_ser->GetDescription();
       return common::make_errno_error(err_str, EAGAIN);
@@ -876,7 +876,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::
     for (size_t i = 0; i < clients.size(); ++i) {
       DaemonClient* dclient = dynamic_cast<DaemonClient*>(clients[i]);
       if (dclient) {
-        protocol::request_t req = ChangedSourcesStreamRequest(NextRequestID(), changed_str);
+        protocol::request_t req = ChangedSourcesStreamRequest(NextRequestID(), changed_json);
         ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
         pdclient->WriteRequest(req);
       }

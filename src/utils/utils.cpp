@@ -25,7 +25,6 @@
 #include <string>
 
 #include <common/file_system/file_system.h>
-#include <common/macros.h>
 #include <common/sprintf.h>
 
 namespace iptv_cloud {

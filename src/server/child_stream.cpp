@@ -52,7 +52,7 @@ common::ErrnoError ChildStream::SendStop(protocol::sequance_id_t id) {
   }
 
   pipe::ProtocoledPipeClient* pipe = static_cast<pipe::ProtocoledPipeClient*>(pipe_client_);
-  protocol::request_t req = StopStreamRequest(id, "{}");
+  protocol::request_t req = StopStreamRequest(id);
   return pipe->WriteRequest(req);
 }
 
@@ -62,7 +62,7 @@ common::ErrnoError ChildStream::SendRestart(protocol::sequance_id_t id) {
   }
 
   pipe::ProtocoledPipeClient* pipe = static_cast<pipe::ProtocoledPipeClient*>(pipe_client_);
-  protocol::request_t req = RestartStreamRequest(id, protocol::params_t("{}"));
+  protocol::request_t req = RestartStreamRequest(id);
   return pipe->WriteRequest(req);
 }
 

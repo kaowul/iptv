@@ -61,7 +61,6 @@ class Probe {
   Consistency GetConsistency() const;
 
  private:
-  DISALLOW_COPY_AND_ASSIGN(Probe);
   static GstPadProbeReturn sink_callback_probe_buffer(GstPad* pad, GstPadProbeInfo* info, gpointer user_data);
   static GstPadProbeReturn source_callback_probe_buffer(GstPad* pad, GstPadProbeInfo* info, gpointer user_data);
   static void destroy_callback_probe(gpointer user_data);
@@ -79,6 +78,8 @@ class Probe {
   GstPad* pad_;
   Consistency consistency_;
   bool is_broken_;
+
+  DISALLOW_COPY_AND_ASSIGN(Probe);
 };
 
 }  // namespace stream
