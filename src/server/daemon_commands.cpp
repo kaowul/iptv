@@ -69,20 +69,24 @@ protocol::responce_t RestartStreamResponceFail(protocol::sequance_id_t id, const
   return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
-protocol::request_t PingRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
+protocol::request_t PingDaemonRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
   protocol::request_t req;
   req.id = id;
-  req.method = CLIENT_PING;
+  req.method = SERVER_PING;
   req.params = params;
   return req;
 }
 
-protocol::responce_t PingResponceSuccsess(protocol::sequance_id_t id) {
+protocol::responce_t PingServiceResponceSuccsess(protocol::sequance_id_t id) {
   return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::responce_t PingResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+protocol::responce_t PingServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
   return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+}
+
+protocol::request_t ChangedSourcesStreamBrodcast(protocol::serializet_params_t params) {
+  return protocol::request_t::MakeNotification(CLIENT_CHANGED_SOURCES_STREAM, params);
 }
 
 }  // namespace server

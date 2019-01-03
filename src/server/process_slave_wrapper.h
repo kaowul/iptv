@@ -38,12 +38,8 @@ class DaemonClient;
 
 class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
  public:
-  enum {
-    node_stats_send_seconds = 10,
-    ping_timeout_clients_seconds = 60,
-    cleanup_seconds = 5,
-    activate_request_id = 0
-  };
+  enum { node_stats_send_seconds = 10, ping_timeout_clients_seconds = 60, cleanup_seconds = 5 };
+
   explicit ProcessSlaveWrapper(const std::string& licensy_key);
   virtual ~ProcessSlaveWrapper();
 
@@ -105,7 +101,10 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   common::ErrnoError HandleRequestClientStateService(DaemonClient* dclient,
                                                      protocol::request_t* req) WARN_UNUSED_RESULT;
   common::ErrnoError HandleRequestClientActivate(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientPingService(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
   common::ErrnoError HandleRequestClientStopService(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
+
+  common::ErrnoError HandleResponcePingService(DaemonClient* dclient, protocol::responce_t* resp) WARN_UNUSED_RESULT;
 
   void ReadConfig();
   void ClearStat();

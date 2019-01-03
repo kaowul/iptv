@@ -40,6 +40,7 @@
 #include "pipe/pipe_client.h"
 
 #include "server/commands_info/activate_info.h"
+#include "server/commands_info/ping_info.h"
 #include "server/commands_info/restart_stream_info.h"
 #include "server/commands_info/state_service_info.h"
 #include "server/commands_info/stop_service_info.h"
@@ -313,7 +314,7 @@ ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key)
       start_time_(common::time::current_mstime() / 1000),
       loop_(),
       license_key_(license_key),
-      id_(activate_request_id + 1),
+      id_(0),
       ping_client_id_timer_(INVALID_TIMER_ID),
       node_stats_timer_(INVALID_TIMER_ID),
       cleanup_timer_(INVALID_TIMER_ID),
@@ -331,7 +332,7 @@ int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
     return EXIT_FAILURE;
   }
 
-  protocol::request_t req = StopServiceRequest(protocol::MakeRequestID(activate_request_id + 1), stop_str);
+  protocol::request_t req = StopServiceRequest(protocol::MakeRequestID(0), stop_str);
   common::net::HostAndPort host = GetServerHostAndPort();
   common::net::socket_info client_info;
   common::ErrnoError err = common::net::connect(host, common::net::ST_SOCK_STREAM, 0, &client_info);
@@ -426,7 +427,14 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
       DaemonClient* dclient = dynamic_cast<DaemonClient*>(client);
       if (dclient && dclient->IsVerified()) {
         ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
-        const protocol::request_t ping_request = PingRequest(NextRequestID());
+        std::string ping_client_json;
+        ClientPingInfo ping_info;
+        common::Error err_ser = ping_info.SerializeToString(&ping_client_json);
+        if (err_ser) {
+          continue;
+        }
+
+        const protocol::request_t ping_request = PingDaemonRequest(NextRequestID(), ping_client_json);
         common::ErrnoError err = pdclient->WriteRequest(ping_request);
         if (err) {
           DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
@@ -696,6 +704,12 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(DaemonCli
   return common::make_errno_error_inval();
 }
 
+common::ErrnoError ProcessSlaveWrapper::HandleResponcePingService(DaemonClient* dclient, protocol::responce_t* resp) {
+  UNUSED(dclient);
+  UNUSED(resp);
+  return common::ErrnoError();
+}
+
 common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop* server,
                                                           const StartStreamInfo& start_info) {
   CHECK(loop_->IsLoopThread());
@@ -874,7 +888,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::
     for (size_t i = 0; i < clients.size(); ++i) {
       DaemonClient* dclient = dynamic_cast<DaemonClient*>(clients[i]);
       if (dclient) {
-        protocol::request_t req = ChangedSourcesStreamRequest(NextRequestID(), changed_json);
+        protocol::request_t req = ChangedSourcesStreamBrodcast(changed_json);
         ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
         pdclient->WriteRequest(req);
       }
@@ -1110,6 +1124,38 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(DaemonClient
   return common::make_errno_error_inval();
 }
 
+common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPingService(DaemonClient* dclient,
+                                                                       protocol::request_t* req) {
+  CHECK(loop_->IsLoopThread());
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jstop = json_tokener_parse(params_ptr);
+    if (!jstop) {
+      return common::make_errno_error_inval();
+    }
+
+    ServerPingInfo server_ping_info;
+    common::Error err_des = server_ping_info.DeSerialize(jstop);
+    json_object_put(jstop);
+    if (err_des) {
+      const std::string err_str = err_des->GetDescription();
+      return common::make_errno_error(err_str, EAGAIN);
+    }
+
+    bool is_verified_request = dclient->IsVerified();
+    if (!is_verified_request) {
+      return common::make_errno_error_inval();
+    }
+
+    ProtocoledDaemonClient* pdclient = static_cast<ProtocoledDaemonClient*>(dclient);
+    protocol::responce_t resp = PingServiceResponceSuccsess(req->id);
+    pdclient->WriteResponce(resp);
+    return common::ErrnoError();
+  }
+
+  return common::make_errno_error_inval();
+}
+
 common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(DaemonClient* dclient, protocol::request_t* req) {
   if (req->method == CLIENT_START_STREAM) {
     return HandleRequestClientStartStream(dclient, req);
@@ -1123,6 +1169,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(DaemonClient
     return HandleRequestClientStopService(dclient, req);
   } else if (req->method == CLIENT_ACTIVATE) {
     return HandleRequestClientActivate(dclient, req);
+  } else if (req->method == CLIENT_PING_SERVICE) {
+    return HandleRequestClientPingService(dclient, req);
   }
 
   WARNING_LOG() << "Received unknown method: " << req->method;

@@ -30,24 +30,35 @@
 #define CLIENT_STATE_SERVICE \
   "state_service"  // { "jobs_directory": "", "timeshifts_directory": "", "hls_directory": "", "playlists_directory":
                    // "", "dvb_directory": "", "capture_card_directory": "" }
+#define CLIENT_PING_SERVICE "ping_service"
 
-#define CLIENT_PING "client_ping"
+#define SERVER_PING "ping_client"
+
+// brodcast
+#define CLIENT_CHANGED_SOURCES_STREAM "changed_source_stream"
 
 namespace iptv_cloud {
 namespace server {
 
+// requests
+protocol::request_t StopServiceRequest(protocol::sequance_id_t id,
+                                       protocol::serializet_params_t params);  // StopServiceInfo
+protocol::request_t PingDaemonRequest(protocol::sequance_id_t id,
+                                      protocol::serializet_params_t params);  // ClientPingInfo
+
+// responces service
 protocol::responce_t StopServiceResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t StopServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
-
-protocol::request_t StopServiceRequest(protocol::sequance_id_t id,
-                                       protocol::serializet_params_t params = protocol::serializet_params_t());
 
 protocol::responce_t ActivateResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
 protocol::responce_t StateServiceResponceSuccess(protocol::sequance_id_t id, const std::string& result);
 
-// streams
+protocol::responce_t PingServiceResponceSuccsess(protocol::sequance_id_t id);
+protocol::responce_t PingServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
+
+// responces streams
 protocol::responce_t StartStreamResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t StartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
@@ -55,16 +66,11 @@ protocol::responce_t StopStreamResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t StopStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
 protocol::responce_t RestartStreamResponceSuccess(protocol::sequance_id_t id);
-
 protocol::responce_t RestartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-// requests
-// ping
-protocol::request_t PingRequest(protocol::sequance_id_t id,
-                                protocol::serializet_params_t params = protocol::serializet_params_t());
-protocol::responce_t PingResponceSuccsess(protocol::sequance_id_t id);
-protocol::responce_t PingResponceFail(protocol::sequance_id_t id,
-                                      const std::string& error_text);  // escaped
+// brodcast
+protocol::request_t ChangedSourcesStreamBrodcast(
+    protocol::serializet_params_t params = protocol::serializet_params_t());
 
 }  // namespace server
 }  // namespace iptv_cloud
