@@ -23,12 +23,10 @@
 
 namespace iptv_cloud {
 
-protocol::request_t RestartStreamRequest(protocol::sequance_id_t id,
-                                         protocol::serializet_params_t params = protocol::serializet_params_t());
+protocol::request_t RestartStreamRequest(protocol::sequance_id_t id);
 protocol::responce_t RestartStreamResponceSuccess(protocol::sequance_id_t id);
 
-protocol::request_t StopStreamRequest(protocol::sequance_id_t id,
-                                      protocol::serializet_params_t params = protocol::serializet_params_t());
+protocol::request_t StopStreamRequest(protocol::sequance_id_t id);
 protocol::responce_t StopStreamResponceSuccess(protocol::sequance_id_t id);
 
 protocol::request_t ChangedSourcesStreamRequest(protocol::sequance_id_t id,

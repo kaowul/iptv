@@ -24,7 +24,7 @@ namespace iptv_cloud {
 struct StreamStruct;
 namespace server {
 namespace pipe {
-class PipeClient;
+class ProtocoledPipeClient;
 }
 
 class ChildStream : public common::libev::IoChild {
@@ -40,12 +40,12 @@ class ChildStream : public common::libev::IoChild {
 
   bool Equals(const ChildStream& stream) const;
 
-  pipe::PipeClient* GetPipe() const;
-  void SetPipe(pipe::PipeClient* pipe);
+  pipe::ProtocoledPipeClient* GetPipe() const;
+  void SetPipe(pipe::ProtocoledPipeClient* pipe);
 
  private:
   StreamStruct* mem_;
-  pipe::PipeClient* pipe_client_;
+  pipe::ProtocoledPipeClient* pipe_client_;
 
   DISALLOW_COPY_AND_ASSIGN(ChildStream);
 };

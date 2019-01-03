@@ -342,12 +342,14 @@ common::ErrnoError ProcessWrapper::StreamDataRecived(common::libev::IoClient* cl
   }
 
   if (req) {
+    INFO_LOG() << "Received request: " << input_command;
     err = HandleRequestCommand(pclient, req);
     if (err) {
       DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
     }
     delete req;
   } else if (resp) {
+    INFO_LOG() << "Received responce: " << input_command;
     err = HandleResponceCommand(pclient, resp);
     if (err) {
       DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
@@ -419,58 +421,22 @@ protocol::sequance_id_t ProcessWrapper::NextRequestID() {
 }
 
 common::ErrnoError ProcessWrapper::HandleRequestStopStream(common::libev::IoClient* client, protocol::request_t* req) {
+  CHECK(loop_->IsLoopThread());
   protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
-  if (req->params) {
-    const char* params_ptr = req->params->c_str();
-    json_object* jstop_info = json_tokener_parse(params_ptr);
-    if (!jstop_info) {
-      return common::make_errno_error_inval();
-    }
-
-    StopInfo stop_info;
-    common::Error err_des = stop_info.DeSerialize(jstop_info);
-    json_object_put(jstop_info);
-    if (err_des) {
-      const std::string err_str = err_des->GetDescription();
-      return common::make_errno_error(err_str, EAGAIN);
-    }
-
-    protocol::responce_t resp = StopStreamResponceSuccess(req->id);
-    pclient->WriteResponce(resp);
-
-    Stop();
-    return common::ErrnoError();
-  }
-
-  return common::make_errno_error_inval();
+  protocol::responce_t resp = StopStreamResponceSuccess(req->id);
+  pclient->WriteResponce(resp);
+  Stop();
+  return common::ErrnoError();
 }
 
 common::ErrnoError ProcessWrapper::HandleRequestRestartStream(common::libev::IoClient* client,
                                                               protocol::request_t* req) {
+  CHECK(loop_->IsLoopThread());
   protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
-  if (req->params) {
-    const char* params_ptr = req->params->c_str();
-    json_object* jrestart_info = json_tokener_parse(params_ptr);
-    if (!jrestart_info) {
-      return common::make_errno_error_inval();
-    }
-
-    RestartInfo restart_info;
-    common::Error err_des = restart_info.DeSerialize(jrestart_info);
-    json_object_put(jrestart_info);
-    if (err_des) {
-      const std::string err_str = err_des->GetDescription();
-      return common::make_errno_error(err_str, EAGAIN);
-    }
-
-    protocol::responce_t resp = RestartStreamResponceSuccess(req->id);
-    pclient->WriteResponce(resp);
-
-    Restart();
-    return common::ErrnoError();
-  }
-
-  return common::make_errno_error_inval();
+  protocol::responce_t resp = RestartStreamResponceSuccess(req->id);
+  pclient->WriteResponce(resp);
+  Restart();
+  return common::ErrnoError();
 }
 
 void ProcessWrapper::StopStream() {

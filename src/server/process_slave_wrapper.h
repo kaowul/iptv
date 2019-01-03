@@ -32,9 +32,9 @@ namespace iptv_cloud {
 namespace server {
 class ChildStream;
 namespace pipe {
-class PipeClient;
+class ProtocoledPipeClient;
 }
-class DaemonClient;
+class ProtocoledDaemonClient;
 
 class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
  public:
@@ -65,46 +65,52 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   void DataReadyToWrite(common::libev::IoClient* client) override;
   void PostLooped(common::libev::IoLoop* server) override;
 
-  virtual common::ErrnoError HandleRequestServiceCommand(DaemonClient* dclient,
+  virtual common::ErrnoError HandleRequestServiceCommand(ProtocoledDaemonClient* dclient,
                                                          protocol::request_t* req) WARN_UNUSED_RESULT;
-  virtual common::ErrnoError HandleResponceServiceCommand(DaemonClient* dclient,
+  virtual common::ErrnoError HandleResponceServiceCommand(ProtocoledDaemonClient* dclient,
                                                           protocol::responce_t* resp) WARN_UNUSED_RESULT;
 
-  virtual common::ErrnoError HandleRequestStreamsCommand(pipe::PipeClient* pclient,
+  virtual common::ErrnoError HandleRequestStreamsCommand(pipe::ProtocoledPipeClient* pclient,
                                                          protocol::request_t* req) WARN_UNUSED_RESULT;
-  virtual common::ErrnoError HandleResponceStreamsCommand(pipe::PipeClient* pclient,
+  virtual common::ErrnoError HandleResponceStreamsCommand(pipe::ProtocoledPipeClient* pclient,
                                                           protocol::responce_t* resp) WARN_UNUSED_RESULT;
 
  private:
   ChildStream* FindChildByID(channel_id_t cid) const;
 
   struct NodeStats;
-  common::ErrnoError DaemonDataReceived(DaemonClient* dclient) WARN_UNUSED_RESULT;
-  common::ErrnoError PipeDataReceived(pipe::PipeClient* pclient) WARN_UNUSED_RESULT;
+  common::ErrnoError DaemonDataReceived(ProtocoledDaemonClient* dclient) WARN_UNUSED_RESULT;
+  common::ErrnoError PipeDataReceived(pipe::ProtocoledPipeClient* pclient) WARN_UNUSED_RESULT;
 
   protocol::sequance_id_t NextRequestID();
 
   common::ErrnoError CreateChildStream(common::libev::IoLoop* server, const StartStreamInfo& start_info);
 
-  common::ErrnoError HandleRequestChangedSourcesStream(pipe::PipeClient* pclient,
+  common::ErrnoError HandleRequestChangedSourcesStream(pipe::ProtocoledPipeClient* pclient,
                                                        protocol::request_t* req) WARN_UNUSED_RESULT;
 
-  common::ErrnoError HandleRequestStatisticStream(pipe::PipeClient* pclient,
+  common::ErrnoError HandleRequestStatisticStream(pipe::ProtocoledPipeClient* pclient,
                                                   protocol::request_t* req) WARN_UNUSED_RESULT;
 
-  common::ErrnoError HandleRequestClientStartStream(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
-  common::ErrnoError HandleRequestClientStopStream(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
-  common::ErrnoError HandleRequestClientRestartStream(DaemonClient* dclient,
+  common::ErrnoError HandleRequestClientStartStream(ProtocoledDaemonClient* dclient,
+                                                    protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientStopStream(ProtocoledDaemonClient* dclient,
+                                                   protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientRestartStream(ProtocoledDaemonClient* dclient,
                                                       protocol::request_t* req) WARN_UNUSED_RESULT;
 
   // service
-  common::ErrnoError HandleRequestClientStateService(DaemonClient* dclient,
+  common::ErrnoError HandleRequestClientStateService(ProtocoledDaemonClient* dclient,
                                                      protocol::request_t* req) WARN_UNUSED_RESULT;
-  common::ErrnoError HandleRequestClientActivate(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
-  common::ErrnoError HandleRequestClientPingService(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
-  common::ErrnoError HandleRequestClientStopService(DaemonClient* dclient, protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientActivate(ProtocoledDaemonClient* dclient,
+                                                 protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientPingService(ProtocoledDaemonClient* dclient,
+                                                    protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientStopService(ProtocoledDaemonClient* dclient,
+                                                    protocol::request_t* req) WARN_UNUSED_RESULT;
 
-  common::ErrnoError HandleResponcePingService(DaemonClient* dclient, protocol::responce_t* resp) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleResponcePingService(ProtocoledDaemonClient* dclient,
+                                               protocol::responce_t* resp) WARN_UNUSED_RESULT;
 
   void ReadConfig();
   void ClearStat();

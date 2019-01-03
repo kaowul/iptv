@@ -16,11 +16,10 @@
 
 namespace iptv_cloud {
 
-protocol::request_t RestartStreamRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
+protocol::request_t RestartStreamRequest(protocol::sequance_id_t id) {
   protocol::request_t req;
   req.id = id;
   req.method = RESTART_STREAM;
-  req.params = params;
   return req;
 }
 
@@ -28,11 +27,10 @@ protocol::responce_t RestartStreamResponceSuccess(protocol::sequance_id_t id) {
   return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::request_t StopStreamRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
+protocol::request_t StopStreamRequest(protocol::sequance_id_t id) {
   protocol::request_t req;
   req.id = id;
   req.method = STOP_STREAM;
-  req.params = params;
   return req;
 }
 

@@ -34,5 +34,8 @@ const char* DaemonClient::ClassName() const {
   return "DaemonClient";
 }
 
+ProtocoledDaemonClient::ProtocoledDaemonClient(common::libev::IoLoop* server, const common::net::socket_info& info)
+    : base_class(server, info) {}
+
 }  // namespace server
 }  // namespace iptv_cloud

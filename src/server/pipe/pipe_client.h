@@ -22,17 +22,19 @@ namespace iptv_cloud {
 namespace server {
 namespace pipe {
 
-class PipeClient : public common::libev::IoClient {
+class ProtocoledPipeClient : public protocol::ProtocolClient<common::libev::IoClient> {
  public:
-  PipeClient(common::libev::IoLoop* server, descriptor_t read_fd, descriptor_t write_fd);
-  virtual ~PipeClient();
+  typedef protocol::ProtocolClient<common::libev::IoClient> base_class;
+  ~ProtocoledPipeClient() override;
 
   const char* ClassName() const override;
 
+  ProtocoledPipeClient(common::libev::IoLoop* server, descriptor_t read_fd, descriptor_t write_fd);
+
+ protected:
   common::ErrnoError Write(const void* data, size_t size, size_t* nwrite_out) override;
   common::ErrnoError Read(void* out, size_t max_size, size_t* nread) override;
 
- protected:
   descriptor_t GetFd() const override;
 
  private:
@@ -42,10 +44,8 @@ class PipeClient : public common::libev::IoClient {
   common::libev::PipeWriteClient* pipe_write_client_;
   const descriptor_t read_fd_;
 
-  DISALLOW_COPY_AND_ASSIGN(PipeClient);
+  DISALLOW_COPY_AND_ASSIGN(ProtocoledPipeClient);
 };
-
-typedef protocol::ProtocolClient<PipeClient> ProtocoledPipeClient;
 
 }  // namespace pipe
 }  // namespace server

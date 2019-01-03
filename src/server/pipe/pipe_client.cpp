@@ -18,35 +18,35 @@ namespace iptv_cloud {
 namespace server {
 namespace pipe {
 
-PipeClient::PipeClient(common::libev::IoLoop* server, descriptor_t read_fd, descriptor_t write_fd)
-    : common::libev::IoClient(server),
+ProtocoledPipeClient::ProtocoledPipeClient(common::libev::IoLoop* server, descriptor_t read_fd, descriptor_t write_fd)
+    : base_class(server),
       pipe_read_client_(new common::libev::PipeReadClient(nullptr, read_fd)),
       pipe_write_client_(new common::libev::PipeWriteClient(nullptr, write_fd)),
       read_fd_(read_fd) {}
 
-common::ErrnoError PipeClient::Write(const void* data, size_t size, size_t* nwrite_out) {
+common::ErrnoError ProtocoledPipeClient::Write(const void* data, size_t size, size_t* nwrite_out) {
   return pipe_write_client_->Write(data, size, nwrite_out);
 }
 
-common::ErrnoError PipeClient::Read(void* out, size_t max_size, size_t* nread) {
+common::ErrnoError ProtocoledPipeClient::Read(void* out, size_t max_size, size_t* nread) {
   return pipe_read_client_->Read(out, max_size, nread);
 }
 
-descriptor_t PipeClient::GetFd() const {
+descriptor_t ProtocoledPipeClient::GetFd() const {
   return read_fd_;
 }
 
-common::ErrnoError PipeClient::DoClose() {
+common::ErrnoError ProtocoledPipeClient::DoClose() {
   pipe_write_client_->Close();
   pipe_read_client_->Close();
   return common::ErrnoError();
 }
 
-const char* PipeClient::ClassName() const {
-  return "PipeClient";
+const char* ProtocoledPipeClient::ClassName() const {
+  return "ProtocoledPipeClient";
 }
 
-PipeClient::~PipeClient() {
+ProtocoledPipeClient::~ProtocoledPipeClient() {
   destroy(&pipe_write_client_);
   destroy(&pipe_read_client_);
 }

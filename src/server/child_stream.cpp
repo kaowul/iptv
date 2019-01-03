@@ -38,11 +38,11 @@ bool ChildStream::Equals(const ChildStream& stream) const {
   return mem_->id == stream.mem_->id;
 }
 
-pipe::PipeClient* ChildStream::GetPipe() const {
+pipe::ProtocoledPipeClient* ChildStream::GetPipe() const {
   return pipe_client_;
 }
 
-void ChildStream::SetPipe(pipe::PipeClient* pipe) {
+void ChildStream::SetPipe(pipe::ProtocoledPipeClient* pipe) {
   pipe_client_ = pipe;
 }
 
@@ -51,9 +51,8 @@ common::ErrnoError ChildStream::SendStop(protocol::sequance_id_t id) {
     return common::make_errno_error_inval();
   }
 
-  pipe::ProtocoledPipeClient* pipe = static_cast<pipe::ProtocoledPipeClient*>(pipe_client_);
   protocol::request_t req = StopStreamRequest(id);
-  return pipe->WriteRequest(req);
+  return pipe_client_->WriteRequest(req);
 }
 
 common::ErrnoError ChildStream::SendRestart(protocol::sequance_id_t id) {
@@ -61,9 +60,8 @@ common::ErrnoError ChildStream::SendRestart(protocol::sequance_id_t id) {
     return common::make_errno_error_inval();
   }
 
-  pipe::ProtocoledPipeClient* pipe = static_cast<pipe::ProtocoledPipeClient*>(pipe_client_);
   protocol::request_t req = RestartStreamRequest(id);
-  return pipe->WriteRequest(req);
+  return pipe_client_->WriteRequest(req);
 }
 
 }  // namespace server

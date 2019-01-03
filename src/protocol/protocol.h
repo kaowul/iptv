@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <map>
+
 #include <common/libev/io_client.h>
 
 #include "protocol/types.h"
@@ -33,8 +35,17 @@ common::ErrnoError ReadCommand(common::libev::IoClient* client, std::string* out
 template <typename Client>
 class ProtocolClient : public Client {
  public:
+  typedef Client base_class;
+
+  template <typename... Args>
+  ProtocolClient(Args... args) : base_class(args...) {}
+
   common::ErrnoError WriteRequest(const request_t& request) WARN_UNUSED_RESULT {
-    return detail::WriteRequest(this, request);
+    common::ErrnoError err = detail::WriteRequest(this, request);
+    if (!err && !request.IsNotification()) {
+      requests_queue_[request.id] = request;
+    }
+    return err;
   }
 
   common::ErrnoError WriteResponce(const responce_t& responce) WARN_UNUSED_RESULT {
@@ -43,12 +54,28 @@ class ProtocolClient : public Client {
 
   common::ErrnoError ReadCommand(std::string* out) WARN_UNUSED_RESULT { return detail::ReadCommand(this, out); }
 
+  bool PopRequestByID(sequance_id_t sid, request_t* req) {
+    if (!req || sid.empty()) {
+      return false;
+    }
+
+    auto found_it = requests_queue_.find(sid);
+    if (found_it == requests_queue_.end()) {
+      return false;
+    }
+
+    *req = found_it->second;
+    requests_queue_.erase(found_it);
+    return true;
+  }
+
  private:
+  std::map<sequance_id_t, request_t> requests_queue_;
   using Client::Read;
   using Client::Write;
 };
 
-typedef protocol::ProtocolClient<common::libev::IoClient> protocol_client_t;
+typedef ProtocolClient<common::libev::IoClient> protocol_client_t;
 
 }  // namespace protocol
 }  // namespace iptv_cloud

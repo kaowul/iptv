@@ -25,7 +25,7 @@ DaemonServer::DaemonServer(const common::net::HostAndPort& host, common::libev::
 DaemonServer::~DaemonServer() {}
 
 common::libev::tcp::TcpClient* DaemonServer::CreateClient(const common::net::socket_info& info) {
-  return new DaemonClient(this, info);
+  return new ProtocoledDaemonClient(this, info);
 }
 
 }  // namespace server

@@ -24,7 +24,6 @@ namespace server {
 class DaemonClient : public common::libev::tcp::TcpClient {
  public:
   typedef common::libev::tcp::TcpClient base_class;
-  DaemonClient(common::libev::IoLoop* server, const common::net::socket_info& info);
   ~DaemonClient() override;
 
   bool IsVerified() const;
@@ -32,11 +31,18 @@ class DaemonClient : public common::libev::tcp::TcpClient {
 
   const char* ClassName() const override;
 
+ protected:
+  DaemonClient(common::libev::IoLoop* server, const common::net::socket_info& info);
+
  private:
   bool is_verified_;
 };
 
-typedef protocol::ProtocolClient<DaemonClient> ProtocoledDaemonClient;
+class ProtocoledDaemonClient : public protocol::ProtocolClient<DaemonClient> {
+ public:
+  typedef protocol::ProtocolClient<DaemonClient> base_class;
+  ProtocoledDaemonClient(common::libev::IoLoop* server, const common::net::socket_info& info);
+};
 
 }  // namespace server
 }  // namespace iptv_cloud
