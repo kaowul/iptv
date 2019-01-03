@@ -69,8 +69,7 @@ protocol::responce_t RestartStreamResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t RestartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
 // brodcast
-protocol::request_t ChangedSourcesStreamBrodcast(
-    protocol::serializet_params_t params = protocol::serializet_params_t());
+protocol::request_t ChangedSourcesStreamBrodcast(protocol::serializet_params_t params);
 
 }  // namespace server
 }  // namespace iptv_cloud

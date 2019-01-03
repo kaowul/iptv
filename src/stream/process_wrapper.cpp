@@ -410,8 +410,12 @@ common::ErrnoError ProcessWrapper::HandleRequestCommand(common::libev::IoClient*
 }
 
 common::ErrnoError ProcessWrapper::HandleResponceCommand(common::libev::IoClient* client, protocol::responce_t* resp) {
-  UNUSED(client);
-  UNUSED(resp);
+  CHECK(loop_->IsLoopThread());
+
+  protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
+  protocol::request_t req;
+  if (pclient->PopRequestByID(resp->id, &req)) {
+  }
   return common::ErrnoError();
 }
 
@@ -500,7 +504,7 @@ void ProcessWrapper::OnInputChanged(const InputUri& uri) {
     return;
   }
 
-  protocol::request_t req = ChangedSourcesStreamRequest(NextRequestID(), changed_json);
+  protocol::request_t req = ChangedSourcesStreamBrodcast(changed_json);
   static_cast<StreamServer*>(loop_)->WriteRequest(req);
 }
 
@@ -515,7 +519,7 @@ void ProcessWrapper::OnPipelineCreated(IBaseStream* stream) {
 void ProcessWrapper::DumpStreamStatus(StreamStruct* stat, StreamStatus st) {
   std::string status_json;
   if (PrepareStatus(stat, st, common::system_info::GetCpuLoad(getpid()), &status_json)) {
-    protocol::request_t req = StatisticStreamRequest(NextRequestID(), status_json);
+    protocol::request_t req = StatisticStreamBrodcast(status_json);
     static_cast<StreamServer*>(loop_)->WriteRequest(req);
   }
 }

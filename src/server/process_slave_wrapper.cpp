@@ -873,6 +873,7 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::ProtocoledPipeClient* pclient,
                                                                           protocol::request_t* req) {
+  UNUSED(pclient);
   CHECK(loop_->IsLoopThread());
   if (req->params) {
     const char* params_ptr = req->params->c_str();
@@ -888,9 +889,6 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::
       const std::string err_str = err_des->GetDescription();
       return common::make_errno_error(err_str, EAGAIN);
     }
-
-    protocol::responce_t resp = ChangedSourcesStreamResponceSuccess(req->id);
-    pclient->WriteResponce(resp);
 
     std::string changed_json;
     common::Error err_ser = ch_sources_info.SerializeToString(&changed_json);
@@ -916,6 +914,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::
 
 common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::ProtocoledPipeClient* pclient,
                                                                      protocol::request_t* req) {
+  UNUSED(pclient);
   CHECK(loop_->IsLoopThread());
   if (req->params) {
     const char* params_ptr = req->params->c_str();
@@ -938,9 +937,6 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::Proto
       const std::string err_str = err_ser->GetDescription();
       return common::make_errno_error(err_str, EAGAIN);
     }
-
-    protocol::responce_t resp = StatisticStreamResponceSuccess(req->id);
-    pclient->WriteResponce(resp);
 
     auto struc = stat.GetStreamStruct();
     stats_->SetKey(MakeSlaveStatsId(struc->id), status);
