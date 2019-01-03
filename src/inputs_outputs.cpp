@@ -23,6 +23,9 @@
 
 #include "utils/arg_converter.h"
 
+#define FIELD_OUTPUT_URLS "urls"
+#define FIELD_INPUT_URLS "urls"
+
 namespace common {
 
 bool ConvertFromString(const std::string& output_urls, iptv_cloud::output_t* out) {

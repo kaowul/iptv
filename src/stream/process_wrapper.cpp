@@ -504,7 +504,7 @@ void ProcessWrapper::OnInputChanged(const InputUri& uri) {
     return;
   }
 
-  protocol::request_t req = ChangedSourcesStreamBrodcast(changed_json);
+  protocol::request_t req = ChangedSourcesStreamBroadcast(changed_json);
   static_cast<StreamServer*>(loop_)->WriteRequest(req);
 }
 
@@ -519,7 +519,7 @@ void ProcessWrapper::OnPipelineCreated(IBaseStream* stream) {
 void ProcessWrapper::DumpStreamStatus(StreamStruct* stat, StreamStatus st) {
   std::string status_json;
   if (PrepareStatus(stat, st, common::system_info::GetCpuLoad(getpid()), &status_json)) {
-    protocol::request_t req = StatisticStreamBrodcast(status_json);
+    protocol::request_t req = StatisticStreamBroadcast(status_json);
     static_cast<StreamServer*>(loop_)->WriteRequest(req);
   }
 }

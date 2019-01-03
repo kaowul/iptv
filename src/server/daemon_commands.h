@@ -34,7 +34,7 @@
 
 #define SERVER_PING "ping_client"
 
-// brodcast
+// Broadcast
 #define CLIENT_CHANGED_SOURCES_STREAM "changed_source_stream"
 
 namespace iptv_cloud {
@@ -44,7 +44,7 @@ namespace server {
 protocol::request_t StopServiceRequest(protocol::sequance_id_t id,
                                        protocol::serializet_params_t params);  // StopServiceInfo
 protocol::request_t PingDaemonRequest(protocol::sequance_id_t id,
-                                      protocol::serializet_params_t params);  // ClientPingInfo
+                                      protocol::serializet_params_t params);  // ServerPingInfo
 
 // responces service
 protocol::responce_t StopServiceResponceSuccess(protocol::sequance_id_t id);
@@ -53,9 +53,10 @@ protocol::responce_t StopServiceResponceFail(protocol::sequance_id_t id, const s
 protocol::responce_t ActivateResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::responce_t StateServiceResponceSuccess(protocol::sequance_id_t id, const std::string& result);
+protocol::responce_t StateServiceResponce(protocol::sequance_id_t id, const std::string& result);
 
-protocol::responce_t PingServiceResponceSuccsess(protocol::sequance_id_t id);
+protocol::responce_t PingServiceResponce(protocol::sequance_id_t id,
+                                         const std::string& result);  // ServerPingInfo
 protocol::responce_t PingServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
 // responces streams
@@ -68,8 +69,8 @@ protocol::responce_t StopStreamResponceFail(protocol::sequance_id_t id, const st
 protocol::responce_t RestartStreamResponceSuccess(protocol::sequance_id_t id);
 protocol::responce_t RestartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-// brodcast
-protocol::request_t ChangedSourcesStreamBrodcast(protocol::serializet_params_t params);
+// Broadcast
+protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params);  // ChangedSouresInfo
 
 }  // namespace server
 }  // namespace iptv_cloud

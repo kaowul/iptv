@@ -21,9 +21,6 @@
 
 #include "utils/arg_reader.h"  // for ArgsMap
 
-#define FIELD_OUTPUT_URLS "urls"
-#define FIELD_INPUT_URLS "urls"
-
 namespace iptv_cloud {
 
 typedef std::vector<InputUri> input_t;

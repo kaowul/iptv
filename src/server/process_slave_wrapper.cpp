@@ -426,14 +426,14 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
       common::libev::IoClient* client = online_clients[i];
       ProtocoledDaemonClient* dclient = dynamic_cast<ProtocoledDaemonClient*>(client);
       if (dclient && dclient->IsVerified()) {
-        std::string ping_client_json;
-        ClientPingInfo ping_info;
-        common::Error err_ser = ping_info.SerializeToString(&ping_client_json);
+        std::string ping_server_json;
+        ServerPingInfo server_ping_info;
+        common::Error err_ser = server_ping_info.SerializeToString(&ping_server_json);
         if (err_ser) {
           continue;
         }
 
-        const protocol::request_t ping_request = PingDaemonRequest(NextRequestID(), ping_client_json);
+        const protocol::request_t ping_request = PingDaemonRequest(NextRequestID(), ping_server_json);
         common::ErrnoError err = dclient->WriteRequest(ping_request);
         if (err) {
           DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
@@ -902,7 +902,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::
     for (size_t i = 0; i < clients.size(); ++i) {
       ProtocoledDaemonClient* dclient = dynamic_cast<ProtocoledDaemonClient*>(clients[i]);
       if (dclient) {
-        protocol::request_t req = ChangedSourcesStreamBrodcast(changed_json);
+        protocol::request_t req = ChangedSourcesStreamBroadcast(changed_json);
         dclient->WriteRequest(req);
       }
     }
@@ -1089,7 +1089,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStateService(Protocol
 
     Directories dirs(state_info);
     std::string resp_str = MakeDirectoryResponce(dirs);
-    protocol::responce_t resp = StateServiceResponceSuccess(req->id, resp_str);
+    protocol::responce_t resp = StateServiceResponce(req->id, resp_str);
     dclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -1147,15 +1147,23 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPingService(Protocole
       return common::make_errno_error_inval();
     }
 
-    ServerPingInfo server_ping_info;
-    common::Error err_des = server_ping_info.DeSerialize(jstop);
+    ClientPingInfo client_ping_info;
+    common::Error err_des = client_ping_info.DeSerialize(jstop);
     json_object_put(jstop);
     if (err_des) {
       const std::string err_str = err_des->GetDescription();
       return common::make_errno_error(err_str, EAGAIN);
     }
 
-    protocol::responce_t resp = PingServiceResponceSuccsess(req->id);
+    std::string ping_server_json;
+    ServerPingInfo server_ping_info;
+    common::Error err_ser = server_ping_info.SerializeToString(&ping_server_json);
+    if (err_ser) {
+      const std::string err_str = err_ser->GetDescription();
+      return common::make_errno_error(err_str, EAGAIN);
+    }
+
+    protocol::responce_t resp = PingServiceResponce(req->id, ping_server_json);
     dclient->WriteResponce(resp);
     return common::ErrnoError();
   }

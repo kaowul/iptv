@@ -38,11 +38,11 @@ protocol::responce_t StopStreamResponceSuccess(protocol::sequance_id_t id) {
   return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::request_t ChangedSourcesStreamBrodcast(protocol::serializet_params_t params) {
+protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params) {
   return protocol::request_t::MakeNotification(CHANGED_SOURCES_STREAM, params);
 }
 
-protocol::request_t StatisticStreamBrodcast(protocol::serializet_params_t params) {
+protocol::request_t StatisticStreamBroadcast(protocol::serializet_params_t params) {
   return protocol::request_t::MakeNotification(STATISTIC_STREAM, params);
 }
 

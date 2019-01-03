@@ -29,8 +29,8 @@ protocol::responce_t RestartStreamResponceSuccess(protocol::sequance_id_t id);
 protocol::request_t StopStreamRequest(protocol::sequance_id_t id);
 protocol::responce_t StopStreamResponceSuccess(protocol::sequance_id_t id);
 
-// brodcast
-protocol::request_t ChangedSourcesStreamBrodcast(protocol::serializet_params_t params);
-protocol::request_t StatisticStreamBrodcast(protocol::serializet_params_t params);
+// Broadcast
+protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params);  // ChangedSouresInfo
+protocol::request_t StatisticStreamBroadcast(protocol::serializet_params_t params);       // StreamStructInfo
 
 }  // namespace iptv_cloud
