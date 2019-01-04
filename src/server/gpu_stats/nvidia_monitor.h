@@ -26,8 +26,8 @@ class NvidiaMonitor : public IPerfMonitor {
   explicit NvidiaMonitor(int* load);
   virtual ~NvidiaMonitor();
 
-  virtual bool Exec() override;
-  virtual void Stop() override;
+  bool Exec() override;
+  void Stop() override;
 
   static bool IsGpuAvailable();
 

@@ -32,7 +32,7 @@ class PlaylistRelayStreamBuilder : public RelayStreamBuilder {
  public:
   PlaylistRelayStreamBuilder(PlaylistRelayConfig* api, PlaylistRelayStream* observer);
 
-  virtual elements::Element* BuildInputSrc() override;
+  elements::Element* BuildInputSrc() override;
 
  protected:
   void HandleAppSrcCreated(elements::sources::ElementAppSrc* src);

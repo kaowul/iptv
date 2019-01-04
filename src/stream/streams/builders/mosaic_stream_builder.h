@@ -43,7 +43,7 @@ class MosaicStreamBuilder : public IBaseBuilder {
   void HandleDecodebinCreated(elements::ElementDecodebin* decodebin);
   void HandleCairoCreated(elements::video::ElementCairoOverlay* cairo, const MosaicImageOptions& options);
 
-  virtual bool InitPipeline() override;
+  bool InitPipeline() override;
   virtual void BuildOutput(elements::Element* video, elements::Element* audio);
 };
 

@@ -25,7 +25,7 @@ class FakeStreamBuilder : public EncodingStreamBuilder {
  public:
   FakeStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer);
 
-  virtual Connector BuildOutput(Connector conn) override;
+  Connector BuildOutput(Connector conn) override;
 
  private:
   Connector BuildFakeOutput(Connector conn);

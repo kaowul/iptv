@@ -29,16 +29,16 @@ class SrcDecodeStreamBuilder : public GstBaseBuilder {
  public:
   SrcDecodeStreamBuilder(Config* api, SrcDecodeBinStream* observer);
 
-  virtual Connector BuildInput() override;
+  Connector BuildInput() override;
   virtual elements::Element* BuildInputSrc();
 
-  virtual Connector BuildUdbConnections(Connector conn) override;
+  Connector BuildUdbConnections(Connector conn) override;
   virtual elements::Element* BuildVideoUdbConnection();
   virtual elements::Element* BuildAudioUdbConnection();
 
-  virtual Connector BuildPostProc(Connector conn) override = 0;
-  virtual Connector BuildConverter(Connector conn) override = 0;
-  virtual Connector BuildOutput(Connector conn) override;
+  Connector BuildPostProc(Connector conn) override = 0;
+  Connector BuildConverter(Connector conn) override = 0;
+  Connector BuildOutput(Connector conn) override;
 
   virtual SupportedVideoCodecs GetVideoCodecType() const = 0;
   virtual SupportedAudioCodecs GetAudioCodecType() const = 0;

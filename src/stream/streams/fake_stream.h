@@ -24,21 +24,21 @@ class FakeStream : public EncodingStream {
  public:
   typedef EncodingStream base_class;
   FakeStream(EncodingConfig* config, IStreamClient* client);
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
   ~FakeStream();
 
  protected:
-  virtual void PreLoop() override;
-  virtual void PostLoop(ExitStatus status) override;
+  void PreLoop() override;
+  void PostLoop(ExitStatus status) override;
 
-  virtual IBaseBuilder* CreateBuilder() override;
+  IBaseBuilder* CreateBuilder() override;
 
-  virtual gboolean HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* message) override;
+  gboolean HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* message) override;
 
-  virtual void HandleDecodeBinElementAdded(GstBin* bin, GstElement* element) override;
-  virtual void HandleDecodeBinElementRemoved(GstBin* bin, GstElement* element) override;
+  void HandleDecodeBinElementAdded(GstBin* bin, GstElement* element) override;
+  void HandleDecodeBinElementRemoved(GstBin* bin, GstElement* element) override;
 
-  virtual gboolean HandleMainTimerTick() override;
+  gboolean HandleMainTimerTick() override;
 };
 
 }  // namespace streams

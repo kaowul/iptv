@@ -23,10 +23,10 @@ namespace streams {
 class DeviceStream : public EncodingStream {  // only videotestsrc and audiotestsrc
  public:
   DeviceStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
 
  protected:
-  virtual IBaseBuilder* CreateBuilder() override;
+  IBaseBuilder* CreateBuilder() override;
 };
 
 }  // namespace streams

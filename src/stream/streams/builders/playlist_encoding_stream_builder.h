@@ -30,7 +30,7 @@ namespace builders {
 class PlaylistEncodingStreamBuilder : public EncodingStreamBuilder {
  public:
   PlaylistEncodingStreamBuilder(PlaylistEncodingConfig* api, PlaylistEncodingStream* observer);
-  virtual elements::Element* BuildInputSrc() override;
+  elements::Element* BuildInputSrc() override;
 
  protected:
   void HandleAppSrcCreated(elements::sources::ElementAppSrc* src);

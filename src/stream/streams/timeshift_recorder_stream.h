@@ -40,19 +40,19 @@ class TimeShiftRecorderStream : public ITimeShiftRecorderStream {
                           const TimeShiftInfo& info,
                           IStreamClient* client,
                           StreamStruct* stats);
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
   virtual ~TimeShiftRecorderStream();
 
  protected:
   virtual void OnSplitmuxsinkCreated(Connector conn, elements::sink::ElementSplitMuxSink* sink);
-  virtual chunk_index_t GetNextChunkStrategy(chunk_index_t last_index, time_t last_index_created_time) const override;
+  chunk_index_t GetNextChunkStrategy(chunk_index_t last_index, time_t last_index_created_time) const override;
 
-  virtual IBaseBuilder* CreateBuilder() override;
+  IBaseBuilder* CreateBuilder() override;
 
-  virtual void HandleDecodeBinElementAdded(GstBin* bin, GstElement* element) override;
+  void HandleDecodeBinElementAdded(GstBin* bin, GstElement* element) override;
 
-  virtual gboolean HandleMainTimerTick() override;
-  virtual void OnOutputDataFailed() override;
+  gboolean HandleMainTimerTick() override;
+  void OnOutputDataFailed() override;
   virtual gchararray OnPathSet(GstElement* splitmux, guint fragment_id, GstSample* sample);
 
   chunk_index_t CalcNextIndex() const;

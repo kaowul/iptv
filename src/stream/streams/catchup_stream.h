@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "stream/streams/timeshift_recorder_stream.h"
 
 namespace iptv_cloud {
@@ -25,14 +27,14 @@ class CatchupStream : public TimeShiftRecorderStream {
   typedef TimeShiftRecorderStream base_class;
   CatchupStream(TimeshiftConfig* config, const TimeShiftInfo& info, IStreamClient* client, StreamStruct* stats);
 
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
 
  protected:
-  virtual chunk_index_t GetNextChunkStrategy(chunk_index_t last_index, time_t last_index_created_time) const override;
-  virtual IBaseBuilder* CreateBuilder() override;
+  chunk_index_t GetNextChunkStrategy(chunk_index_t last_index, time_t last_index_created_time) const override;
+  IBaseBuilder* CreateBuilder() override;
 
-  virtual void PostLoop(ExitStatus status) override;
-  virtual gchararray OnPathSet(GstElement* splitmux, guint fragment_id, GstSample* sample) override;
+  void PostLoop(ExitStatus status) override;
+  gchararray OnPathSet(GstElement* splitmux, guint fragment_id, GstSample* sample) override;
 
  private:
   void WriteM3u8List();

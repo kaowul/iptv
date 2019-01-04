@@ -38,13 +38,13 @@ class PlaylistEncodingStream : public EncodingStream {
   PlaylistEncodingStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
   ~PlaylistEncodingStream();
 
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
 
  protected:
-  virtual void PreLoop() override;
+  void PreLoop() override;
 
   virtual void OnAppSrcCreatedCreated(elements::sources::ElementAppSrc* src);
-  virtual IBaseBuilder* CreateBuilder() override;
+  IBaseBuilder* CreateBuilder() override;
 
   virtual void HandleNeedData(GstElement* pipeline, guint rsize);
 

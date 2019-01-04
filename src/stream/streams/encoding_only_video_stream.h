@@ -25,12 +25,12 @@ class EncodingOnlyVideoStream : public EncodingStream {
   EncodingOnlyVideoStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
   ~EncodingOnlyVideoStream();
 
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
 
  protected:
-  virtual IBaseBuilder* CreateBuilder() override;
+  IBaseBuilder* CreateBuilder() override;
 
-  virtual gboolean HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad, GstCaps* caps) override;
+  gboolean HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad, GstCaps* caps) override;
 };
 
 }  // namespace streams

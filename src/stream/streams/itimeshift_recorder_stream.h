@@ -26,14 +26,14 @@ class ITimeShiftRecorderStream : public RelayStream {
  public:
   typedef RelayStream base_class;
   ITimeShiftRecorderStream(RelayConfig* config, const TimeShiftInfo& info, IStreamClient* client, StreamStruct* stats);
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
 
   TimeShiftInfo GetTimeshiftInfo() const;
 
  protected:
   virtual chunk_index_t GetNextChunkStrategy(chunk_index_t last_index, time_t last_index_created_time) const = 0;
 
-  virtual IBaseBuilder* CreateBuilder() override = 0;
+  IBaseBuilder* CreateBuilder() override = 0;
 
  private:
   TimeShiftInfo timeshift_info_;

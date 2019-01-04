@@ -26,8 +26,8 @@ class EncodingOnlyAudioStreamBuilder : public EncodingStreamBuilder {
   EncodingOnlyAudioStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer);
 
  protected:
-  virtual elements_line_t BuildVideoPostProc(element_id_t video_id) override;
-  virtual elements_line_t BuildVideoConverter(element_id_t video_id) override;
+  elements_line_t BuildVideoPostProc(element_id_t video_id) override;
+  elements_line_t BuildVideoConverter(element_id_t video_id) override;
 };
 
 }  // namespace builders

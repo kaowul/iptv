@@ -27,11 +27,11 @@ class ScreenStreamBuilder : public GstBaseBuilder {
  public:
   ScreenStreamBuilder(AudioVideoConfig* api, IBaseBuilderObserver* observer);
 
-  virtual Connector BuildInput() override;
-  virtual Connector BuildUdbConnections(Connector conn) override;
-  virtual Connector BuildPostProc(Connector conn) override;
-  virtual Connector BuildConverter(Connector conn) override;
-  virtual Connector BuildOutput(Connector conn) override;
+  Connector BuildInput() override;
+  Connector BuildUdbConnections(Connector conn) override;
+  Connector BuildPostProc(Connector conn) override;
+  Connector BuildConverter(Connector conn) override;
+  Connector BuildOutput(Connector conn) override;
 };
 
 }  // namespace builders

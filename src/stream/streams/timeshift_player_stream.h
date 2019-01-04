@@ -30,14 +30,14 @@ class TimeShiftPlayerStream : public RelayStream {
                         IStreamClient* client,
                         StreamStruct* stats,
                         chunk_index_t start_chunk_index);
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
 
   TimeShiftInfo GetTimeshiftInfo() const;
 
  protected:
-  virtual IBaseBuilder* CreateBuilder() override;
+  IBaseBuilder* CreateBuilder() override;
 
-  virtual void OnInputDataFailed() override;
+  void OnInputDataFailed() override;
 
  private:
   TimeShiftInfo timeshift_info_;

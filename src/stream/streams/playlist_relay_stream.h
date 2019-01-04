@@ -37,15 +37,15 @@ class PlaylistRelayStream : public RelayStream {
   PlaylistRelayStream(PlaylistRelayConfig* config, IStreamClient* client, StreamStruct* stats);
   ~PlaylistRelayStream();
 
-  virtual const char* ClassName() const override;
+  const char* ClassName() const override;
 
  protected:
   virtual void OnAppSrcCreatedCreated(elements::sources::ElementAppSrc* src);
 
-  virtual IBaseBuilder* CreateBuilder() override;
+  IBaseBuilder* CreateBuilder() override;
 
-  virtual void PreLoop() override;
-  virtual void PostLoop(ExitStatus status) override;
+  void PreLoop() override;
+  void PostLoop(ExitStatus status) override;
 
   virtual void HandleNeedData(GstElement* pipeline, guint rsize);
 

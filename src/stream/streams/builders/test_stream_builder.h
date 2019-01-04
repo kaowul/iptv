@@ -24,7 +24,7 @@ namespace builders {
 class TestStreamBuilder : public EncodingStreamBuilder {
  public:
   TestStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer);
-  virtual Connector BuildInput() override;
+  Connector BuildInput() override;
 };
 
 }  // namespace builders

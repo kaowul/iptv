@@ -31,7 +31,7 @@ class TimeShiftPlayerBuilder : public RelayStreamBuilder {
                          RelayConfig* api,
                          SrcDecodeBinStream* observer);
 
-  virtual elements::Element* BuildInputSrc() override;
+  elements::Element* BuildInputSrc() override;
 
  private:
   TimeShiftInfo tinfo_;

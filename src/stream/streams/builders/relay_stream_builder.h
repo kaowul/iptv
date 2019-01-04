@@ -27,14 +27,14 @@ class RelayStreamBuilder : public SrcDecodeStreamBuilder {
  public:
   RelayStreamBuilder(RelayConfig* config, SrcDecodeBinStream* observer);
 
-  virtual elements::Element* BuildVideoUdbConnection() override;
-  virtual elements::Element* BuildAudioUdbConnection() override;
+  elements::Element* BuildVideoUdbConnection() override;
+  elements::Element* BuildAudioUdbConnection() override;
 
-  virtual SupportedVideoCodecs GetVideoCodecType() const override;
-  virtual SupportedAudioCodecs GetAudioCodecType() const override;
+  SupportedVideoCodecs GetVideoCodecType() const override;
+  SupportedAudioCodecs GetAudioCodecType() const override;
 
-  virtual Connector BuildPostProc(Connector conn) override;
-  virtual Connector BuildConverter(Connector conn) override;
+  Connector BuildPostProc(Connector conn) override;
+  Connector BuildConverter(Connector conn) override;
 };
 
 }  // namespace builders

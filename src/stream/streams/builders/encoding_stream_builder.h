@@ -29,11 +29,11 @@ namespace builders {
 class EncodingStreamBuilder : public SrcDecodeStreamBuilder {
  public:
   EncodingStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer);
-  virtual Connector BuildPostProc(Connector conn) override;
-  virtual Connector BuildConverter(Connector conn) override;
+  Connector BuildPostProc(Connector conn) override;
+  Connector BuildConverter(Connector conn) override;
 
-  virtual SupportedVideoCodecs GetVideoCodecType() const override;
-  virtual SupportedAudioCodecs GetAudioCodecType() const override;
+  SupportedVideoCodecs GetVideoCodecType() const override;
+  SupportedAudioCodecs GetAudioCodecType() const override;
 
  protected:
   virtual elements_line_t BuildVideoPostProc(element_id_t video_id);

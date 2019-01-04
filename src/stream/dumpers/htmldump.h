@@ -22,7 +22,7 @@ namespace dumper {
 
 class HtmlDump : public IDumper {
  public:
-  virtual bool Dump(GstBin* pipeline, const common::file_system::ascii_file_string_path& path) override;
+  bool Dump(GstBin* pipeline, const common::file_system::ascii_file_string_path& path) override;
 };
 
 }  // namespace dumper
