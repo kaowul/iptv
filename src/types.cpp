@@ -25,7 +25,7 @@ const std::array<const char*, NUM_STREAM_TYPES> kStreamTypes = {
     {"screen", "relay", "encoding", "timeshift_player", "timeshift_recorder", "catchup"}};
 }
 
-const stream_id_t kInvalidStreamId = std::numeric_limits<stream_id_t>::max();
+const stream_id_t kInvalidStreamID = std::numeric_limits<stream_id_t>::max();
 }  // namespace iptv_cloud
 
 namespace common {

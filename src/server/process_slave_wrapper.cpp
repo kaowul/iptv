@@ -14,12 +14,10 @@
 
 #include "server/process_slave_wrapper.h"
 
-#include <sys/mman.h>
 #include <sys/prctl.h>
 #include <sys/wait.h>
 
 #include <dlfcn.h>
-#include <unistd.h>
 
 #include <fstream>
 #include <string>
@@ -29,6 +27,7 @@
 #include <common/file_system/file_system.h>
 #include <common/file_system/string_path_utils.h>
 #include <common/net/net.h>
+#include <common/string_util.h>
 
 #include "child_stream.h"
 #include "constants.h"
@@ -325,6 +324,10 @@ ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key)
 }
 
 int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
+  if (license.empty()) {
+    return EXIT_FAILURE;
+  }
+
   StopServiceInfo stop_req(license);
   std::string stop_str;
   common::Error serialize_error = stop_req.SerializeToString(&stop_str);
@@ -340,10 +343,14 @@ int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
     return EXIT_FAILURE;
   }
 
-  ProtocoledDaemonClient* connection = new ProtocoledDaemonClient(nullptr, client_info);
-  connection->WriteRequest(req);
+  std::unique_ptr<ProtocoledDaemonClient> connection(new ProtocoledDaemonClient(nullptr, client_info));
+  err = connection->WriteRequest(req);
+  if (err) {
+    connection->Close();
+    return EXIT_FAILURE;
+  }
+
   connection->Close();
-  delete connection;
   return EXIT_SUCCESS;
 }
 
@@ -480,10 +487,9 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
       std::string node_stats = json_object_get_string(jstats);
       json_object_put(jstats);
 
-      bool res = stats_->SetKey(make_daemon_stats_id(node_id_),
-                                node_stats);  // node_id_ can be changed in runtime
+      bool res = stats_->SetKey(make_daemon_stats_id(node_id_), node_stats);
       if (!res) {
-        WARNING_LOG() << "Failed to send statistic: " << node_stats;
+        WARNING_LOG() << "Failed to save node statistic: " << node_stats;
       }
     }
   } else if (cleanup_timer_ == id) {
@@ -706,6 +712,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(Protocole
 common::ErrnoError ProcessSlaveWrapper::HandleResponcePingService(ProtocoledDaemonClient* dclient,
                                                                   protocol::responce_t* resp) {
   UNUSED(dclient);
+  CHECK(loop_->IsLoopThread());
   if (resp->IsMessage()) {
     const char* params_ptr = resp->message->result.c_str();
     json_object* jclient_ping = json_tokener_parse(params_ptr);
@@ -728,21 +735,11 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponcePingService(ProtocoledDaem
 common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop* server,
                                                           const StartStreamInfo& start_info) {
   CHECK(loop_->IsLoopThread());
-  std::string cmd_argss = start_info.GetCmd();
-  std::string config_str = start_info.GetConfig();
+  const std::string cmd_argss = start_info.GetCmd();
+  const std::string config_str = start_info.GetConfig();
 
   std::vector<std::string> args;
-  std::string arg;
-  for (size_t i = 0; i != cmd_argss.size(); ++i) {
-    char c = cmd_argss[i];
-    if (c == ' ') {
-      args.push_back(arg);
-      arg.clear();
-    } else {
-      arg += c;
-    }
-  }
-  args.push_back(arg);
+  common::Tokenize(cmd_argss, " ", &args);
 
   utils::ArgsMap cmd_args = options::ValidateCmdArgs(args);
   utils::ArgsMap config_args = options::ValidateConfig(config_str);
@@ -931,15 +928,18 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::Proto
       return common::make_errno_error(err_str, EAGAIN);
     }
 
-    std::string status;
-    common::Error err_ser = stat.SerializeToString(&status);
+    std::string stream_stats;
+    common::Error err_ser = stat.SerializeToString(&stream_stats);
     if (err_ser) {
       const std::string err_str = err_ser->GetDescription();
       return common::make_errno_error(err_str, EAGAIN);
     }
 
     auto struc = stat.GetStreamStruct();
-    stats_->SetKey(MakeSlaveStatsId(struc->id), status);
+    bool res = stats_->SetKey(MakeSlaveStatsId(struc->id), stream_stats);
+    if (!res) {
+      WARNING_LOG() << "Failed to save stream statistic: " << stream_stats;
+    }
     return common::ErrnoError();
   }
 
@@ -1226,6 +1226,9 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponceStreamsCommand(pipe::Proto
                                                                      protocol::responce_t* resp) {
   protocol::request_t req;
   if (pclient->PopRequestByID(resp->id, &req)) {
+    if (req.method == STOP_STREAM) {
+    } else if (req.method == RESTART_STREAM) {
+    }
   }
   return common::ErrnoError();
 }

@@ -78,15 +78,6 @@ Validity validate_output(const std::string& value) {
   return Validity::VALID;
 }
 
-Validity validate_config_path(const std::string& value) {
-  return common::file_system::node_access(value) ? Validity::INVALID : Validity::VALID;
-}
-
-Validity validate_config_data(const std::string& value) {
-  UNUSED(value);
-  return Validity::VALID;
-}
-
 Validity validate_feedback_dir(const std::string& value) {
   return common::file_system::is_valid_path(value) ? Validity::VALID : Validity::INVALID;
 }
@@ -160,7 +151,8 @@ Validity validate_stats_cred(const std::string& value) {
 }
 
 Validity validate_log_level(const std::string& value) {
-  return validate_range(value, (int)common::logging::LOG_LEVEL_EMERG, (int)common::logging::LOG_LEVEL_DEBUG, false);
+  return validate_range(value, static_cast<int>(common::logging::LOG_LEVEL_EMERG),
+                        static_cast<int>(common::logging::LOG_LEVEL_DEBUG), false);
 }
 
 Validity validate_volume(const std::string& value) {
@@ -388,9 +380,7 @@ bool FindCmdOption(const std::string& key, option_t* opt) {
     return false;
   }
 
-  static const ConstantOptions ALLOWED_CMD_OPTIONS = {{CONFIG_FIELD, validate_config_path},
-                                                      {CONFIG_DATA_FIELD, validate_config_data},
-                                                      {FEEDBACK_DIR_FIELD, validate_feedback_dir},
+  static const ConstantOptions ALLOWED_CMD_OPTIONS = {{FEEDBACK_DIR_FIELD, validate_feedback_dir},
                                                       {LOG_LEVEL_FIELD, validate_log_level}};
   for (const option_t& cur : ALLOWED_CMD_OPTIONS) {
     if (cur.first == key) {

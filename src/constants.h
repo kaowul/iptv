@@ -20,8 +20,6 @@
 #define M3U8_CHUNK_MARKER "#EXTINF"
 
 // cmd line
-#define CONFIG_FIELD "config"
-#define CONFIG_DATA_FIELD "config_data"
 #define FEEDBACK_DIR_FIELD "feedback_dir"  // required
 #define LOG_LEVEL_FIELD "log_level"
 

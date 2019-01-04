@@ -19,11 +19,7 @@
 // some links:
 // http://gstreamer-devel.narkive.com/YF3JF3qj/issue-in-seeking-while-streaming-video-files
 
-#include <string.h>
-
 #include <iostream>
-
-#include <fcntl.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

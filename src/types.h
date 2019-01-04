@@ -22,7 +22,7 @@ typedef uint64_t stream_id_t;
 typedef std::string channel_id_t;
 typedef double volume_t;
 
-extern const stream_id_t kInvalidStreamId;
+extern const stream_id_t kInvalidStreamID;
 
 enum StreamType {
   SCREEN = 0,  // for inner use
