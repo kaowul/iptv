@@ -24,7 +24,7 @@ namespace gpu_stats {
 class IntelMonitor : public IPerfMonitor {
  public:
   explicit IntelMonitor(int* load);
-  virtual ~IntelMonitor();
+  ~IntelMonitor() override;
 
   bool Exec() override;
   void Stop() override;

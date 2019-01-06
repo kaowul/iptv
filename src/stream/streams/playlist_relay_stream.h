@@ -35,7 +35,7 @@ class PlaylistRelayStream : public RelayStream {
 
  public:
   PlaylistRelayStream(PlaylistRelayConfig* config, IStreamClient* client, StreamStruct* stats);
-  ~PlaylistRelayStream();
+  ~PlaylistRelayStream() override;
 
   const char* ClassName() const override;
 

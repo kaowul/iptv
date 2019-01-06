@@ -18,8 +18,6 @@
 
 #include "stream/elements/element.h"
 
-#define VAAPI_DECODER "vaapidecode"
-
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
@@ -33,7 +31,7 @@ class SrcDecodeBinStream : public IBaseStream {
 
  public:
   SrcDecodeBinStream(Config* config, IStreamClient* client, StreamStruct* stats);
-  virtual ~SrcDecodeBinStream();
+  ~SrcDecodeBinStream() override;
 
   const char* ClassName() const override;
 

@@ -15,6 +15,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace iptv_cloud {
@@ -24,7 +25,6 @@ typedef std::pair<std::string, std::string> arg_t;
 typedef std::vector<arg_t> ArgsMap;
 
 std::pair<std::string, std::string> GetKeyValue(const std::string& line, char separator);
-ArgsMap ParseCmd(int argc, char** argv);
 
 }  // namespace utils
 }  // namespace iptv_cloud

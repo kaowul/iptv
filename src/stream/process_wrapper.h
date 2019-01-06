@@ -110,7 +110,7 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
   common::libev::IoLoop* loop_;
   common::libev::timer_id_t ttl_master_timer_;
   time_t ttl_sec_;
-  common::threads::barrier libev_stated_;
+  common::threads::barrier libev_started_;
 
   StreamStruct* mem_;
 

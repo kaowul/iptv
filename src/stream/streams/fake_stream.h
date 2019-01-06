@@ -25,7 +25,7 @@ class FakeStream : public EncodingStream {
   typedef EncodingStream base_class;
   FakeStream(EncodingConfig* config, IStreamClient* client);
   const char* ClassName() const override;
-  ~FakeStream();
+  ~FakeStream() override;
 
  protected:
   void PreLoop() override;

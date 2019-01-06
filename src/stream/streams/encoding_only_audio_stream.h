@@ -23,7 +23,7 @@ namespace streams {
 class EncodingOnlyAudioStream : public EncodingStream {
  public:
   EncodingOnlyAudioStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
-  ~EncodingOnlyAudioStream();
+  ~EncodingOnlyAudioStream() override;
 
   const char* ClassName() const override;
 

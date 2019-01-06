@@ -135,7 +135,7 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
       loop_(new StreamServer(command_client, this)),
       ttl_master_timer_(0),
       ttl_sec_(0),
-      libev_stated_(2),
+      libev_started_(2),
       mem_(mem),
       //
       origin_(nullptr),
@@ -196,7 +196,7 @@ int ProcessWrapper::Exec() {
     int res = loop_->Exec();
     UNUSED(res);
   });
-  libev_stated_.Wait();
+  libev_started_.Wait();
   TimeShiftInfo tinfo;
   bool is_timeshift_player = IsTimeshiftPlayer(config_args_, &tinfo);
   time_t timeshift_chunk_duration;
@@ -298,7 +298,7 @@ void ProcessWrapper::PreLooped(common::libev::IoLoop* loop) {
     NOTICE_LOG() << "Set stream ttl: " << ttl_sec_;
   }
 
-  libev_stated_.Wait();
+  libev_started_.Wait();
   INFO_LOG() << "Child listening started!";
 }
 

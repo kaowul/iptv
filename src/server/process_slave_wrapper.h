@@ -15,18 +15,14 @@
 #pragma once
 
 #include <string>
-#include <thread>
 
 #include <common/libev/io_loop_observer.h>
 #include <common/net/types.h>
 
-#include "stats/istat.h"
-
-#include "types.h"
-
 #include "protocol/types.h"
-
 #include "server/commands_info/start_stream_info.h"
+#include "stats/istat.h"
+#include "types.h"
 
 namespace iptv_cloud {
 namespace server {
@@ -41,7 +37,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   enum { node_stats_send_seconds = 10, ping_timeout_clients_seconds = 60, cleanup_seconds = 5 };
 
   explicit ProcessSlaveWrapper(const std::string& licensy_key);
-  virtual ~ProcessSlaveWrapper();
+  ~ProcessSlaveWrapper() override;
 
   static int SendStopDaemonRequest(const std::string& license);
 

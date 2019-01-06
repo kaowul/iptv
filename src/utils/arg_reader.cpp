@@ -22,26 +22,12 @@ namespace utils {
 std::pair<std::string, std::string> GetKeyValue(const std::string& line, char separator) {
   const size_t pos = line.find(separator);
   if (pos != std::string::npos) {
-    std::string key = line.substr(0, pos);
-    std::string value = line.substr(pos + 1);
+    const std::string key = line.substr(0, pos);
+    const std::string value = line.substr(pos + 1);
     return std::make_pair(key, value);
   }
 
   return std::make_pair(line, std::string());
-}
-
-ArgsMap ParseCmd(int argc, char** argv) {
-  if (argc == 1) {
-    return ArgsMap();
-  }
-
-  ArgsMap args;
-  for (int i = 1; i < argc; ++i) {
-    std::string tmp = argv[i];
-    std::pair<std::string, std::string> pair = GetKeyValue(tmp, '=');
-    args.push_back(pair);
-  }
-  return args;
 }
 
 }  // namespace utils

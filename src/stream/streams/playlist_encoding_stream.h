@@ -36,7 +36,7 @@ class PlaylistEncodingStream : public EncodingStream {
 
  public:
   PlaylistEncodingStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
-  ~PlaylistEncodingStream();
+  ~PlaylistEncodingStream() override;
 
   const char* ClassName() const override;
 

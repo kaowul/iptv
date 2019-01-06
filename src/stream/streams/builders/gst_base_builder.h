@@ -28,7 +28,7 @@ namespace builders {
 class GstBaseBuilder : public IBaseBuilder {
  public:
   GstBaseBuilder(Config* api, IBaseBuilderObserver* observer);
-  virtual ~GstBaseBuilder();
+  ~GstBaseBuilder() override;
 
   virtual Connector BuildInput() = 0;
 
@@ -38,7 +38,7 @@ class GstBaseBuilder : public IBaseBuilder {
   virtual Connector BuildOutput(Connector conn) = 0;
 
  protected:
-  bool InitPipeline() final;
+  bool InitPipeline() override final;
 };
 
 }  // namespace builders

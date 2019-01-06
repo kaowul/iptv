@@ -41,7 +41,7 @@ class TimeShiftRecorderStream : public ITimeShiftRecorderStream {
                           IStreamClient* client,
                           StreamStruct* stats);
   const char* ClassName() const override;
-  virtual ~TimeShiftRecorderStream();
+  ~TimeShiftRecorderStream() override;
 
  protected:
   virtual void OnSplitmuxsinkCreated(Connector conn, elements::sink::ElementSplitMuxSink* sink);
