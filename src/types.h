@@ -25,12 +25,12 @@ typedef double volume_t;
 extern const stream_id_t kInvalidStreamID;
 
 enum StreamType {
-  SCREEN = 0,  // for inner use
-  RELAY,
+  RELAY = 0,
   ENCODING,
   TIMESHIFT_PLAYER,
   TIMESHIFT_RECORDER,
   CATCHUP,
+  SCREEN,  // for inner use
   NUM_STREAM_TYPES
 };
 
