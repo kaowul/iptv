@@ -28,12 +28,7 @@ typedef std::pair<std::string, validate_callback_t> option_t;
 
 utils::ArgsMap ValidateConfig(const std::string& config);
 
-utils::ArgsMap ValidateCmdArgs(const std::vector<std::string>& cmd_args);
-utils::ArgsMap ValidateCmdArgs(int argc, char** argv);
-
 bool FindOption(const std::string& key, option_t* opt);
-
-bool FindCmdOption(const std::string& key, option_t* opt);
 
 }  // namespace options
 }  // namespace server

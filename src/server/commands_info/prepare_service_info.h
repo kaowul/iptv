@@ -18,22 +18,22 @@
 
 #include <common/serializer/json_serializer.h>
 
-#define STATE_SERVICE_INFO_JOBS_DIRECTORY_FIELD "jobs_directory"
-#define STATE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD "timeshifts_directory"
-#define STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD "hls_directory"
-#define STATE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD "playlists_directory"
-#define STATE_SERVICE_INFO_DVB_DIRECTORY_FIELD "dvb_directory"
-#define STATE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD "capture_card_directory"
+#define PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD "feedback_directory"
+#define PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD "timeshifts_directory"
+#define PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD "hls_directory"
+#define PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD "playlists_directory"
+#define PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD "dvb_directory"
+#define PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD "capture_card_directory"
 
 namespace iptv_cloud {
 namespace server {
 
-class StateServiceInfo : public common::serializer::JsonSerializer<StateServiceInfo> {
+class PrepareServiceInfo : public common::serializer::JsonSerializer<PrepareServiceInfo> {
  public:
-  typedef JsonSerializer<StateServiceInfo> base_class;
-  StateServiceInfo();
+  typedef JsonSerializer<PrepareServiceInfo> base_class;
+  PrepareServiceInfo();
 
-  std::string GetJobsDirectory() const;
+  std::string GetFeedbackDirectory() const;
   std::string GetTimeshiftsDirectory() const;
   std::string GetHlsDirectory() const;
   std::string GetPlaylistsDirectory() const;
@@ -45,7 +45,7 @@ class StateServiceInfo : public common::serializer::JsonSerializer<StateServiceI
   common::Error SerializeFields(json_object* out) const override;
 
  private:
-  std::string jobs_directory_;
+  std::string feedback_directory_;
   std::string timeshifts_directory_;
   std::string hls_directory_;
   std::string playlists_directory_;

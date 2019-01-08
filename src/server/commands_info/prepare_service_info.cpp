@@ -12,99 +12,100 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server/commands_info/state_service_info.h"
+#include "server/commands_info/prepare_service_info.h"
 
 #include <string>
 
 namespace iptv_cloud {
 namespace server {
 
-StateServiceInfo::StateServiceInfo()
+PrepareServiceInfo::PrepareServiceInfo()
     : base_class(),
-      jobs_directory_(),
+      feedback_directory_(),
       timeshifts_directory_(),
       hls_directory_(),
       playlists_directory_(),
       dvb_directory_(),
       capture_card_directory_() {}
 
-std::string StateServiceInfo::GetJobsDirectory() const {
-  return jobs_directory_;
+std::string PrepareServiceInfo::GetFeedbackDirectory() const {
+  return feedback_directory_;
 }
 
-std::string StateServiceInfo::GetTimeshiftsDirectory() const {
+std::string PrepareServiceInfo::GetTimeshiftsDirectory() const {
   return timeshifts_directory_;
 }
 
-std::string StateServiceInfo::GetHlsDirectory() const {
+std::string PrepareServiceInfo::GetHlsDirectory() const {
   return hls_directory_;
 }
 
-std::string StateServiceInfo::GetPlaylistsDirectory() const {
+std::string PrepareServiceInfo::GetPlaylistsDirectory() const {
   return playlists_directory_;
 }
 
-std::string StateServiceInfo::GetDvbDirectory() const {
+std::string PrepareServiceInfo::GetDvbDirectory() const {
   return dvb_directory_;
 }
 
-std::string StateServiceInfo::GetCaptureDirectory() const {
+std::string PrepareServiceInfo::GetCaptureDirectory() const {
   return capture_card_directory_;
 }
 
-common::Error StateServiceInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, STATE_SERVICE_INFO_JOBS_DIRECTORY_FIELD, json_object_new_string(jobs_directory_.c_str()));
-  json_object_object_add(out, STATE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD,
+common::Error PrepareServiceInfo::SerializeFields(json_object* out) const {
+  json_object_object_add(out, PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD,
+                         json_object_new_string(feedback_directory_.c_str()));
+  json_object_object_add(out, PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD,
                          json_object_new_string(timeshifts_directory_.c_str()));
-  json_object_object_add(out, STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD, json_object_new_string(hls_directory_.c_str()));
-  json_object_object_add(out, STATE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD,
+  json_object_object_add(out, PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD, json_object_new_string(hls_directory_.c_str()));
+  json_object_object_add(out, PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD,
                          json_object_new_string(playlists_directory_.c_str()));
-  json_object_object_add(out, STATE_SERVICE_INFO_DVB_DIRECTORY_FIELD, json_object_new_string(dvb_directory_.c_str()));
-  json_object_object_add(out, STATE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD,
+  json_object_object_add(out, PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD, json_object_new_string(dvb_directory_.c_str()));
+  json_object_object_add(out, PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD,
                          json_object_new_string(capture_card_directory_.c_str()));
   return common::Error();
 }
 
-common::Error StateServiceInfo::DoDeSerialize(json_object* serialized) {
-  StateServiceInfo inf;
-  json_object* jjobs_directory = nullptr;
-  json_bool jjobs_directory_exists =
-      json_object_object_get_ex(serialized, STATE_SERVICE_INFO_JOBS_DIRECTORY_FIELD, &jjobs_directory);
-  if (jjobs_directory_exists) {
-    inf.jobs_directory_ = json_object_get_string(jjobs_directory);
+common::Error PrepareServiceInfo::DoDeSerialize(json_object* serialized) {
+  PrepareServiceInfo inf;
+  json_object* jfeedback_directory = nullptr;
+  json_bool jfeedback_directory_exists =
+      json_object_object_get_ex(serialized, PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD, &jfeedback_directory);
+  if (jfeedback_directory_exists) {
+    inf.feedback_directory_ = json_object_get_string(jfeedback_directory);
   }
 
   json_object* jtimeshifts_directory = nullptr;
   json_bool jtimeshifts_directory_exists =
-      json_object_object_get_ex(serialized, STATE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD, &jtimeshifts_directory);
+      json_object_object_get_ex(serialized, PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD, &jtimeshifts_directory);
   if (jtimeshifts_directory_exists) {
     inf.timeshifts_directory_ = json_object_get_string(jtimeshifts_directory);
   }
 
   json_object* jhls_directory = nullptr;
   json_bool jhls_directory_exists =
-      json_object_object_get_ex(serialized, STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD, &jhls_directory);
+      json_object_object_get_ex(serialized, PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD, &jhls_directory);
   if (jhls_directory_exists) {
     inf.hls_directory_ = json_object_get_string(jhls_directory);
   }
 
   json_object* jplaylists_directory = nullptr;
   json_bool jplaylists_directory_exists =
-      json_object_object_get_ex(serialized, STATE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD, &jplaylists_directory);
+      json_object_object_get_ex(serialized, PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD, &jplaylists_directory);
   if (jplaylists_directory_exists) {
     inf.playlists_directory_ = json_object_get_string(jplaylists_directory);
   }
 
   json_object* jdvb_directory = nullptr;
   json_bool jdvb_directory_exists =
-      json_object_object_get_ex(serialized, STATE_SERVICE_INFO_DVB_DIRECTORY_FIELD, &jdvb_directory);
+      json_object_object_get_ex(serialized, PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD, &jdvb_directory);
   if (jdvb_directory_exists) {
     inf.dvb_directory_ = json_object_get_string(jdvb_directory);
   }
 
   json_object* jcapture_card_directory = nullptr;
-  json_bool jcapture_card_directory_exists =
-      json_object_object_get_ex(serialized, STATE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD, &jcapture_card_directory);
+  json_bool jcapture_card_directory_exists = json_object_object_get_ex(
+      serialized, PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD, &jcapture_card_directory);
   if (jcapture_card_directory_exists) {
     inf.capture_card_directory_ = json_object_get_string(jcapture_card_directory);
   }

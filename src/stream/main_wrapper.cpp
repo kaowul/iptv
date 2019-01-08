@@ -23,7 +23,6 @@
 
 #include <string>
 
-#include <common/file_system/file_system.h>
 #include <common/file_system/string_path_utils.h>
 
 #include "constants.h"
@@ -39,17 +38,6 @@ int start_stream(const std::string& process_name,
                  const iptv_cloud::utils::ArgsMap& config_args,
                  common::libev::IoClient* command_client,
                  iptv_cloud::StreamStruct* mem) {
-  if (!common::file_system::is_directory_exist(feedback_dir)) {
-    common::ErrnoError err = common::file_system::create_directory(feedback_dir, true);
-    if (err) {
-      ERROR_LOG() << "Failed to create FeeadBack directory, path: " << feedback_dir;
-    } else {
-      DEBUG_LOG() << "FeeadBack directory created, path: " << feedback_dir;
-    }
-  } else {
-    DEBUG_LOG() << "FeeadBack directory exists, path: " << feedback_dir;
-  }
-
   common::logging::INIT_LOGGER(process_name, feedback_dir + "/logs",
                                logs_level);  // initialization of logging system
   NOTICE_LOG() << "Running " PROJECT_VERSION_HUMAN;

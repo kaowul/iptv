@@ -18,7 +18,6 @@
 
 #include <gst/gstcompat.h>
 
-#include <common/file_system/file_system.h>
 #include <common/file_system/string_path_utils.h>
 #include <common/system_info/system_info.h>
 #include <common/time.h>
@@ -141,20 +140,6 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
       origin_(nullptr),
       id_() {
   CHECK(mem);
-
-  std::string timeshift_dir;
-  if (utils::ArgsGetValue(config_args_, TIMESHIFT_DIR_FIELD, &timeshift_dir)) {
-    if (!common::file_system::is_directory_exist(timeshift_dir)) {
-      common::ErrnoError err = common::file_system::create_directory(timeshift_dir, true);
-      if (err) {
-        ERROR_LOG() << "Failed to create TimeShift directory, path: " << timeshift_dir;
-      } else {
-        DEBUG_LOG() << "TimeShift directory exists, path: " << timeshift_dir;
-      }
-    } else {
-      DEBUG_LOG() << "TimeShift directory exists, path: " << timeshift_dir;
-    }
-  }
 
   size_t attemps = 0;
   if (utils::ArgsGetValue(config_args_, RESTART_ATTEMPTS_FIELD, &attemps)) {

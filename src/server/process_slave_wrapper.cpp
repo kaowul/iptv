@@ -41,8 +41,8 @@
 
 #include "server/commands_info/activate_info.h"
 #include "server/commands_info/ping_info.h"
+#include "server/commands_info/prepare_service_info.h"
 #include "server/commands_info/restart_stream_info.h"
-#include "server/commands_info/state_service_info.h"
 #include "server/commands_info/stop_service_info.h"
 #include "server/commands_info/stop_stream_info.h"
 #include "server/daemon_client.h"
@@ -85,8 +85,8 @@
 #define CLIENT_PORT 6317
 
 #define SAVE_DIRECTORY_FIELD_PATH "path"
-#define SAVE_DIRECTORY_FIELD_STATUS "status"
-#define SAVE_DIRECTORY_FIELD_RESPONCE "responce"
+#define SAVE_DIRECTORY_FIELD_RESULT "result"
+#define SAVE_DIRECTORY_FIELD_ERROR "error"
 
 namespace {
 
@@ -118,10 +118,13 @@ struct DirectoryState {
     }
 
     dir = common::file_system::ascii_directory_string_path(dir_str);
-    common::ErrnoError err = common::file_system::node_access(dir.GetPath());
-    if (err) {
-      error_str = err->GetDescription();
-      return;
+    const std::string dir_path = dir.GetPath();
+    if (!common::file_system::is_directory_exist(dir_path)) {
+      common::ErrnoError errn = common::file_system::create_directory(dir_path, true);
+      if (errn) {
+        error_str = errn->GetDescription();
+        return;
+      }
     }
 
     is_valid = true;
@@ -139,23 +142,26 @@ json_object* MakeDirectoryStateResponce(const DirectoryState& dir) {
   json_object* obj = json_object_new_object();
   const std::string path_str = dir.dir.GetPath();
   json_object_object_add(obj, SAVE_DIRECTORY_FIELD_PATH, json_object_new_string(path_str.c_str()));
-  json_object_object_add(obj, SAVE_DIRECTORY_FIELD_STATUS, json_object_new_boolean(dir.is_valid));
-  json_object_object_add(obj, SAVE_DIRECTORY_FIELD_RESPONCE, json_object_new_string(dir.error_str.c_str()));
+  if (dir.is_valid) {
+    json_object_object_add(obj, SAVE_DIRECTORY_FIELD_RESULT, json_object_new_string(OK_RESULT));
+  } else {
+    json_object_object_add(obj, SAVE_DIRECTORY_FIELD_ERROR, json_object_new_string(dir.error_str.c_str()));
+  }
 
   json_object_object_add(obj_dir, dir.key.c_str(), obj);
   return obj_dir;
 }
 
 struct Directories {
-  explicit Directories(const iptv_cloud::server::StateServiceInfo& sinf)
-      : job_dir(sinf.GetJobsDirectory(), STATE_SERVICE_INFO_JOBS_DIRECTORY_FIELD),
-        timeshift_dir(sinf.GetTimeshiftsDirectory(), STATE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD),
-        hls_dir(sinf.GetHlsDirectory(), STATE_SERVICE_INFO_HLS_DIRECTORY_FIELD),
-        playlist_dir(sinf.GetPlaylistsDirectory(), STATE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD),
-        dvb_dir(sinf.GetDvbDirectory(), STATE_SERVICE_INFO_DVB_DIRECTORY_FIELD),
-        capture_card_dir(sinf.GetCaptureDirectory(), STATE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD) {}
+  explicit Directories(const iptv_cloud::server::PrepareServiceInfo& sinf)
+      : feedback_dir(sinf.GetFeedbackDirectory(), PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD),
+        timeshift_dir(sinf.GetTimeshiftsDirectory(), PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD),
+        hls_dir(sinf.GetHlsDirectory(), PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD),
+        playlist_dir(sinf.GetPlaylistsDirectory(), PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD),
+        dvb_dir(sinf.GetDvbDirectory(), PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD),
+        capture_card_dir(sinf.GetCaptureDirectory(), PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD) {}
 
-  const DirectoryState job_dir;
+  const DirectoryState feedback_dir;
   const DirectoryState timeshift_dir;
   const DirectoryState hls_dir;
   const DirectoryState playlist_dir;
@@ -163,14 +169,14 @@ struct Directories {
   const DirectoryState capture_card_dir;
 
   bool IsValid() const {
-    return job_dir.is_valid && timeshift_dir.is_valid && hls_dir.is_valid && playlist_dir.is_valid &&
+    return feedback_dir.is_valid && timeshift_dir.is_valid && hls_dir.is_valid && playlist_dir.is_valid &&
            dvb_dir.is_valid && capture_card_dir.is_valid;
   }
 };
 
 std::string MakeDirectoryResponce(const Directories& dirs) {
   json_object* obj = json_object_new_array();
-  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.job_dir));
+  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.feedback_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.timeshift_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.hls_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.playlist_dir));
@@ -240,6 +246,16 @@ common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInf
 
   if (!utils::ArgsGetValue(config_args, TYPE_FIELD, &lsha.type)) {
     return common::make_errno_error("Define " TYPE_FIELD " variable and make it valid.", EAGAIN);
+  }
+
+  std::string feedback_dir;
+  if (!utils::ArgsGetValue(config_args, FEEDBACK_DIR_FIELD, &feedback_dir)) {
+    if (!common::file_system::is_directory_exist(feedback_dir)) {
+      common::ErrnoError errn = common::file_system::create_directory(feedback_dir, true);
+      if (errn) {
+        return errn;
+      }
+    }
   }
 
   input_t input;
@@ -736,13 +752,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponcePingService(ProtocoledDaem
 common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop* server,
                                                           const StartStreamInfo& start_info) {
   CHECK(loop_->IsLoopThread());
-  const std::string cmd_argss = start_info.GetCmd();
   const std::string config_str = start_info.GetConfig();
 
-  std::vector<std::string> args;
-  common::Tokenize(cmd_argss, " ", &args);
-
-  utils::ArgsMap cmd_args = options::ValidateCmdArgs(args);
   utils::ArgsMap config_args = options::ValidateConfig(config_str);
   StreamInfo sha;
   common::ErrnoError err = make_stream_info(config_args, &sha);
@@ -803,16 +814,16 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
       _exit(EXIT_FAILURE);
     }
 
-    int logs_level;
-    if (!utils::ArgsGetValue(cmd_args, LOG_LEVEL_FIELD, &logs_level)) {
-      logs_level = common::logging::LOG_LEVEL_DEBUG;
-    }
-
     std::string feedback_dir;
-    if (!utils::ArgsGetValue(cmd_args, FEEDBACK_DIR_FIELD, &feedback_dir)) {
+    if (!utils::ArgsGetValue(config_args, FEEDBACK_DIR_FIELD, &feedback_dir)) {
       ERROR_LOG() << "Define " FEEDBACK_DIR_FIELD " variable and make it valid.";
       dlclose(handle);
       _exit(EXIT_FAILURE);
+    }
+
+    int logs_level;
+    if (!utils::ArgsGetValue(config_args, LOG_LEVEL_FIELD, &logs_level)) {
+      logs_level = common::logging::LOG_LEVEL_DEBUG;
     }
 
     const struct cmd_args client_args = {feedback_dir.c_str(), logs_level};
@@ -1066,8 +1077,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientRestartStream(Protoco
   return common::make_errno_error_inval();
 }
 
-common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStateService(ProtocoledDaemonClient* dclient,
-                                                                        protocol::request_t* req) {
+common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPrepareService(ProtocoledDaemonClient* dclient,
+                                                                          protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
   if (!dclient->IsVerified()) {
     return common::make_errno_error_inval();
@@ -1080,7 +1091,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStateService(Protocol
       return common::make_errno_error_inval();
     }
 
-    StateServiceInfo state_info;
+    PrepareServiceInfo state_info;
     common::Error err_des = state_info.DeSerialize(jservice_state);
     json_object_put(jservice_state);
     if (err_des) {
@@ -1180,8 +1191,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(ProtocoledDa
     return HandleRequestClientStopStream(dclient, req);
   } else if (req->method == CLIENT_RESTART_STREAM) {
     return HandleRequestClientRestartStream(dclient, req);
-  } else if (req->method == CLIENT_STATE_SERVICE) {
-    return HandleRequestClientStateService(dclient, req);
+  } else if (req->method == CLIENT_PREPARE_SERVICE) {
+    return HandleRequestClientPrepareService(dclient, req);
   } else if (req->method == CLIENT_STOP_SERVICE) {
     return HandleRequestClientStopService(dclient, req);
   } else if (req->method == CLIENT_ACTIVATE) {

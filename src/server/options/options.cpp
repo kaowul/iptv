@@ -380,8 +380,7 @@ bool FindCmdOption(const std::string& key, option_t* opt) {
     return false;
   }
 
-  static const ConstantOptions ALLOWED_CMD_OPTIONS = {{FEEDBACK_DIR_FIELD, validate_feedback_dir},
-                                                      {LOG_LEVEL_FIELD, validate_log_level}};
+  static const ConstantOptions ALLOWED_CMD_OPTIONS = {};
   for (const option_t& cur : ALLOWED_CMD_OPTIONS) {
     if (cur.first == key) {
       *opt = cur;
@@ -390,49 +389,6 @@ bool FindCmdOption(const std::string& key, option_t* opt) {
   }
 
   return false;
-}
-
-utils::ArgsMap ValidateCmdArgs(const std::vector<std::string>& cmd_args) {
-  if (cmd_args.empty()) {
-    return utils::ArgsMap();
-  }
-
-  utils::ArgsMap args;
-  for (size_t i = 0; i < cmd_args.size(); ++i) {
-    std::pair<std::string, std::string> pair = utils::GetKeyValue(cmd_args[i], '=');
-    option_t option;
-    if (!FindCmdOption(pair.first, &option)) {
-      WARNING_LOG() << "Unknown cmd option: " << pair.first;
-    } else {
-      switch (option.second(pair.second)) {
-        case Validity::VALID:
-          args.push_back(pair);
-          break;
-        case Validity::INVALID:
-          WARNING_LOG() << "Invalid value \"" << pair.second << "\" of cmd option " << pair.first;
-          break;
-        case Validity::FATAL:
-          CRITICAL_LOG() << "Invalid value \"" << pair.second << "\" of cmd option " << pair.first;
-          break;
-        default:
-          NOTREACHED();
-          break;
-      }
-    }
-  }
-  return args;
-}
-
-utils::ArgsMap ValidateCmdArgs(int argc, char** argv) {
-  if (argc == 0) {
-    return utils::ArgsMap();
-  }
-
-  std::vector<std::string> args;
-  for (int i = 0; i < argc; ++i) {
-    args.push_back(argv[i]);
-  }
-  return ValidateCmdArgs(args);
 }
 
 utils::ArgsMap ValidateConfig(const std::string& full_config) {
@@ -482,6 +438,8 @@ bool FindOption(const std::string& key, option_t* opt) {
   static const ConstantOptions ALLOWED_OPTIONS = {
       {ID_FIELD, validate_id},
       {TYPE_FIELD, validate_type},
+      {FEEDBACK_DIR_FIELD, validate_feedback_dir},
+      {LOG_LEVEL_FIELD, validate_log_level},
       {INPUT_FIELD, validate_input},
       {OUTPUT_FIELD, validate_output},
       {LOG_FILE_FIELD, dont_validate},

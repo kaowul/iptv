@@ -15,19 +15,14 @@
 #include "server/commands_info/start_stream_info.h"
 
 #define CONFIG_KEY_FIELD "config"
-#define CMD_KEY_FIELD "command_line"
 
 namespace iptv_cloud {
 namespace server {
 
-StartStreamInfo::StartStreamInfo() : base_class(), config_(), cmd_() {}
+StartStreamInfo::StartStreamInfo() : base_class(), config_() {}
 
 std::string StartStreamInfo::GetConfig() const {
   return config_;
-}
-
-std::string StartStreamInfo::GetCmd() const {
-  return cmd_;
 }
 
 common::Error StartStreamInfo::DoDeSerialize(json_object* serialized) {
@@ -41,22 +36,14 @@ common::Error StartStreamInfo::DoDeSerialize(json_object* serialized) {
     return common::make_error_inval();
   }
 
-  json_object* jcmd = nullptr;
-  json_bool jcmd_exists = json_object_object_get_ex(serialized, CMD_KEY_FIELD, &jcmd);
-  if (!jcmd_exists) {
-    return common::make_error_inval();
-  }
-
   StartStreamInfo inf;
   inf.config_ = json_object_get_string(jconfig);
-  inf.cmd_ = json_object_get_string(jcmd);
   *this = inf;
   return common::Error();
 }
 
 common::Error StartStreamInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, CONFIG_KEY_FIELD, json_object_new_string(config_.c_str()));
-  json_object_object_add(out, CMD_KEY_FIELD, json_object_new_string(cmd_.c_str()));
   return common::Error();
 }
 

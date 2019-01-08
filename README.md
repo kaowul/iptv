@@ -16,6 +16,7 @@ Free IPTV cloud server
 * File Formats
 * Presets
 * Public API, client server communication via [JSON RPC](https://www.jsonrpc.org/specification)
+* [Admin panel](https://github.com/fastogt/iptv_admin)
 
 Visit our site: [fastotv.com](https://fastotv.com)
 

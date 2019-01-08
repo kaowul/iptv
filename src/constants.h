@@ -19,10 +19,6 @@
 
 #define M3U8_CHUNK_MARKER "#EXTINF"
 
-// cmd line
-#define FEEDBACK_DIR_FIELD "feedback_dir"  // required
-#define LOG_LEVEL_FIELD "log_level"
-
 #define DEFAULT_AUDIO_VOLUME 1.0
 #define DEFAULT_VIDEO_BITRATE 0
 #define DEFAULT_AUDIO_BITRATE 0
@@ -40,6 +36,8 @@
 
 #define DEFAULT_TIMESHIFT_CHUNK_DURATION 120
 
+#define FEEDBACK_DIR_FIELD "feedback_dir"  // required for daemon and slave
+#define LOG_LEVEL_FIELD "log_level"
 #define ID_FIELD "id"                                // required for daemon and slave
 #define TYPE_FIELD "type"                            // required for slave
 #define STATS_CREDENTIALS_FIELD "stats_credentials"  // required for daemon

@@ -27,7 +27,6 @@ class StartStreamInfo : public common::serializer::JsonSerializer<StartStreamInf
   StartStreamInfo();
 
   std::string GetConfig() const;
-  std::string GetCmd() const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
@@ -35,7 +34,6 @@ class StartStreamInfo : public common::serializer::JsonSerializer<StartStreamInf
 
  private:
   std::string config_;
-  std::string cmd_;
 };
 
 }  // namespace server

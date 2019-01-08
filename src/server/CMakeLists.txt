@@ -6,7 +6,7 @@ SET(DAEMONS_HEADERS_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_stream_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/restart_stream_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/license_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/state_service_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/prepare_service_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/activate_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/ping_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_service_info.h
@@ -17,7 +17,7 @@ SET(DAEMONS_SOURCES_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_stream_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/restart_stream_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/license_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/state_service_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/prepare_service_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/activate_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/ping_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_service_info.cpp
