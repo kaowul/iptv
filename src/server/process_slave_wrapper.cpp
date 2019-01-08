@@ -250,11 +250,13 @@ common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInf
 
   std::string feedback_dir;
   if (!utils::ArgsGetValue(config_args, FEEDBACK_DIR_FIELD, &feedback_dir)) {
-    if (!common::file_system::is_directory_exist(feedback_dir)) {
-      common::ErrnoError errn = common::file_system::create_directory(feedback_dir, true);
-      if (errn) {
-        return errn;
-      }
+    return common::make_errno_error("Define " FEEDBACK_DIR_FIELD " variable and make it valid.", EAGAIN);
+  }
+
+  if (!common::file_system::is_directory_exist(feedback_dir)) {
+    common::ErrnoError errn = common::file_system::create_directory(feedback_dir, true);
+    if (errn) {
+      return errn;
     }
   }
 
