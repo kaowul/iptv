@@ -3,7 +3,7 @@ About IPTV cloud
 Free IPTV cloud server
 ### Features:
 * Encode/Transcode
-* GPU Encode/Decode/Deinterlace
+* GPU Encode/Decode/Post Processing
 * Relay
 * Timeshift
 * Catchups
