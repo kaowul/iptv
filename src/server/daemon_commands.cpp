@@ -89,5 +89,9 @@ protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t 
   return protocol::request_t::MakeNotification(CLIENT_CHANGED_SOURCES_STREAM, params);
 }
 
+protocol::request_t StatisitcStreamBroadcast(protocol::serializet_params_t params) {
+  return protocol::request_t::MakeNotification(CLIENT_STATISTIC_STREAM, params);
+}
+
 }  // namespace server
 }  // namespace iptv_cloud

@@ -26,7 +26,7 @@ extern const stream_id_t kInvalidStreamID;
 
 enum StreamType {
   RELAY = 0,
-  ENCODING,
+  ENCODE,
   TIMESHIFT_PLAYER,
   TIMESHIFT_RECORDER,
   CATCHUP,

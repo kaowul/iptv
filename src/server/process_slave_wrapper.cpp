@@ -954,6 +954,16 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::Proto
     if (!res) {
       WARNING_LOG() << "Failed to save stream statistic: " << stream_stats;
     }
+
+    // notify subscribers
+    std::vector<common::libev::IoClient*> clients = loop_->GetClients();
+    for (size_t i = 0; i < clients.size(); ++i) {
+      ProtocoledDaemonClient* dclient = dynamic_cast<ProtocoledDaemonClient*>(clients[i]);
+      if (dclient) {
+        protocol::request_t req = StatisitcStreamBroadcast(stream_stats);
+        dclient->WriteRequest(req);
+      }
+    }
     return common::ErrnoError();
   }
 

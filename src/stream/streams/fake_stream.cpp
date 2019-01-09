@@ -21,7 +21,7 @@ namespace stream {
 namespace streams {
 
 FakeStream::FakeStream(EncodingConfig* config, IStreamClient* client)
-    : EncodingStream(config, client, new StreamStruct(StreamInfo{"fake", ENCODING, {0}, {1}})) {}
+    : EncodingStream(config, client, new StreamStruct(StreamInfo{"fake", ENCODE, {0}, {1}})) {}
 
 const char* FakeStream::ClassName() const {
   return "FakeStream";

@@ -80,7 +80,7 @@ IBaseStream* StreamsFactory::CreateStream(const utils::ArgsMap& args,
     }*/
 
     return new streams::RelayStream(rconfig, client, stats);
-  } else if (config->GetType() == ENCODING) {
+  } else if (config->GetType() == ENCODE) {
     streams::EncodingConfig* econfig = static_cast<streams::EncodingConfig*>(config);
     InputUri iuri = input[0];
     common::uri::Url input_uri = iuri.GetInput();

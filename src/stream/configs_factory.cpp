@@ -200,7 +200,7 @@ Config* make_config(const utils::ArgsMap& config) {
       rconfig->SetLoop(loop);
     }
     return rconfig;
-  } else if (stream_type == ENCODING) {
+  } else if (stream_type == ENCODE) {
     streams::EncodingConfig econf(aconf);
     streams::PlaylistEncodingConfig* econfig = new streams::PlaylistEncodingConfig(econf);
     bool deinterlace = false;

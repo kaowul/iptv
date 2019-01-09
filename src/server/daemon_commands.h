@@ -36,6 +36,7 @@
 
 // Broadcast
 #define CLIENT_CHANGED_SOURCES_STREAM "changed_source_stream"
+#define CLIENT_STATISTIC_STREAM "statistic_stream"
 
 namespace iptv_cloud {
 namespace server {
@@ -71,6 +72,7 @@ protocol::responce_t RestartStreamResponceFail(protocol::sequance_id_t id, const
 
 // Broadcast
 protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params);  // ChangedSouresInfo
+protocol::request_t StatisitcStreamBroadcast(protocol::serializet_params_t params);
 
 }  // namespace server
 }  // namespace iptv_cloud
