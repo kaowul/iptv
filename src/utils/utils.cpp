@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "utils.h"
+#include "utils/utils.h"
 
 #include <dirent.h>
 #include <string.h>

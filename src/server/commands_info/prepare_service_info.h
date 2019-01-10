@@ -16,14 +16,8 @@
 
 #include <string>
 
+#include <common/file_system/path.h>
 #include <common/serializer/json_serializer.h>
-
-#define PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD "feedback_directory"
-#define PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD "timeshifts_directory"
-#define PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD "hls_directory"
-#define PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD "playlists_directory"
-#define PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD "dvb_directory"
-#define PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD "capture_card_directory"
 
 namespace iptv_cloud {
 namespace server {
@@ -52,6 +46,30 @@ class PrepareServiceInfo : public common::serializer::JsonSerializer<PrepareServ
   std::string dvb_directory_;
   std::string capture_card_directory_;
 };
+
+struct DirectoryState {
+  DirectoryState(const std::string& dir_str, const char* k);
+
+  std::string key;
+  common::file_system::ascii_directory_string_path dir;
+  bool is_valid;
+  std::string error_str;
+};
+
+struct Directories {
+  explicit Directories(const iptv_cloud::server::PrepareServiceInfo& sinf);
+
+  const DirectoryState feedback_dir;
+  const DirectoryState timeshift_dir;
+  const DirectoryState hls_dir;
+  const DirectoryState playlist_dir;
+  const DirectoryState dvb_dir;
+  const DirectoryState capture_card_dir;
+
+  bool IsValid() const;
+};
+
+std::string MakeDirectoryResponce(const Directories& dirs);
 
 }  // namespace server
 }  // namespace iptv_cloud

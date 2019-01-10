@@ -43,6 +43,7 @@
 #include "server/commands_info/ping_info.h"
 #include "server/commands_info/prepare_service_info.h"
 #include "server/commands_info/restart_stream_info.h"
+#include "server/commands_info/statistic_service_info.h"
 #include "server/commands_info/stop_service_info.h"
 #include "server/commands_info/stop_stream_info.h"
 #include "server/daemon_client.h"
@@ -59,34 +60,12 @@
 #include "utils/arg_converter.h"
 #include "utils/utils.h"
 
-#define FIELD_STATS_UPTIME "uptime"
-#define FIELD_STATS_TIMESTAM "timestamp"
-#define FIELD_STATS_CPU "cpu"
-#define FIELD_STATS_GPU "gpu"
-#define FIELD_STATS_MEMORY_TOTAL "memory_total"
-#define FIELD_STATS_MEMORY_FREE "memory_free"
-#define FIELD_STATS_MEMORY_AVAILIBLE "memory_availible"
-
-#define FIELD_STATS_HDD_TOTAL "hdd_total"
-#define FIELD_STATS_HDD_FREE "hdd_free"
-
-#define FIELD_STATS_LOAD_AVERAGE "load_average"
-
-#define FIELD_STATS_BANDWIDTH_IN "bandwidth_in"
-#define FIELD_STATS_BANDWIDTH_OUT "bandwidth_out"
-
-#define FIELD_STATS_PROJECT_VERSION PROJECT_NAME "_version"
-
 #define DUMMY_LOG_FILE_PATH "/dev/null"
 
 #define DAEMON_STATS_1S "%s:stats"
 #define SLAVE_STATS_1S "%s:slave"
 
 #define CLIENT_PORT 6317
-
-#define SAVE_DIRECTORY_FIELD_PATH "path"
-#define SAVE_DIRECTORY_FIELD_RESULT "result"
-#define SAVE_DIRECTORY_FIELD_ERROR "error"
 
 namespace {
 
@@ -108,83 +87,6 @@ common::ErrnoError create_pipe(int* read_client_fd, int* write_client_fd) {
 
 std::string make_daemon_stats_id(std::string id) {
   return common::MemSPrintf(DAEMON_STATS_1S, id);
-}
-
-struct DirectoryState {
-  DirectoryState(const std::string& dir_str, const char* k) : key(k), dir(), is_valid(false), error_str() {
-    if (dir_str.empty()) {
-      error_str = "Invalid input.";
-      return;
-    }
-
-    dir = common::file_system::ascii_directory_string_path(dir_str);
-    const std::string dir_path = dir.GetPath();
-    if (!common::file_system::is_directory_exist(dir_path)) {
-      common::ErrnoError errn = common::file_system::create_directory(dir_path, true);
-      if (errn) {
-        error_str = errn->GetDescription();
-        return;
-      }
-    }
-
-    is_valid = true;
-  }
-
-  std::string key;
-  common::file_system::ascii_directory_string_path dir;
-  bool is_valid;
-  std::string error_str;
-};
-
-json_object* MakeDirectoryStateResponce(const DirectoryState& dir) {
-  json_object* obj_dir = json_object_new_object();
-
-  json_object* obj = json_object_new_object();
-  const std::string path_str = dir.dir.GetPath();
-  json_object_object_add(obj, SAVE_DIRECTORY_FIELD_PATH, json_object_new_string(path_str.c_str()));
-  if (dir.is_valid) {
-    json_object_object_add(obj, SAVE_DIRECTORY_FIELD_RESULT, json_object_new_string(OK_RESULT));
-  } else {
-    json_object_object_add(obj, SAVE_DIRECTORY_FIELD_ERROR, json_object_new_string(dir.error_str.c_str()));
-  }
-
-  json_object_object_add(obj_dir, dir.key.c_str(), obj);
-  return obj_dir;
-}
-
-struct Directories {
-  explicit Directories(const iptv_cloud::server::PrepareServiceInfo& sinf)
-      : feedback_dir(sinf.GetFeedbackDirectory(), PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD),
-        timeshift_dir(sinf.GetTimeshiftsDirectory(), PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD),
-        hls_dir(sinf.GetHlsDirectory(), PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD),
-        playlist_dir(sinf.GetPlaylistsDirectory(), PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD),
-        dvb_dir(sinf.GetDvbDirectory(), PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD),
-        capture_card_dir(sinf.GetCaptureDirectory(), PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD) {}
-
-  const DirectoryState feedback_dir;
-  const DirectoryState timeshift_dir;
-  const DirectoryState hls_dir;
-  const DirectoryState playlist_dir;
-  const DirectoryState dvb_dir;
-  const DirectoryState capture_card_dir;
-
-  bool IsValid() const {
-    return feedback_dir.is_valid && timeshift_dir.is_valid && hls_dir.is_valid && playlist_dir.is_valid &&
-           dvb_dir.is_valid && capture_card_dir.is_valid;
-  }
-};
-
-std::string MakeDirectoryResponce(const Directories& dirs) {
-  json_object* obj = json_object_new_array();
-  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.feedback_dir));
-  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.timeshift_dir));
-  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.hls_dir));
-  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.playlist_dir));
-  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.dvb_dir));
-  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.capture_card_dir));
-  std::string obj_str = json_object_get_string(obj);
-  json_object_put(obj);
-  return obj_str;
 }
 
 iptv_cloud::utils::ArgsMap read_slave_config(const std::string& path) {
@@ -487,29 +389,22 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
       utils::HddShot hdd_shot = utils::GetMachineHddShot();
       utils::SysinfoShot sshot = utils::GetMachineSysinfoShot();
       std::string uptime_str = common::MemSPrintf("%lu %lu %lu", sshot.loads[0], sshot.loads[1], sshot.loads[2]);
-      time_t cur_ts = common::time::current_mstime() / 1000;
 
-      json_object* jstats = json_object_new_object();
-      json_object_object_add(jstats, FIELD_STATS_CPU, json_object_new_int(cpu_load * 100));
-      json_object_object_add(jstats, FIELD_STATS_GPU, json_object_new_int(node_stats_->gpu_load));
-      json_object_object_add(jstats, FIELD_STATS_LOAD_AVERAGE, json_object_new_string(uptime_str.c_str()));
-      json_object_object_add(jstats, FIELD_STATS_MEMORY_TOTAL, json_object_new_int64(mem_shot.total_ram));
-      json_object_object_add(jstats, FIELD_STATS_MEMORY_FREE, json_object_new_int64(mem_shot.free_ram));
-      json_object_object_add(jstats, FIELD_STATS_MEMORY_AVAILIBLE, json_object_new_int64(mem_shot.avail_ram));
-      json_object_object_add(jstats, FIELD_STATS_HDD_TOTAL, json_object_new_int64(hdd_shot.hdd_total));
-      json_object_object_add(jstats, FIELD_STATS_HDD_FREE, json_object_new_int64(hdd_shot.hdd_free));
-      json_object_object_add(jstats, FIELD_STATS_BANDWIDTH_IN, json_object_new_int64(bytes_recv));
-      json_object_object_add(jstats, FIELD_STATS_BANDWIDTH_OUT, json_object_new_int64(bytes_send));
-      json_object_object_add(jstats, FIELD_STATS_UPTIME, json_object_new_int64(sshot.uptime));
-      json_object_object_add(jstats, FIELD_STATS_TIMESTAM, json_object_new_int64(cur_ts));
-      json_object_object_add(jstats, FIELD_STATS_PROJECT_VERSION, json_object_new_string(PROJECT_VERSION_HUMAN));
-      std::string node_stats = json_object_get_string(jstats);
-      json_object_put(jstats);
+      StatisticServiceInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
+                                bytes_recv, bytes_send, sshot);
+      std::string node_stats;
+      common::Error err_ser = stat.SerializeToString(&node_stats);
+      if (err_ser) {
+        const std::string err_str = err_ser->GetDescription();
+        WARNING_LOG() << "Failed to generate node statistic: " << err_str;
+      }
 
       bool res = stats_->SetKey(make_daemon_stats_id(node_id_), node_stats);
       if (!res) {
         WARNING_LOG() << "Failed to save node statistic: " << node_stats;
       }
+
+      BroadcastClients(StatisitcServiceBroadcast(node_stats));
     }
   } else if (cleanup_timer_ == id) {
     loop_->Stop();
@@ -557,6 +452,16 @@ ChildStream* ProcessSlaveWrapper::FindChildByID(channel_id_t cid) const {
   }
 
   return nullptr;
+}
+
+void ProcessSlaveWrapper::BroadcastClients(const protocol::request_t& req) {
+  std::vector<common::libev::IoClient*> clients = loop_->GetClients();
+  for (size_t i = 0; i < clients.size(); ++i) {
+    ProtocoledDaemonClient* dclient = dynamic_cast<ProtocoledDaemonClient*>(clients[i]);
+    if (dclient) {
+      dclient->WriteRequest(req);
+    }
+  }
 }
 
 common::ErrnoError ProcessSlaveWrapper::DaemonDataReceived(ProtocoledDaemonClient* dclient) {
@@ -908,15 +813,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestChangedSourcesStream(pipe::
       return common::make_errno_error(err_str, EAGAIN);
     }
 
-    // notify subscribers
-    std::vector<common::libev::IoClient*> clients = loop_->GetClients();
-    for (size_t i = 0; i < clients.size(); ++i) {
-      ProtocoledDaemonClient* dclient = dynamic_cast<ProtocoledDaemonClient*>(clients[i]);
-      if (dclient) {
-        protocol::request_t req = ChangedSourcesStreamBroadcast(changed_json);
-        dclient->WriteRequest(req);
-      }
-    }
+    BroadcastClients(ChangedSourcesStreamBroadcast(changed_json));
     return common::ErrnoError();
   }
 
@@ -955,15 +852,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::Proto
       WARNING_LOG() << "Failed to save stream statistic: " << stream_stats;
     }
 
-    // notify subscribers
-    std::vector<common::libev::IoClient*> clients = loop_->GetClients();
-    for (size_t i = 0; i < clients.size(); ++i) {
-      ProtocoledDaemonClient* dclient = dynamic_cast<ProtocoledDaemonClient*>(clients[i]);
-      if (dclient) {
-        protocol::request_t req = StatisitcStreamBroadcast(stream_stats);
-        dclient->WriteRequest(req);
-      }
-    }
+    BroadcastClients(StatisitcStreamBroadcast(stream_stats));
     return common::ErrnoError();
   }
 

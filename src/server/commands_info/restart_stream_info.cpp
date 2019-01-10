@@ -14,7 +14,7 @@
 
 #include "server/commands_info/restart_stream_info.h"
 
-#define STREAM_ID_FIELD "id"
+#define RESTART_INFO_STREAM_ID_FIELD "id"
 
 namespace iptv_cloud {
 namespace server {
@@ -30,7 +30,7 @@ RestartStreamInfo::stream_id_t RestartStreamInfo::GetStreamID() const {
 common::Error RestartStreamInfo::DoDeSerialize(json_object* serialized) {
   RestartStreamInfo inf;
   json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, STREAM_ID_FIELD, &jid);
+  json_bool jid_exists = json_object_object_get_ex(serialized, RESTART_INFO_STREAM_ID_FIELD, &jid);
   if (!jid_exists) {
     return common::make_error_inval();
   }
@@ -41,7 +41,7 @@ common::Error RestartStreamInfo::DoDeSerialize(json_object* serialized) {
 }
 
 common::Error RestartStreamInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, STREAM_ID_FIELD, json_object_new_string(stream_id_.c_str()));
+  json_object_object_add(out, RESTART_INFO_STREAM_ID_FIELD, json_object_new_string(stream_id_.c_str()));
   return common::Error();
 }
 

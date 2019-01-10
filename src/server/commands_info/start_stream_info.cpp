@@ -14,7 +14,7 @@
 
 #include "server/commands_info/start_stream_info.h"
 
-#define CONFIG_KEY_FIELD "config"
+#define START_STREAM_INFO_CONFIG_KEY_FIELD "config"
 
 namespace iptv_cloud {
 namespace server {
@@ -31,7 +31,7 @@ common::Error StartStreamInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jconfig = nullptr;
-  json_bool jconfig_exists = json_object_object_get_ex(serialized, CONFIG_KEY_FIELD, &jconfig);
+  json_bool jconfig_exists = json_object_object_get_ex(serialized, START_STREAM_INFO_CONFIG_KEY_FIELD, &jconfig);
   if (!jconfig_exists) {
     return common::make_error_inval();
   }
@@ -43,7 +43,7 @@ common::Error StartStreamInfo::DoDeSerialize(json_object* serialized) {
 }
 
 common::Error StartStreamInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, CONFIG_KEY_FIELD, json_object_new_string(config_.c_str()));
+  json_object_object_add(out, START_STREAM_INFO_CONFIG_KEY_FIELD, json_object_new_string(config_.c_str()));
   return common::Error();
 }
 

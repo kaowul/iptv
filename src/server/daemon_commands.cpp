@@ -93,5 +93,9 @@ protocol::request_t StatisitcStreamBroadcast(protocol::serializet_params_t param
   return protocol::request_t::MakeNotification(CLIENT_STATISTIC_STREAM, params);
 }
 
+protocol::request_t StatisitcServiceBroadcast(protocol::serializet_params_t params) {
+  return protocol::request_t::MakeNotification(CLIENT_STATISTIC_SERVICE, params);
+}
+
 }  // namespace server
 }  // namespace iptv_cloud

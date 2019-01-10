@@ -16,8 +16,42 @@
 
 #include <string>
 
+#include <common/file_system/file_system.h>
+#include <common/file_system/string_path_utils.h>
+
+#define OK_RESULT "OK"
+
+#define PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD "feedback_directory"
+#define PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD "timeshifts_directory"
+#define PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD "hls_directory"
+#define PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD "playlists_directory"
+#define PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD "dvb_directory"
+#define PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD "capture_card_directory"
+
+#define SAVE_DIRECTORY_FIELD_PATH "path"
+#define SAVE_DIRECTORY_FIELD_RESULT "result"
+#define SAVE_DIRECTORY_FIELD_ERROR "error"
+
 namespace iptv_cloud {
 namespace server {
+
+namespace {
+json_object* MakeDirectoryStateResponce(const DirectoryState& dir) {
+  json_object* obj_dir = json_object_new_object();
+
+  json_object* obj = json_object_new_object();
+  const std::string path_str = dir.dir.GetPath();
+  json_object_object_add(obj, SAVE_DIRECTORY_FIELD_PATH, json_object_new_string(path_str.c_str()));
+  if (dir.is_valid) {
+    json_object_object_add(obj, SAVE_DIRECTORY_FIELD_RESULT, json_object_new_string(OK_RESULT));
+  } else {
+    json_object_object_add(obj, SAVE_DIRECTORY_FIELD_ERROR, json_object_new_string(dir.error_str.c_str()));
+  }
+
+  json_object_object_add(obj_dir, dir.key.c_str(), obj);
+  return obj_dir;
+}
+}  // namespace
 
 PrepareServiceInfo::PrepareServiceInfo()
     : base_class(),
@@ -112,6 +146,52 @@ common::Error PrepareServiceInfo::DoDeSerialize(json_object* serialized) {
 
   *this = inf;
   return common::Error();
+}
+
+DirectoryState::DirectoryState(const std::string& dir_str, const char* k)
+    : key(k), dir(), is_valid(false), error_str() {
+  if (dir_str.empty()) {
+    error_str = "Invalid input.";
+    return;
+  }
+
+  dir = common::file_system::ascii_directory_string_path(dir_str);
+  const std::string dir_path = dir.GetPath();
+  if (!common::file_system::is_directory_exist(dir_path)) {
+    common::ErrnoError errn = common::file_system::create_directory(dir_path, true);
+    if (errn) {
+      error_str = errn->GetDescription();
+      return;
+    }
+  }
+
+  is_valid = true;
+}
+
+Directories::Directories(const iptv_cloud::server::PrepareServiceInfo& sinf)
+    : feedback_dir(sinf.GetFeedbackDirectory(), PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD),
+      timeshift_dir(sinf.GetTimeshiftsDirectory(), PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD),
+      hls_dir(sinf.GetHlsDirectory(), PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD),
+      playlist_dir(sinf.GetPlaylistsDirectory(), PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD),
+      dvb_dir(sinf.GetDvbDirectory(), PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD),
+      capture_card_dir(sinf.GetCaptureDirectory(), PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD) {}
+
+bool Directories::IsValid() const {
+  return feedback_dir.is_valid && timeshift_dir.is_valid && hls_dir.is_valid && playlist_dir.is_valid &&
+         dvb_dir.is_valid && capture_card_dir.is_valid;
+}
+
+std::string MakeDirectoryResponce(const Directories& dirs) {
+  json_object* obj = json_object_new_array();
+  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.feedback_dir));
+  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.timeshift_dir));
+  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.hls_dir));
+  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.playlist_dir));
+  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.dvb_dir));
+  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.capture_card_dir));
+  std::string obj_str = json_object_get_string(obj);
+  json_object_put(obj);
+  return obj_str;
 }
 
 }  // namespace server

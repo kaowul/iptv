@@ -73,6 +73,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
 
  private:
   ChildStream* FindChildByID(channel_id_t cid) const;
+  void BroadcastClients(const protocol::request_t& req);
 
   struct NodeStats;
   common::ErrnoError DaemonDataReceived(ProtocoledDaemonClient* dclient) WARN_UNUSED_RESULT;

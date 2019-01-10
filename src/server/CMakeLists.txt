@@ -10,6 +10,7 @@ SET(DAEMONS_HEADERS_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/activate_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/ping_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_service_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/statistic_service_info.h
 )
 
 SET(DAEMONS_SOURCES_COMANDS_INFO
@@ -21,6 +22,7 @@ SET(DAEMONS_SOURCES_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/activate_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/ping_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_service_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/statistic_service_info.cpp
 )
 
 SET(PIPE_HEADERS ${CMAKE_SOURCE_DIR}/src/server/pipe/pipe_client.h)
