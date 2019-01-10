@@ -48,7 +48,7 @@ sequance_id_t MakeRequestID(seq_id_t sid) {
   char bytes[sizeof(seq_id_t)];
   const seq_id_t stabled = common::NetToHost64(sid);  // for human readable hex
   memcpy(&bytes, &stabled, sizeof(seq_id_t));
-  protocol::sequance_id_t hexed;
+  protocol::sequance_id_t::value_type hexed;
   common::utils::hex::encode(std::string(bytes, sizeof(seq_id_t)), true, &hexed);
   return hexed;
 }

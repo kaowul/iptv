@@ -482,7 +482,7 @@ void ProcessWrapper::OnSyncMessageReceived(IBaseStream* stream, GstMessage* mess
 }
 
 void ProcessWrapper::OnInputChanged(const InputUri& uri) {
-  ChangedSouresInfo ch(uri);
+  ChangedSouresInfo ch(mem_->id, uri);
   std::string changed_json;
   common::Error err = ch.SerializeToString(&changed_json);
   if (err) {

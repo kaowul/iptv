@@ -17,6 +17,7 @@
 #include <common/serializer/json_serializer.h>
 
 #include "input_uri.h"
+#include "types.h"
 
 namespace iptv_cloud {
 
@@ -25,15 +26,17 @@ class ChangedSouresInfo : public common::serializer::JsonSerializer<ChangedSoure
   typedef JsonSerializer<ChangedSouresInfo> base_class;
   typedef InputUri url_t;
   ChangedSouresInfo();
-  explicit ChangedSouresInfo(const url_t& url);
+  explicit ChangedSouresInfo(channel_id_t cid, const url_t& url);
 
   url_t GetUrl() const;
+  stream_id_t GetID() const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
   common::Error SerializeFields(json_object* out) const override;
 
  private:
+  channel_id_t id_;
   url_t url_;
 };
 

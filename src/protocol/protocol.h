@@ -55,7 +55,7 @@ class ProtocolClient : public Client {
   common::ErrnoError ReadCommand(std::string* out) WARN_UNUSED_RESULT { return detail::ReadCommand(this, out); }
 
   bool PopRequestByID(sequance_id_t sid, request_t* req) {
-    if (!req || sid.empty()) {
+    if (!req || !sid) {
       return false;
     }
 
