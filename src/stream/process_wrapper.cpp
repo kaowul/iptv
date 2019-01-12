@@ -160,7 +160,7 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
   std::string video_codec;
   if (utils::ArgsGetValue(config_args, VIDEO_CODEC_FIELD, &video_codec)) {
     EncoderType lenc;
-    if (GetTypeEncoder(video_codec, &lenc)) {
+    if (GetEncoderType(video_codec, &lenc)) {
       enc = lenc;
     }
   }
@@ -195,7 +195,7 @@ int ProcessWrapper::Exec() {
     chunk_index_t start_chunk_index = invalid_chunk_index;
     if (is_timeshift_player) {  // if timeshift player or cathcup player
       while (!tinfo.FindChunkToPlay(timeshift_chunk_duration, &start_chunk_index)) {
-        DumpStreamStatus(mem_, SWAITING);
+        DumpStreamStatus(mem_, WAITING);
 
         {
           std::unique_lock<std::mutex> lock(stop_mutex_);
@@ -240,7 +240,7 @@ int ProcessWrapper::Exec() {
     size_t wait_time = 0;
     if (++restart_attempts_ == max_restart_attempts_) {
       restart_attempts_ = 0;
-      DumpStreamStatus(mem_, SFROZEN);
+      DumpStreamStatus(mem_, FROZEN);
       wait_time = restart_after_frozen_sec;
     } else {
       wait_time = restart_attempts_ * (restart_after_frozen_sec / max_restart_attempts_);

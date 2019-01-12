@@ -33,7 +33,7 @@ struct Connector {
 
 enum EncoderType { GPU_MFX, GPU_VAAPI, CPU };
 
-bool GetTypeEncoder(const std::string& encoder, EncoderType* enc);
+bool GetEncoderType(const std::string& encoder, EncoderType* enc);
 
 }  // namespace stream
 }  // namespace iptv_cloud

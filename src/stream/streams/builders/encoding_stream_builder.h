@@ -32,8 +32,8 @@ class EncodingStreamBuilder : public SrcDecodeStreamBuilder {
   Connector BuildPostProc(Connector conn) override;
   Connector BuildConverter(Connector conn) override;
 
-  SupportedVideoCodecs GetVideoCodecType() const override;
-  SupportedAudioCodecs GetAudioCodecType() const override;
+  SupportedVideoCodec GetVideoCodecType() const override;
+  SupportedAudioCodec GetAudioCodecType() const override;
 
  protected:
   virtual elements_line_t BuildVideoPostProc(element_id_t video_id);

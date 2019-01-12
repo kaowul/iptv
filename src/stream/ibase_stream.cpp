@@ -170,7 +170,7 @@ IBaseStream::IBaseStream(Config* config, IStreamClient* client, StreamStruct* st
       probe_out_(),
       loop_(g_main_loop_new(ctx_holder::instance()->ctx, FALSE)),
       pipeline_(nullptr),
-      status_(SNEW),
+      status_(NEW),
       status_tick(0),
       no_data_panic_tick(0),
       stats_(stats),
@@ -319,7 +319,7 @@ ExitStatus IBaseStream::Exec() {
   gst_bus_set_sync_handler(bus, sync_bus_callback, this, remove_notify_callback);
   guint bus_watch_id = gst_bus_add_watch(bus, async_bus_callback, this);
   gst_object_unref(bus);
-  SetStatus(SNULL);
+  SetStatus(INIT);
 
   stats_->loop_start_time = common::time::current_mstime() / 1000;
   ResetDataWait();
@@ -336,7 +336,7 @@ ExitStatus IBaseStream::Exec() {
   res = g_source_remove(main_timeout_id);
   DCHECK(res);
 
-  SetStatus(SNULL);  // emulating loop statuses
+  SetStatus(INIT);  // emulating loop statuses
   Stop();
 
   stats_->restarts++;
@@ -355,7 +355,7 @@ bool IBaseStream::IsVideoInited() const {
   return flags_ & INITED_VIDEO;
 }
 
-void IBaseStream::RegisterAudioCaps(SupportedAudioCodecs saudio, GstCaps* caps, element_id_t id) {
+void IBaseStream::RegisterAudioCaps(SupportedAudioCodec saudio, GstCaps* caps, element_id_t id) {
   UNUSED(saudio);
   bool is_inited_audio = desire_flags_ & INITED_AUDIO;
   if (is_inited_audio) {
@@ -376,7 +376,7 @@ void IBaseStream::RegisterAudioCaps(SupportedAudioCodecs saudio, GstCaps* caps, 
   }
 }
 
-void IBaseStream::RegisterVideoCaps(SupportedVideoCodecs svideo, GstCaps* caps, element_id_t id) {
+void IBaseStream::RegisterVideoCaps(SupportedVideoCodec svideo, GstCaps* caps, element_id_t id) {
   bool is_inited_video = desire_flags_ & INITED_VIDEO;
   if (is_inited_video) {
     return;
@@ -443,7 +443,7 @@ void IBaseStream::Restart() {
   ResetDataWait();
 
   Pause();
-  SetStatus(SNULL);  // emulating loop statuses
+  SetStatus(INIT);  // emulating loop statuses
   Play();
 
   stats_->restarts++;
@@ -656,11 +656,11 @@ gboolean IBaseStream::HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* mes
       GstState old_state, new_state, pending_state;
       gst_message_parse_state_changed(message, &old_state, &new_state, &pending_state);
       if (new_state == GST_STATE_NULL) {
-        SetStatus(SNULL);
+        SetStatus(INIT);
       } else if (new_state == GST_STATE_READY) {
-        SetStatus(SREADY);
+        SetStatus(READY);
       } else if (new_state == GST_STATE_PLAYING) {
-        SetStatus(SPLAYING);
+        SetStatus(PLAYING);
       }
     }
   } else if (type == GST_MESSAGE_EOS) {
@@ -691,7 +691,7 @@ void IBaseStream::SetStatus(StreamStatus status) {
 }
 
 bool IBaseStream::IsActive() const {
-  return status_ != SNULL;
+  return status_ != INIT;
 }
 
 void IBaseStream::HandleProbeEvent(Probe* probe, GstEvent* event) {

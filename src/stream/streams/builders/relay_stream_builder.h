@@ -30,8 +30,8 @@ class RelayStreamBuilder : public SrcDecodeStreamBuilder {
   elements::Element* BuildVideoUdbConnection() override;
   elements::Element* BuildAudioUdbConnection() override;
 
-  SupportedVideoCodecs GetVideoCodecType() const override;
-  SupportedAudioCodecs GetAudioCodecType() const override;
+  SupportedVideoCodec GetVideoCodecType() const override;
+  SupportedAudioCodec GetAudioCodecType() const override;
 
   Connector BuildPostProc(Connector conn) override;
   Connector BuildConverter(Connector conn) override;

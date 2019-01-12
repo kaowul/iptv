@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include <common/macros.h>
@@ -22,7 +23,7 @@
 
 namespace iptv_cloud {
 
-enum StreamStatus { SNEW = 0, SNULL, SSTARTED, SREADY, SPLAYING, SFROZEN, SWAITING };
+enum StreamStatus { NEW = 0, INIT = 1, STARTED = 2, READY = 3, PLAYING = 4, FROZEN = 5, WAITING = 6 };
 
 class StreamStats;
 
@@ -77,6 +78,7 @@ struct StreamStruct {
   const input_stream_info_t input;    // ptrs
   const output_stream_info_t output;  // ptrs
 
+ private:
   DISALLOW_COPY_AND_ASSIGN(StreamStruct);
 };
 

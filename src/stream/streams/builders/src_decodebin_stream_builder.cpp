@@ -33,7 +33,7 @@
 namespace iptv_cloud {
 namespace stream {
 namespace {
-elements::Element* make_video_pay(SupportedVideoCodecs vcodec, element_id_t pay_id) {
+elements::Element* make_video_pay(SupportedVideoCodec vcodec, element_id_t pay_id) {
   if (vcodec == VIDEO_H264_CODEC) {
     return elements::pay::make_h264_pay(96, pay_id);
   } else if (vcodec == VIDEO_H265_CODEC) {
@@ -46,7 +46,7 @@ elements::Element* make_video_pay(SupportedVideoCodecs vcodec, element_id_t pay_
   return nullptr;
 }
 
-elements::Element* make_audio_pay(SupportedAudioCodecs acodec, element_id_t pay_id) {
+elements::Element* make_audio_pay(SupportedAudioCodec acodec, element_id_t pay_id) {
   if (acodec == AUDIO_AAC_CODEC) {
     return elements::pay::make_aac_pay(97, pay_id);
   } else if (acodec == AUDIO_AC3_CODEC) {

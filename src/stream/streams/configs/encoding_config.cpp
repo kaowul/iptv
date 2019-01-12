@@ -93,7 +93,7 @@ void EncodingConfig::SetAudioEncoder(const std::string& enc) {
 bool EncodingConfig::IsGpu() const {
   const std::string video_enc = GetVideoEncoder();
   EncoderType enc;
-  if (GetTypeEncoder(video_enc, &enc)) {
+  if (GetEncoderType(video_enc, &enc)) {
     return enc == GPU_MFX || enc == GPU_VAAPI;
   }
 
@@ -103,7 +103,7 @@ bool EncodingConfig::IsGpu() const {
 bool EncodingConfig::IsMfxGpu() const {
   const std::string video_enc = GetVideoEncoder();
   EncoderType enc;
-  if (GetTypeEncoder(video_enc, &enc)) {
+  if (GetEncoderType(video_enc, &enc)) {
     return enc == GPU_MFX;
   }
 

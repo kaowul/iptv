@@ -187,7 +187,7 @@ common::Error StreamStructInfo::DoDeSerialize(json_object* serialized) {
     }
   }
 
-  StreamStatus st = SNEW;
+  StreamStatus st = NEW;
   json_object* jstatus = nullptr;
   json_bool jstatus_exists = json_object_object_get_ex(serialized, FIELD_JOB_STATUS, &jstatus);
   if (jstatus_exists) {

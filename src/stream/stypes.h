@@ -120,33 +120,33 @@ enum SupportedOtherType {
   IMAGE_JPEG_TYPE             // "image/jpeg"
 };
 
-enum SupportedDemuxers {
+enum SupportedDemuxer {
   VIDEO_MPEGTS_DEMUXER,  // "video/mpegts"
   VIDEO_FLV_DEMUXER      // "video/x-flv"
 };
 
-enum SupportedVideoCodecs {
+enum SupportedVideoCodec {
   VIDEO_H264_CODEC,  // video/x-h264
   VIDEO_MPEG_CODEC,  // video/mpeg
   VIDEO_H265_CODEC   // video/x-h265
 };
 
-enum SupportedAudioCodecs {
+enum SupportedAudioCodec {
   AUDIO_MPEG_CODEC,  // "audio/mpeg"
   AUDIO_AAC_CODEC,   // "audio/aac"
   AUDIO_AC3_CODEC    // "audio/x-ac3"
 };
 
-enum SupportedRawStreams {
+enum SupportedRawStream {
   VIDEO_RAW_STREAM,  // video/x-raw
   AUDIO_RAW_STREAM   // audio/x-raw
 };
 
 bool IsOtherFromType(const std::string& type, SupportedOtherType* oc);
-bool IsDemuxerFromType(const std::string& type, SupportedDemuxers* dc);
-bool IsVideoCodecFromType(const std::string& type, SupportedVideoCodecs* vc);
-bool IsAudioCodecFromType(const std::string& type, SupportedAudioCodecs* ac);
-bool IsRawStreamFromType(const std::string& type, SupportedRawStreams* rc);
+bool IsDemuxerFromType(const std::string& type, SupportedDemuxer* dc);
+bool IsVideoCodecFromType(const std::string& type, SupportedVideoCodec* vc);
+bool IsAudioCodecFromType(const std::string& type, SupportedAudioCodec* ac);
+bool IsRawStreamFromType(const std::string& type, SupportedRawStream* rc);
 
 std::string GenHttpTsTemplate(time_t msec);
 bool GetIndexFromHttpTsTemplate(const std::string& file_name, uint64_t* index);

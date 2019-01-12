@@ -60,7 +60,7 @@ Connector EncodingStreamBuilder::BuildPostProc(Connector conn) {
   return conn;
 }
 
-SupportedVideoCodecs EncodingStreamBuilder::GetVideoCodecType() const {
+SupportedVideoCodec EncodingStreamBuilder::GetVideoCodecType() const {
   EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
   const std::string vcodec = conf->GetVideoEncoder();
   if (elements::encoders::IsH264Encoder(vcodec)) {
@@ -75,7 +75,7 @@ SupportedVideoCodecs EncodingStreamBuilder::GetVideoCodecType() const {
   return VIDEO_H264_CODEC;
 }
 
-SupportedAudioCodecs EncodingStreamBuilder::GetAudioCodecType() const {
+SupportedAudioCodec EncodingStreamBuilder::GetAudioCodecType() const {
   EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
   const std::string acodec = conf->GetAudioEncoder();
   if (elements::encoders::IsAACEncoder(acodec)) {

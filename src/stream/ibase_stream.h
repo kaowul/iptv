@@ -52,7 +52,7 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
     virtual ~IStreamClient();
   };
 
-  enum inited_flags { INITED_NOTHING = 0x0000, INITED_VIDEO = 0x0001, INITED_AUDIO = 0x0002 };
+  enum InitedFlag { INITED_NOTHING = 0x0000, INITED_VIDEO = 0x0001, INITED_AUDIO = 0x0002 };
   enum { main_timer_msecs = 1000, no_data_panic_sec = 60, src_timeout_sec = no_data_panic_sec * 2 };
 
   // channel_id_t not empty
@@ -100,8 +100,8 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
   bool IsAudioInited() const;
   bool IsVideoInited() const;
 
-  void RegisterAudioCaps(SupportedAudioCodecs saudio, GstCaps* caps, element_id_t id);
-  void RegisterVideoCaps(SupportedVideoCodecs svideo, GstCaps* caps, element_id_t id);
+  void RegisterAudioCaps(SupportedAudioCodec saudio, GstCaps* caps, element_id_t id);
+  void RegisterVideoCaps(SupportedVideoCodec svideo, GstCaps* caps, element_id_t id);
 
   void SetAudioInited(bool val);
   void SetVideoInited(bool val);

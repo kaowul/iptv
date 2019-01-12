@@ -143,7 +143,7 @@ bool IsOtherFromType(const std::string& type, SupportedOtherType* oc) {
   return false;
 }
 
-bool IsDemuxerFromType(const std::string& type, SupportedDemuxers* dc) {
+bool IsDemuxerFromType(const std::string& type, SupportedDemuxer* dc) {
   if (type.empty() || !dc) {
     return false;
   }
@@ -159,7 +159,7 @@ bool IsDemuxerFromType(const std::string& type, SupportedDemuxers* dc) {
   return false;
 }
 
-bool IsVideoCodecFromType(const std::string& type, SupportedVideoCodecs* vc) {
+bool IsVideoCodecFromType(const std::string& type, SupportedVideoCodec* vc) {
   if (type.empty() || !vc) {
     return false;
   }
@@ -178,7 +178,7 @@ bool IsVideoCodecFromType(const std::string& type, SupportedVideoCodecs* vc) {
   return false;
 }
 
-bool IsAudioCodecFromType(const std::string& type, SupportedAudioCodecs* ac) {
+bool IsAudioCodecFromType(const std::string& type, SupportedAudioCodec* ac) {
   if (type.empty() || !ac) {
     return false;
   }
@@ -194,7 +194,7 @@ bool IsAudioCodecFromType(const std::string& type, SupportedAudioCodecs* ac) {
   return false;
 }
 
-bool IsRawStreamFromType(const std::string& type, SupportedRawStreams* rc) {
+bool IsRawStreamFromType(const std::string& type, SupportedRawStream* rc) {
   if (type.empty() || !rc) {
     return false;
   }

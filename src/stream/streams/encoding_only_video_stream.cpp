@@ -49,9 +49,9 @@ gboolean EncodingOnlyVideoStream::HandleDecodeBinAutoplugger(GstElement* elem, G
   }
 
   INFO_LOG() << GetID() << " caps notified: " << type_title << "(" << type_full << ")";
-  SupportedAudioCodecs saudio;
-  SupportedVideoCodecs svideo;
-  SupportedDemuxers sdemuxer;
+  SupportedAudioCodec saudio;
+  SupportedVideoCodec svideo;
+  SupportedDemuxer sdemuxer;
   bool is_audio = IsAudioCodecFromType(type_title, &saudio);
   bool is_video = IsVideoCodecFromType(type_title, &svideo);
   bool is_demuxer = IsDemuxerFromType(type_title, &sdemuxer);
@@ -100,7 +100,7 @@ gboolean EncodingOnlyVideoStream::HandleDecodeBinAutoplugger(GstElement* elem, G
     DNOTREACHED();
   }
 
-  SupportedRawStreams sraw;
+  SupportedRawStream sraw;
   SupportedOtherType otype;
   DCHECK(IsRawStreamFromType(type_title, &sraw) || IsOtherFromType(type_title, &otype));
   return TRUE;

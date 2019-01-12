@@ -40,8 +40,8 @@ class SrcDecodeStreamBuilder : public GstBaseBuilder {
   Connector BuildConverter(Connector conn) override = 0;
   Connector BuildOutput(Connector conn) override;
 
-  virtual SupportedVideoCodecs GetVideoCodecType() const = 0;
-  virtual SupportedAudioCodecs GetAudioCodecType() const = 0;
+  virtual SupportedVideoCodec GetVideoCodecType() const = 0;
+  virtual SupportedAudioCodec GetAudioCodecType() const = 0;
 
  protected:
   void HandleDecodebinCreated(elements::ElementDecodebin* decodebin);

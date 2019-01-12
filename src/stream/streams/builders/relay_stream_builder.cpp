@@ -14,6 +14,8 @@
 
 #include "stream/streams/builders/relay_stream_builder.h"
 
+#include <string>
+
 #include <common/sprintf.h>
 
 #include "stream/elements/parser/audio_parsers.h"
@@ -47,7 +49,7 @@ elements::Element* RelayStreamBuilder::BuildAudioUdbConnection() {
   return audio;
 }
 
-SupportedVideoCodecs RelayStreamBuilder::GetVideoCodecType() const {
+SupportedVideoCodec RelayStreamBuilder::GetVideoCodecType() const {
   RelayConfig* conf = static_cast<RelayConfig*>(api_);
   const std::string vparser = conf->GetVideoParser();
   if (vparser == elements::parser::ElementH264Parse::GetPluginName()) {
@@ -62,7 +64,7 @@ SupportedVideoCodecs RelayStreamBuilder::GetVideoCodecType() const {
   return VIDEO_H264_CODEC;
 }
 
-SupportedAudioCodecs RelayStreamBuilder::GetAudioCodecType() const {
+SupportedAudioCodec RelayStreamBuilder::GetAudioCodecType() const {
   RelayConfig* conf = static_cast<RelayConfig*>(api_);
   const std::string aparser = conf->GetAudioParser();
   if (aparser == elements::parser::ElementAACParse::GetPluginName()) {
