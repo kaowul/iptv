@@ -24,11 +24,9 @@
 
 #include <common/file_system/file_system.h>
 
-#include "constants.h"
+#include "config_fields.h"
 #include "gst_constants.h"
 #include "inputs_outputs.h"
-
-#include "server/stats/stat_credentials.h"
 
 #include "utils/arg_converter.h"
 
@@ -140,14 +138,6 @@ Validity validate_type(const std::string& value) {
     return Validity::INVALID;
   }
   return Validity::VALID;
-}
-
-Validity validate_stats_cred(const std::string& value) {
-  if (stats::StatCredentialsBase::IsValidCredentials(value)) {
-    return Validity::VALID;
-  }
-
-  return Validity::FATAL;
 }
 
 Validity validate_log_level(const std::string& value) {
@@ -442,8 +432,6 @@ bool FindOption(const std::string& key, option_t* opt) {
       {LOG_LEVEL_FIELD, validate_log_level},
       {INPUT_FIELD, validate_input},
       {OUTPUT_FIELD, validate_output},
-      {LOG_FILE_FIELD, dont_validate},
-      {STATS_CREDENTIALS_FIELD, validate_stats_cred},
       {AUTO_EXIT_TIME_FIELD, validate_auto_exit_time},
       {TIMESHIFT_DIR_FIELD, validate_timeshift_dir},
       {TIMESHIFT_CHUNK_MAX_LIFE_TIME_FIELD, validate_timeshift_chunk_max_life_time},

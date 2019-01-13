@@ -12,26 +12,4 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
-#define TS_EXTENSION "ts"
-#define M3U8_EXTENSION "m3u8"
-
-#define M3U8_CHUNK_MARKER "#EXTINF"
-
-#define DEFAULT_AUDIO_VOLUME 1.0
-#define DEFAULT_VIDEO_BITRATE 0
-#define DEFAULT_AUDIO_BITRATE 0
-#define DEFAULT_VOLUME 1
-#define DEFAULT_AUDIO_CHANNEL_COUNT 0
-#define DEFAULT_FRAME_RATE 0
-#define DEFAULT_VIDEO_HEIGHT 0
-#define DEFAULT_VIDEO_WIDTH 0
-#define DEFAULT_LOGO_ALPHA 1
-#define DEFAULT_AUDIO_SELECT -1
-#define DEFAULT_DECKLINK_VIDEO_MODE 1
-
-#define DEFAULT_ASPECT_RATIO_NUM 0
-#define DEFAULT_ASPECT_RATIO_DEN 0
-
-#define DEFAULT_TIMESHIFT_CHUNK_DURATION 120
+#include "config_fields.h"

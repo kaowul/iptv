@@ -16,7 +16,7 @@
 
 #include <string>
 
-#include "constants.h"  // for TYPE_FIELD, INPUT_FIELD, TIMESHIFT_DIR_FIELD
+#include "config_fields.h"
 
 #include "stream/streams/catchup_stream.h"
 #include "stream/streams/device_stream.h"

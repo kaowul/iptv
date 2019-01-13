@@ -19,7 +19,7 @@
 
 #include <common/convert2string.h>
 
-#include "constants.h"  // for INPUT_FIELD
+#include "config_fields.h"
 
 #include "utils/arg_converter.h"
 

@@ -25,7 +25,7 @@
 
 #include <common/file_system/string_path_utils.h>
 
-#include "constants.h"
+#include "config_fields.h"
 #include "process_wrapper.h"
 
 #include "utils/arg_converter.h"

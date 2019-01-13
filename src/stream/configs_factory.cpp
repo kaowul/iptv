@@ -17,6 +17,7 @@
 #include <map>
 #include <string>
 
+#include "config_fields.h"
 #include "constants.h"
 #include "gst_constants.h"
 

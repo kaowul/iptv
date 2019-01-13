@@ -24,9 +24,10 @@
 
 #include "stream/ibase_stream.h"
 
-#include "constants.h"  // for ID_FIELD
+#include "config_fields.h"  // for ID_FIELD
+#include "constants.h"
 #include "gst_constants.h"
-#include "stream_commands.h"  // for CMD_FIELD
+#include "stream_commands.h"
 
 #include "stream_commands_info/changed_sources_info.h"
 #include "stream_commands_info/restart_info.h"

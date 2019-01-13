@@ -31,7 +31,7 @@
 #include <common/string_util.h>
 
 #include "child_stream.h"
-#include "constants.h"
+#include "config_fields.h"
 #include "inputs_outputs.h"
 #include "stream_commands.h"
 
@@ -67,6 +67,10 @@
 
 #define CLIENT_PORT 6317
 
+#define SERVICE_ID_FIELD "id"
+#define SERVICE_STATS_CREDENTIALS_FIELD "stats_credentials"
+#define SERVICE_LOG_FILE_FIELD "log_file"
+
 namespace {
 
 common::ErrnoError create_pipe(int* read_client_fd, int* write_client_fd) {
@@ -85,8 +89,8 @@ common::ErrnoError create_pipe(int* read_client_fd, int* write_client_fd) {
   return common::ErrnoError();
 }
 
-std::string make_daemon_stats_id(std::string id) {
-  return common::MemSPrintf(DAEMON_STATS_1S, id);
+std::string make_daemon_stats_id(std::string sid) {
+  return common::MemSPrintf(DAEMON_STATS_1S, sid);
 }
 
 iptv_cloud::utils::ArgsMap read_slave_config(const std::string& path) {
@@ -103,25 +107,14 @@ iptv_cloud::utils::ArgsMap read_slave_config(const std::string& path) {
   std::string line;
   while (getline(config, line)) {
     const std::pair<std::string, std::string> pair = iptv_cloud::utils::GetKeyValue(line, '=');
-
-    iptv_cloud::server::options::option_t option;
-    if (!iptv_cloud::server::options::FindOption(pair.first, &option)) {
-      WARNING_LOG() << "Unknown option: " << pair.first;
+    if (pair.first == SERVICE_ID_FIELD) {
+      options.push_back(pair);
+    } else if (pair.first == SERVICE_STATS_CREDENTIALS_FIELD) {
+      options.push_back(pair);
+    } else if (pair.first == SERVICE_LOG_FILE_FIELD) {
+      options.push_back(pair);
     } else {
-      switch (option.second(pair.second)) {
-        case iptv_cloud::server::options::Validity::VALID:
-          options.push_back(pair);
-          break;
-        case iptv_cloud::server::options::Validity::INVALID:
-          WARNING_LOG() << "Invalid value \"" << pair.second << "\" of option " << pair.first;
-          break;
-        case iptv_cloud::server::options::Validity::FATAL:
-          CRITICAL_LOG() << "Invalid value \"" << pair.second << "\" of option " << pair.first;
-          break;
-        default:
-          NOTREACHED();
-          break;
-      }
+      WARNING_LOG() << "Unknown option: " << pair.first;
     }
   }
 
@@ -132,7 +125,7 @@ iptv_cloud::utils::ArgsMap read_slave_config(const std::string& path) {
 
 namespace iptv_cloud {
 namespace {
-std::string MakeSlaveStatsId(channel_id_t id) {
+std::string make_slave_stats_id(channel_id_t id) {
   return common::MemSPrintf(SLAVE_STATS_1S, id);
 }
 
@@ -458,7 +451,7 @@ void ProcessSlaveWrapper::BroadcastClients(const protocol::request_t& req) {
   std::vector<common::libev::IoClient*> clients = loop_->GetClients();
   for (size_t i = 0; i < clients.size(); ++i) {
     ProtocoledDaemonClient* dclient = dynamic_cast<ProtocoledDaemonClient*>(clients[i]);
-    if (dclient) {
+    if (dclient && dclient->IsVerified()) {
       dclient->WriteRequest(req);
     }
   }
@@ -847,7 +840,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::Proto
     }
 
     auto struc = stat.GetStreamStruct();
-    bool res = stats_->SetKey(MakeSlaveStatsId(struc->id), stream_stats);
+    bool res = stats_->SetKey(make_slave_stats_id(struc->id), stream_stats);
     if (!res) {
       WARNING_LOG() << "Failed to save stream statistic: " << stream_stats;
     }
@@ -1148,17 +1141,17 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponceStreamsCommand(pipe::Proto
 
 void ProcessSlaveWrapper::ReadConfig() {  // CONFIG_SLAVE_FILE_PATH
   utils::ArgsMap slave_config_args = read_slave_config(CONFIG_SLAVE_FILE_PATH);
-  if (!utils::ArgsGetValue(slave_config_args, ID_FIELD, &node_id_)) {
-    CRITICAL_LOG() << "Define " ID_FIELD " variable and make it valid.";
+  if (!utils::ArgsGetValue(slave_config_args, SERVICE_ID_FIELD, &node_id_)) {
+    CRITICAL_LOG() << "Define " SERVICE_ID_FIELD " variable and make it valid.";
   }
 
   std::string stats_data;
-  if (!utils::ArgsGetValue(slave_config_args, STATS_CREDENTIALS_FIELD, &stats_data)) {
-    CRITICAL_LOG() << "Define " STATS_CREDENTIALS_FIELD " variable and make it valid.";
+  if (!utils::ArgsGetValue(slave_config_args, SERVICE_STATS_CREDENTIALS_FIELD, &stats_data)) {
+    CRITICAL_LOG() << "Define " SERVICE_STATS_CREDENTIALS_FIELD " variable and make it valid.";
   }
 
-  if (!utils::ArgsGetValue(slave_config_args, LOG_FILE_FIELD, &log_path_)) {
-    WARNING_LOG() << "Define " LOG_FILE_FIELD " variable and make it valid, now used: " DUMMY_LOG_FILE_PATH ".";
+  if (!utils::ArgsGetValue(slave_config_args, SERVICE_LOG_FILE_FIELD, &log_path_)) {
+    WARNING_LOG() << "Define " SERVICE_LOG_FILE_FIELD " variable and make it valid, now used: " DUMMY_LOG_FILE_PATH ".";
     log_path_ = DUMMY_LOG_FILE_PATH;
   }
 
