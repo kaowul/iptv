@@ -16,13 +16,14 @@
     along with FastoTV. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server/commands_info/ping_info.h"
+#include "server/commands_info/service/ping_info.h"
 
 #define SERVER_INFO_TIMESTAMP_FIELD "timestamp"
 #define CLIENT_INFO_TIMESTAMP_FIELD "timestamp"
 
 namespace iptv_cloud {
 namespace server {
+namespace service {
 
 ServerPingInfo::ServerPingInfo() : timestamp_(common::time::current_utc_mstime()) {}
 
@@ -70,5 +71,6 @@ timestamp_t ClientPingInfo::GetTimeStamp() const {
   return timestamp_;
 }
 
+}  // namespace service
 }  // namespace server
 }  // namespace iptv_cloud

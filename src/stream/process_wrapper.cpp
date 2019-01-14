@@ -31,8 +31,8 @@
 
 #include "stream_commands_info/changed_sources_info.h"
 #include "stream_commands_info/restart_info.h"
+#include "stream_commands_info/statistic_info.h"
 #include "stream_commands_info/stop_info.h"
-#include "stream_commands_info/stream_struct_info.h"
 
 #include "stream/streams_factory.h"  // for isTimeshiftP...
 
@@ -61,7 +61,7 @@ bool PrepareStatus(StreamStruct* stats, StreamStatus st, double cpu_load, std::s
 
   long rss = common::system_info::GetProcessRss(static_cast<long>(getpid()));
   const time_t current_time = common::time::current_mstime() / 1000;
-  StreamStructInfo sinf(*stats, st, cpu_load, current_time, rss);
+  StatisticInfo sinf(*stats, st, cpu_load, current_time, rss);
 
   std::string out;
   common::Error err = sinf.SerializeToString(&out);

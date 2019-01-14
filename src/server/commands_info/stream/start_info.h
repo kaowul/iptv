@@ -14,40 +14,29 @@
 
 #pragma once
 
-#include <memory>
+#include <string>
 
 #include <common/serializer/json_serializer.h>
 
-#include "stream_struct.h"
-
 namespace iptv_cloud {
+namespace server {
+namespace stream {
 
-class StreamStructInfo : public common::serializer::JsonSerializer<StreamStructInfo> {
+class StartInfo : public common::serializer::JsonSerializer<StartInfo> {
  public:
-  typedef JsonSerializer<StreamStructInfo> base_class;
-  typedef double cpu_load_t;
-  typedef long rss_t;
-  typedef std::shared_ptr<StreamStruct> stream_struct_t;
+  typedef common::serializer::JsonSerializer<StartInfo> base_class;
+  StartInfo();
 
-  StreamStructInfo();
-  StreamStructInfo(const StreamStruct& str, StreamStatus st, cpu_load_t cpu_load, rss_t rss, time_t time);
-
-  stream_struct_t GetStreamStruct() const;
-  StreamStatus GetStatus() const;
-  cpu_load_t GetCpuLoad() const;
-  rss_t GetRss() const;
-  time_t GetTime() const;
+  std::string GetConfig() const;
 
  protected:
-  common::Error SerializeFields(json_object* out) const override;
   common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
 
  private:
-  stream_struct_t stream_struct_;
-  StreamStatus status_;
-  cpu_load_t cpu_load_;
-  rss_t rss_;
-  time_t time_;
+  std::string config_;
 };
 
+}  // namespace stream
+}  // namespace server
 }  // namespace iptv_cloud

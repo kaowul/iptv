@@ -20,7 +20,7 @@
 #include <common/net/types.h>
 
 #include "protocol/types.h"
-#include "server/commands_info/start_stream_info.h"
+#include "server/commands_info/stream/start_info.h"
 #include "stats/istat.h"
 #include "types.h"
 
@@ -81,7 +81,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
 
   protocol::sequance_id_t NextRequestID();
 
-  common::ErrnoError CreateChildStream(common::libev::IoLoop* server, const StartStreamInfo& start_info);
+  common::ErrnoError CreateChildStream(common::libev::IoLoop* server, const stream::StartInfo& start_info);
 
   common::ErrnoError HandleRequestChangedSourcesStream(pipe::ProtocoledPipeClient* pclient,
                                                        protocol::request_t* req) WARN_UNUSED_RESULT;

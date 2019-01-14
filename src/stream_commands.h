@@ -18,7 +18,8 @@
 
 #define STOP_STREAM "stop"
 #define RESTART_STREAM "restart"
-#define CHANGED_SOURCES_STREAM "changed_source"
+
+#define CHANGED_SOURCES_STREAM "changed_source_stream"
 #define STATISTIC_STREAM "statistic_stream"
 
 namespace iptv_cloud {
@@ -31,6 +32,6 @@ protocol::response_t StopStreamResponceSuccess(protocol::sequance_id_t id);
 
 // Broadcast
 protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params);  // ChangedSouresInfo
-protocol::request_t StatisticStreamBroadcast(protocol::serializet_params_t params);       // StreamStructInfo
+protocol::request_t StatisticStreamBroadcast(protocol::serializet_params_t params);       // StatisticInfo
 
 }  // namespace iptv_cloud

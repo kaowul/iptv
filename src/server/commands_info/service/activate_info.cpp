@@ -12,36 +12,16 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
-#include <common/serializer/json_serializer.h>
-
-#include "types.h"
+#include "server/commands_info/service/activate_info.h"
 
 namespace iptv_cloud {
 namespace server {
+namespace service {
 
-class StatusStreamInfo : public common::serializer::JsonSerializer<StatusStreamInfo> {
- public:
-  typedef JsonSerializer<StatusStreamInfo> base_class;
-  typedef channel_id_t stream_id_t;
+ActivateInfo::ActivateInfo() : LicenseInfo() {}
 
-  StatusStreamInfo();
-  explicit StatusStreamInfo(stream_id_t stream_id, int exit_status, int signal);
+ActivateInfo::ActivateInfo(const std::string& license) : LicenseInfo(license) {}
 
-  stream_id_t GetStreamID() const;
-  int GetSignal() const;
-  int GetExitStatus() const;
-
- protected:
-  common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* out) const override;
-
- private:
-  stream_id_t stream_id_;
-  int exit_status_;
-  int signal_;
-};
-
+}  // namespace service
 }  // namespace server
 }  // namespace iptv_cloud

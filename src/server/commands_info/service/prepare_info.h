@@ -21,11 +21,12 @@
 
 namespace iptv_cloud {
 namespace server {
+namespace service {
 
-class PrepareServiceInfo : public common::serializer::JsonSerializer<PrepareServiceInfo> {
+class PrepareInfo : public common::serializer::JsonSerializer<PrepareInfo> {
  public:
-  typedef JsonSerializer<PrepareServiceInfo> base_class;
-  PrepareServiceInfo();
+  typedef JsonSerializer<PrepareInfo> base_class;
+  PrepareInfo();
 
   std::string GetFeedbackDirectory() const;
   std::string GetTimeshiftsDirectory() const;
@@ -57,7 +58,7 @@ struct DirectoryState {
 };
 
 struct Directories {
-  explicit Directories(const iptv_cloud::server::PrepareServiceInfo& sinf);
+  explicit Directories(const PrepareInfo& sinf);
 
   const DirectoryState feedback_dir;
   const DirectoryState timeshift_dir;
@@ -65,11 +66,10 @@ struct Directories {
   const DirectoryState playlist_dir;
   const DirectoryState dvb_dir;
   const DirectoryState capture_card_dir;
-
-  bool IsValid() const;
 };
 
 std::string MakeDirectoryResponce(const Directories& dirs);
 
+}  // namespace service
 }  // namespace server
 }  // namespace iptv_cloud

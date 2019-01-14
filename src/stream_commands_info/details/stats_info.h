@@ -14,28 +14,28 @@
 
 #pragma once
 
-#include <string>
-
 #include <common/serializer/json_serializer.h>
 
+#include "stream_stats.h"
+
 namespace iptv_cloud {
-namespace server {
+namespace details {
 
-class LicenseInfo : public common::serializer::JsonSerializer<LicenseInfo> {
+class StatsInfo : public common::serializer::JsonSerializer<StatsInfo> {
  public:
-  typedef JsonSerializer<LicenseInfo> base_class;
-  LicenseInfo();
-  explicit LicenseInfo(const std::string& license);
+  typedef JsonSerializer<StatsInfo> base_class;
+  StatsInfo();
+  explicit StatsInfo(const StreamStats& stats);
 
-  std::string GetLicense() const;
+  StreamStats GetStats() const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
   common::Error SerializeFields(json_object* out) const override;
 
  private:
-  std::string license_;
+  StreamStats stats_;
 };
 
-}  // namespace server
+}  // namespace details
 }  // namespace iptv_cloud

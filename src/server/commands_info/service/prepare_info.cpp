@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server/commands_info/prepare_service_info.h"
+#include "server/commands_info/service/prepare_info.h"
 
 #include <string>
 
@@ -34,6 +34,7 @@
 
 namespace iptv_cloud {
 namespace server {
+namespace service {
 
 namespace {
 json_object* MakeDirectoryStateResponce(const DirectoryState& dir) {
@@ -53,7 +54,7 @@ json_object* MakeDirectoryStateResponce(const DirectoryState& dir) {
 }
 }  // namespace
 
-PrepareServiceInfo::PrepareServiceInfo()
+PrepareInfo::PrepareInfo()
     : base_class(),
       feedback_directory_(),
       timeshifts_directory_(),
@@ -62,31 +63,31 @@ PrepareServiceInfo::PrepareServiceInfo()
       dvb_directory_(),
       capture_card_directory_() {}
 
-std::string PrepareServiceInfo::GetFeedbackDirectory() const {
+std::string PrepareInfo::GetFeedbackDirectory() const {
   return feedback_directory_;
 }
 
-std::string PrepareServiceInfo::GetTimeshiftsDirectory() const {
+std::string PrepareInfo::GetTimeshiftsDirectory() const {
   return timeshifts_directory_;
 }
 
-std::string PrepareServiceInfo::GetHlsDirectory() const {
+std::string PrepareInfo::GetHlsDirectory() const {
   return hls_directory_;
 }
 
-std::string PrepareServiceInfo::GetPlaylistsDirectory() const {
+std::string PrepareInfo::GetPlaylistsDirectory() const {
   return playlists_directory_;
 }
 
-std::string PrepareServiceInfo::GetDvbDirectory() const {
+std::string PrepareInfo::GetDvbDirectory() const {
   return dvb_directory_;
 }
 
-std::string PrepareServiceInfo::GetCaptureDirectory() const {
+std::string PrepareInfo::GetCaptureDirectory() const {
   return capture_card_directory_;
 }
 
-common::Error PrepareServiceInfo::SerializeFields(json_object* out) const {
+common::Error PrepareInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD,
                          json_object_new_string(feedback_directory_.c_str()));
   json_object_object_add(out, PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD,
@@ -100,8 +101,8 @@ common::Error PrepareServiceInfo::SerializeFields(json_object* out) const {
   return common::Error();
 }
 
-common::Error PrepareServiceInfo::DoDeSerialize(json_object* serialized) {
-  PrepareServiceInfo inf;
+common::Error PrepareInfo::DoDeSerialize(json_object* serialized) {
+  PrepareInfo inf;
   json_object* jfeedback_directory = nullptr;
   json_bool jfeedback_directory_exists =
       json_object_object_get_ex(serialized, PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD, &jfeedback_directory);
@@ -168,18 +169,13 @@ DirectoryState::DirectoryState(const std::string& dir_str, const char* k)
   is_valid = true;
 }
 
-Directories::Directories(const iptv_cloud::server::PrepareServiceInfo& sinf)
+Directories::Directories(const PrepareInfo& sinf)
     : feedback_dir(sinf.GetFeedbackDirectory(), PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD),
       timeshift_dir(sinf.GetTimeshiftsDirectory(), PREPARE_SERVICE_INFO_TIMESHIFTS_DIRECTORY_FIELD),
       hls_dir(sinf.GetHlsDirectory(), PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD),
       playlist_dir(sinf.GetPlaylistsDirectory(), PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD),
       dvb_dir(sinf.GetDvbDirectory(), PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD),
       capture_card_dir(sinf.GetCaptureDirectory(), PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD) {}
-
-bool Directories::IsValid() const {
-  return feedback_dir.is_valid && timeshift_dir.is_valid && hls_dir.is_valid && playlist_dir.is_valid &&
-         dvb_dir.is_valid && capture_card_dir.is_valid;
-}
 
 std::string MakeDirectoryResponce(const Directories& dirs) {
   json_object* obj = json_object_new_array();
@@ -194,5 +190,6 @@ std::string MakeDirectoryResponce(const Directories& dirs) {
   return obj_str;
 }
 
+}  // namespace service
 }  // namespace server
 }  // namespace iptv_cloud

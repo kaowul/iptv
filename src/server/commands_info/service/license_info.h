@@ -16,28 +16,28 @@
 
 #include <string>
 
-#include <common/time.h>
-
-#include "server/commands_info/license_info.h"
+#include <common/serializer/json_serializer.h>
 
 namespace iptv_cloud {
 namespace server {
+namespace service {
 
-class StopServiceInfo : public LicenseInfo {
+class LicenseInfo : public common::serializer::JsonSerializer<LicenseInfo> {
  public:
-  typedef LicenseInfo base_class;
-  StopServiceInfo();
-  explicit StopServiceInfo(const std::string& license, common::time64_t delay = 0);
+  typedef JsonSerializer<LicenseInfo> base_class;
+  LicenseInfo();
+  explicit LicenseInfo(const std::string& license);
 
-  common::time64_t GetDelay() const;
+  std::string GetLicense() const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* obj) const override;
+  common::Error SerializeFields(json_object* out) const override;
 
  private:
-  common::time64_t delay_;
+  std::string license_;
 };
 
+}  // namespace service
 }  // namespace server
 }  // namespace iptv_cloud

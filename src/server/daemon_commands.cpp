@@ -97,8 +97,8 @@ protocol::request_t StatisitcServiceBroadcast(protocol::serializet_params_t para
   return protocol::request_t::MakeNotification(CLIENT_STATISTIC_SERVICE, params);
 }
 
-protocol::request_t StatusStreamBroadcast(protocol::serializet_params_t params) {
-  return protocol::request_t::MakeNotification(CLIENT_STATUS_STREAM, params);
+protocol::request_t QuitStatusStreamBroadcast(protocol::serializet_params_t params) {
+  return protocol::request_t::MakeNotification(CLIENT_QUIT_STATUS_STREAM, params);
 }
 
 }  // namespace server

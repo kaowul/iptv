@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server/commands_info/status_stream_info.h"
+#include "server/commands_info/stream/quit_status_info.h"
 
 #define STATUS_STREAM_INFO_STREAM_ID_FIELD "id"
 #define STATUS_STREAM_INFO_SIGNAL_FIELD "signal"
@@ -20,26 +20,27 @@
 
 namespace iptv_cloud {
 namespace server {
+namespace stream {
 
-StatusStreamInfo::StatusStreamInfo() : base_class(), stream_id_(), exit_status_(), signal_() {}
+QuitStatusInfo::QuitStatusInfo() : base_class(), stream_id_(), exit_status_(), signal_() {}
 
-StatusStreamInfo::StatusStreamInfo(stream_id_t stream_id, int exit_status, int signal)
+QuitStatusInfo::QuitStatusInfo(stream_id_t stream_id, int exit_status, int signal)
     : stream_id_(stream_id), exit_status_(exit_status), signal_(signal) {}
 
-StatusStreamInfo::stream_id_t StatusStreamInfo::GetStreamID() const {
+QuitStatusInfo::stream_id_t QuitStatusInfo::GetStreamID() const {
   return stream_id_;
 }
 
-int StatusStreamInfo::GetSignal() const {
+int QuitStatusInfo::GetSignal() const {
   return signal_;
 }
 
-int StatusStreamInfo::GetExitStatus() const {
+int QuitStatusInfo::GetExitStatus() const {
   return exit_status_;
 }
 
-common::Error StatusStreamInfo::DoDeSerialize(json_object* serialized) {
-  StatusStreamInfo inf;
+common::Error QuitStatusInfo::DoDeSerialize(json_object* serialized) {
+  QuitStatusInfo inf;
   json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(serialized, STATUS_STREAM_INFO_STREAM_ID_FIELD, &jid);
   if (!jid_exists) {
@@ -66,12 +67,13 @@ common::Error StatusStreamInfo::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-common::Error StatusStreamInfo::SerializeFields(json_object* out) const {
+common::Error QuitStatusInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, STATUS_STREAM_INFO_STREAM_ID_FIELD, json_object_new_string(stream_id_.c_str()));
   json_object_object_add(out, STATUS_STREAM_INFO_SIGNAL_FIELD, json_object_new_int(signal_));
   json_object_object_add(out, STATUS_STREAM_INFO_EXIT_STATUS_FIELD, json_object_new_int(exit_status_));
   return common::Error();
 }
 
+}  // namespace stream
 }  // namespace server
 }  // namespace iptv_cloud

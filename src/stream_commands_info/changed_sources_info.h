@@ -29,7 +29,7 @@ class ChangedSouresInfo : public common::serializer::JsonSerializer<ChangedSoure
   explicit ChangedSouresInfo(channel_id_t cid, const url_t& url);
 
   url_t GetUrl() const;
-  stream_id_t GetID() const;
+  channel_id_t GetID() const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;

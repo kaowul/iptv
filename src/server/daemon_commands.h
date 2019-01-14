@@ -37,7 +37,7 @@
 // Broadcast
 #define CLIENT_CHANGED_SOURCES_STREAM "changed_source_stream"
 #define CLIENT_STATISTIC_STREAM "statistic_stream"
-#define CLIENT_STATUS_STREAM "status_stream"
+#define CLIENT_QUIT_STATUS_STREAM "quit_status_stream"
 #define CLIENT_STATISTIC_SERVICE "statistic_service"
 
 namespace iptv_cloud {
@@ -45,7 +45,7 @@ namespace server {
 
 // requests
 protocol::request_t StopServiceRequest(protocol::sequance_id_t id,
-                                       protocol::serializet_params_t params);  // StopServiceInfo
+                                       protocol::serializet_params_t params);  // StopInfo
 protocol::request_t PingDaemonRequest(protocol::sequance_id_t id,
                                       protocol::serializet_params_t params);  // ServerPingInfo
 
@@ -56,7 +56,7 @@ protocol::response_t StopServiceResponceFail(protocol::sequance_id_t id, const s
 protocol::response_t ActivateResponceSuccess(protocol::sequance_id_t id);
 protocol::response_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::response_t StateServiceResponce(protocol::sequance_id_t id, const std::string& result);
+protocol::response_t StateServiceResponce(protocol::sequance_id_t id, const std::string& result);  // Directories
 
 protocol::response_t PingServiceResponce(protocol::sequance_id_t id,
                                          const std::string& result);  // ServerPingInfo
@@ -74,9 +74,9 @@ protocol::response_t RestartStreamResponceFail(protocol::sequance_id_t id, const
 
 // Broadcast
 protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params);  // ChangedSouresInfo
-protocol::request_t StatisitcStreamBroadcast(protocol::serializet_params_t params);       // StreamStructInfo
-protocol::request_t StatisitcServiceBroadcast(protocol::serializet_params_t params);      // StatisticServiceInfo
-protocol::request_t StatusStreamBroadcast(protocol::serializet_params_t params);          // StatusStreamInfo
+protocol::request_t StatisitcStreamBroadcast(protocol::serializet_params_t params);       // StatisticInfo
+protocol::request_t StatisitcServiceBroadcast(protocol::serializet_params_t params);      // StatisticInfo
+protocol::request_t QuitStatusStreamBroadcast(protocol::serializet_params_t params);      // StatusInfo
 
 }  // namespace server
 }  // namespace iptv_cloud

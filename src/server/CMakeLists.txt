@@ -2,29 +2,31 @@ SET(STREAMER_SERVICE_NAME ${STREAMER_NAME}_service)
 SET(STREAMER_SERVICE_NAME_EXE ${STREAMER_SERVICE_NAME}_s)
 
 SET(DAEMONS_HEADERS_COMANDS_INFO
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/start_stream_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_stream_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/restart_stream_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/license_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/prepare_service_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/activate_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/ping_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_service_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/statistic_service_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/status_stream_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/activate_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/license_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/stop_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/ping_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/statistic_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/prepare_info.h
+
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/start_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/quit_status_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/restart_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/stop_info.h
 )
 
 SET(DAEMONS_SOURCES_COMANDS_INFO
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/start_stream_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_stream_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/restart_stream_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/license_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/prepare_service_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/activate_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/ping_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stop_service_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/statistic_service_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/status_stream_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/license_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/activate_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/stop_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/ping_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/statistic_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/prepare_info.cpp
+
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/start_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/quit_status_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/restart_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/stop_info.cpp
 )
 
 SET(PIPE_HEADERS ${CMAKE_SOURCE_DIR}/src/server/pipe/pipe_client.h)

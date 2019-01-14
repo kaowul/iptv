@@ -12,11 +12,11 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream_commands_info/stream_struct_info.h"
+#include "stream_commands_info/statistic_info.h"
 
 #include <math.h>
 
-#include "stream_commands_info/stream_stats_info.h"
+#include "stream_commands_info/details/stats_info.h"
 
 #define FIELD_JOB_ID "id"
 #define FIELD_JOB_TYPE "type"
@@ -30,28 +30,13 @@
 #define FIELD_JOB_CUR_TIME "cur_time"
 
 #define FIELD_JOB_INPUT_STREAMS "input_streams"
-/*#define FIELD_JOB_INPUT_STREAM_ID "id"
-#define FIELD_JOB_INPUT_STREAM_LAST_PULL_TIME "last_pull_time"
-#define FIELD_JOB_INPUT_STREAM_BYTES_IN "bytes_in"
-#define FIELD_JOB_INPUT_STREAM_BYTES_PER_SEC_IN "in_bps"
-#define FIELD_JOB_INPUT_STREAM_IS_BROKEN "is_broken"*/
-
 #define FIELD_JOB_OUTPUT_STREAMS "output_streams"
-/*#define FIELD_JOB_OUTPUT_STREAM_ID "id"
-#define FIELD_JOB_OUTPUT_STREAM_LAST_PUSH_TIME "last_push_time"
-#define FIELD_JOB_OUTPUT_STREAM_BYTES_OUT "bytes_out"
-#define FIELD_JOB_OUTPUT_STREAM_BYTES_PER_SEC_OUT "out_bps"
-#define FIELD_JOB_OUTPUT_STREAM_IS_BROKEN "is_broken"*/
 
 namespace iptv_cloud {
 
-StreamStructInfo::StreamStructInfo() : stream_struct_(), status_(), cpu_load_(), rss_(), time_() {}
+StatisticInfo::StatisticInfo() : stream_struct_(), status_(), cpu_load_(), rss_(), time_() {}
 
-StreamStructInfo::StreamStructInfo(const StreamStruct& str,
-                                   StreamStatus st,
-                                   cpu_load_t cpu_load,
-                                   rss_t rss,
-                                   time_t time)
+StatisticInfo::StatisticInfo(const StreamStruct& str, StreamStatus st, cpu_load_t cpu_load, rss_t rss, time_t time)
     : stream_struct_(), status_(st), cpu_load_(cpu_load), rss_(rss), time_(time) {
   input_stream_info_t input;
   for (auto it = str.input.rbegin(); it != str.input.rend(); ++it) {
@@ -73,27 +58,27 @@ StreamStructInfo::StreamStructInfo(const StreamStruct& str,
   }*/
 }
 
-StreamStructInfo::stream_struct_t StreamStructInfo::GetStreamStruct() const {
+StatisticInfo::stream_struct_t StatisticInfo::GetStreamStruct() const {
   return stream_struct_;
 }
 
-StreamStatus StreamStructInfo::GetStatus() const {
+StreamStatus StatisticInfo::GetStatus() const {
   return status_;
 }
 
-StreamStructInfo::cpu_load_t StreamStructInfo::GetCpuLoad() const {
+StatisticInfo::cpu_load_t StatisticInfo::GetCpuLoad() const {
   return cpu_load_;
 }
 
-StreamStructInfo::rss_t StreamStructInfo::GetRss() const {
+StatisticInfo::rss_t StatisticInfo::GetRss() const {
   return rss_;
 }
 
-time_t StreamStructInfo::GetTime() const {
+time_t StatisticInfo::GetTime() const {
   return time_;
 }
 
-common::Error StreamStructInfo::SerializeFields(json_object* out) const {
+common::Error StatisticInfo::SerializeFields(json_object* out) const {
   if (!stream_struct_ || !stream_struct_->IsValid()) {
     return common::make_error_inval();
   }
@@ -106,7 +91,7 @@ common::Error StreamStructInfo::SerializeFields(json_object* out) const {
   json_object* jinput_streams = json_object_new_array();
   for (StreamStats* inf : input_streams) {
     json_object* jinf = nullptr;
-    StreamStatsInfo sinf(*inf);
+    details::StatsInfo sinf(*inf);
     common::Error err = sinf.Serialize(&jinf);
     if (err) {
       continue;
@@ -119,7 +104,7 @@ common::Error StreamStructInfo::SerializeFields(json_object* out) const {
   json_object* joutput_streams = json_object_new_array();
   for (StreamStats* inf : output_streams) {
     json_object* jinf = nullptr;
-    StreamStatsInfo sinf(*inf);
+    details::StatsInfo sinf(*inf);
     common::Error err = sinf.Serialize(&jinf);
     if (err) {
       continue;
@@ -138,7 +123,7 @@ common::Error StreamStructInfo::SerializeFields(json_object* out) const {
   return common::Error();
 }
 
-common::Error StreamStructInfo::DoDeSerialize(json_object* serialized) {
+common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
   json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(serialized, FIELD_JOB_ID, &jid);
   if (!jid_exists) {
@@ -160,7 +145,7 @@ common::Error StreamStructInfo::DoDeSerialize(json_object* serialized) {
     int len = json_object_array_length(jinput);
     for (int i = len - 1; i >= 0; --i) {
       json_object* jin = json_object_array_get_idx(jinput, i);
-      StreamStatsInfo sinf;
+      details::StatsInfo sinf;
       common::Error err = sinf.DeSerialize(jin);
       if (err) {
         continue;
@@ -177,7 +162,7 @@ common::Error StreamStructInfo::DoDeSerialize(json_object* serialized) {
     int len = json_object_array_length(joutput);
     for (int i = len - 1; i >= 0; --i) {
       json_object* jin = json_object_array_get_idx(joutput, i);
-      StreamStatsInfo sinf;
+      details::StatsInfo sinf;
       common::Error err = sinf.DeSerialize(jin);
       if (err) {
         continue;
@@ -238,7 +223,7 @@ common::Error StreamStructInfo::DoDeSerialize(json_object* serialized) {
   }
 
   StreamStruct strct(cid, type, input, output, start_time, loop_start_time, restarts);
-  *this = StreamStructInfo(strct, st, cpu_load, rss, time);
+  *this = StatisticInfo(strct, st, cpu_load, rss, time);
   return common::Error();
 }
 

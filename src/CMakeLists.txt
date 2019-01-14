@@ -43,15 +43,15 @@ SET(STREAM_COMMANDS_INFO_HEADERS
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/stop_info.h
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/restart_info.h
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/changed_sources_info.h
-  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/stream_stats_info.h
-  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/stream_struct_info.h
+  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/statistic_info.h
+  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/details/stats_info.h
 )
 SET(STREAM_COMMANDS_INFO_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/stop_info.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/restart_info.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/changed_sources_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/stream_stats_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/stream_struct_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/statistic_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/details/stats_info.cpp
 )
 
 FIND_PACKAGE(Common REQUIRED)

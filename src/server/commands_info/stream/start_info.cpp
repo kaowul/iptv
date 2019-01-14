@@ -12,37 +12,42 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server/commands_info/license_info.h"
+#include "server/commands_info/stream/start_info.h"
 
-#define LICENSE_INFO_KEY_FIELD "license_key"
+#define START_STREAM_INFO_CONFIG_KEY_FIELD "config"
 
 namespace iptv_cloud {
 namespace server {
+namespace stream {
 
-LicenseInfo::LicenseInfo() : base_class(), license_() {}
+StartInfo::StartInfo() : base_class(), config_() {}
 
-LicenseInfo::LicenseInfo(const std::string& license) : base_class(), license_(license) {}
-
-common::Error LicenseInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, LICENSE_INFO_KEY_FIELD, json_object_new_string(license_.c_str()));
-  return common::Error();
+std::string StartInfo::GetConfig() const {
+  return config_;
 }
 
-common::Error LicenseInfo::DoDeSerialize(json_object* serialized) {
-  LicenseInfo inf;
-  json_object* jlicense = nullptr;
-  json_bool jlicense_exists = json_object_object_get_ex(serialized, LICENSE_INFO_KEY_FIELD, &jlicense);
-  if (jlicense_exists) {
-    inf.license_ = json_object_get_string(jlicense);
+common::Error StartInfo::DoDeSerialize(json_object* serialized) {
+  if (!serialized) {
+    return common::make_error_inval();
   }
 
+  json_object* jconfig = nullptr;
+  json_bool jconfig_exists = json_object_object_get_ex(serialized, START_STREAM_INFO_CONFIG_KEY_FIELD, &jconfig);
+  if (!jconfig_exists) {
+    return common::make_error_inval();
+  }
+
+  StartInfo inf;
+  inf.config_ = json_object_get_string(jconfig);
   *this = inf;
   return common::Error();
 }
 
-std::string LicenseInfo::GetLicense() const {
-  return license_;
+common::Error StartInfo::SerializeFields(json_object* out) const {
+  json_object_object_add(out, START_STREAM_INFO_CONFIG_KEY_FIELD, json_object_new_string(config_.c_str()));
+  return common::Error();
 }
 
+}  // namespace stream
 }  // namespace server
 }  // namespace iptv_cloud

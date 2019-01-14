@@ -12,14 +12,22 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server/commands_info/activate_info.h"
+#pragma once
+
+#include <string>
+
+#include "server/commands_info/service/license_info.h"
 
 namespace iptv_cloud {
 namespace server {
+namespace service {
 
-ActivateInfo::ActivateInfo() : LicenseInfo() {}
+class ActivateInfo : public LicenseInfo {
+ public:
+  ActivateInfo();
+  explicit ActivateInfo(const std::string& license);
+};
 
-ActivateInfo::ActivateInfo(const std::string& license) : LicenseInfo(license) {}
-
+}  // namespace service
 }  // namespace server
 }  // namespace iptv_cloud

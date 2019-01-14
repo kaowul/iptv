@@ -39,14 +39,14 @@
 
 #include "pipe/pipe_client.h"
 
-#include "server/commands_info/activate_info.h"
-#include "server/commands_info/ping_info.h"
-#include "server/commands_info/prepare_service_info.h"
-#include "server/commands_info/restart_stream_info.h"
-#include "server/commands_info/statistic_service_info.h"
-#include "server/commands_info/status_stream_info.h"
-#include "server/commands_info/stop_service_info.h"
-#include "server/commands_info/stop_stream_info.h"
+#include "server/commands_info/service/activate_info.h"
+#include "server/commands_info/service/ping_info.h"
+#include "server/commands_info/service/prepare_info.h"
+#include "server/commands_info/service/statistic_info.h"
+#include "server/commands_info/service/stop_info.h"
+#include "server/commands_info/stream/quit_status_info.h"
+#include "server/commands_info/stream/restart_info.h"
+#include "server/commands_info/stream/stop_info.h"
 #include "server/daemon_client.h"
 #include "server/daemon_commands.h"
 #include "server/daemon_server.h"
@@ -54,7 +54,7 @@
 #include "server/stream_struct_utils.h"
 
 #include "stream_commands_info/changed_sources_info.h"
-#include "stream_commands_info/stream_struct_info.h"
+#include "stream_commands_info/statistic_info.h"
 
 #include "gpu_stats/perf_monitor.h"
 
@@ -243,7 +243,7 @@ int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
     return EXIT_FAILURE;
   }
 
-  StopServiceInfo stop_req(license);
+  service::StopInfo stop_req(license);
   std::string stop_str;
   common::Error serialize_error = stop_req.SerializeToString(&stop_str);
   if (serialize_error) {
@@ -349,7 +349,7 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
       ProtocoledDaemonClient* dclient = dynamic_cast<ProtocoledDaemonClient*>(client);
       if (dclient && dclient->IsVerified()) {
         std::string ping_server_json;
-        ServerPingInfo server_ping_info;
+        service::ServerPingInfo server_ping_info;
         common::Error err_ser = server_ping_info.SerializeToString(&ping_server_json);
         if (err_ser) {
           continue;
@@ -384,8 +384,8 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
       utils::SysinfoShot sshot = utils::GetMachineSysinfoShot();
       std::string uptime_str = common::MemSPrintf("%lu %lu %lu", sshot.loads[0], sshot.loads[1], sshot.loads[2]);
 
-      StatisticServiceInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
-                                bytes_recv, bytes_send, sshot);
+      service::StatisticInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
+                                  bytes_recv, bytes_send, sshot);
       std::string node_stats;
       common::Error err_ser = stat.SerializeToString(&node_stats);
       if (err_ser) {
@@ -436,16 +436,16 @@ void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int 
   loop_->UnRegisterChild(child);
   delete child;
 
-  std::string changed_json;
-  StatusStreamInfo ch_status_info(cid, stabled_status, signal_number);
-  common::Error err_ser = ch_status_info.SerializeToString(&changed_json);
+  std::string quit_json;
+  stream::QuitStatusInfo ch_status_info(cid, stabled_status, signal_number);
+  common::Error err_ser = ch_status_info.SerializeToString(&quit_json);
   if (err_ser) {
     const std::string err_str = err_ser->GetDescription();
     WARNING_LOG() << "Failed to generate strean exit message: " << err_str;
     return;
   }
 
-  BroadcastClients(StatusStreamBroadcast(changed_json));
+  BroadcastClients(QuitStatusStreamBroadcast(quit_json));
 }
 
 ChildStream* ProcessSlaveWrapper::FindChildByID(channel_id_t cid) const {
@@ -602,7 +602,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(Protocole
       return common::make_errno_error_inval();
     }
 
-    StopServiceInfo stop_info;
+    service::StopInfo stop_info;
     common::Error err_des = stop_info.DeSerialize(jstop);
     json_object_put(jstop);
     if (err_des) {
@@ -650,7 +650,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponcePingService(ProtocoledDaem
       return common::make_errno_error_inval();
     }
 
-    ClientPingInfo client_ping_info;
+    service::ClientPingInfo client_ping_info;
     common::Error err_des = client_ping_info.DeSerialize(jclient_ping);
     json_object_put(jclient_ping);
     if (err_des) {
@@ -663,7 +663,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponcePingService(ProtocoledDaem
 }
 
 common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop* server,
-                                                          const StartStreamInfo& start_info) {
+                                                          const stream::StartInfo& start_info) {
   CHECK(loop_->IsLoopThread());
   const std::string config_str = start_info.GetConfig();
 
@@ -837,7 +837,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::Proto
       return common::make_errno_error_inval();
     }
 
-    StreamStructInfo stat;
+    StatisticInfo stat;
     common::Error err_des = stat.DeSerialize(jrequest_stat);
     json_object_put(jrequest_stat);
     if (err_des) {
@@ -879,7 +879,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStartStream(Protocole
       return common::make_errno_error_inval();
     }
 
-    StartStreamInfo start_info;
+    stream::StartInfo start_info;
     common::Error err_des = start_info.DeSerialize(jstart_info);
     json_object_put(jstart_info);
     if (err_des) {
@@ -922,7 +922,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopStream(Protocoled
       return common::make_errno_error_inval();
     }
 
-    StopStreamInfo stop_info;
+    stream::StopInfo stop_info;
     common::Error err_des = stop_info.DeSerialize(jstop_info);
     json_object_put(jstop_info);
     if (err_des) {
@@ -960,7 +960,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientRestartStream(Protoco
       return common::make_errno_error_inval();
     }
 
-    RestartStreamInfo restart_info;
+    stream::RestartInfo restart_info;
     common::Error err_des = restart_info.DeSerialize(jrestart_info);
     json_object_put(jrestart_info);
     if (err_des) {
@@ -998,7 +998,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPrepareService(Protoc
       return common::make_errno_error_inval();
     }
 
-    PrepareServiceInfo state_info;
+    service::PrepareInfo state_info;
     common::Error err_des = state_info.DeSerialize(jservice_state);
     json_object_put(jservice_state);
     if (err_des) {
@@ -1006,8 +1006,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPrepareService(Protoc
       return common::make_errno_error(err_str, EAGAIN);
     }
 
-    Directories dirs(state_info);
-    std::string resp_str = MakeDirectoryResponce(dirs);
+    service::Directories dirs(state_info);
+    std::string resp_str = service::MakeDirectoryResponce(dirs);
     protocol::response_t resp = StateServiceResponce(req->id, resp_str);
     dclient->WriteResponce(resp);
     return common::ErrnoError();
@@ -1026,7 +1026,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(ProtocoledDa
       return common::make_errno_error_inval();
     }
 
-    ActivateInfo activate_info;
+    service::ActivateInfo activate_info;
     common::Error err_des = activate_info.DeSerialize(jactivate);
     json_object_put(jactivate);
     if (err_des) {
@@ -1066,7 +1066,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPingService(Protocole
       return common::make_errno_error_inval();
     }
 
-    ClientPingInfo client_ping_info;
+    service::ClientPingInfo client_ping_info;
     common::Error err_des = client_ping_info.DeSerialize(jstop);
     json_object_put(jstop);
     if (err_des) {
@@ -1075,7 +1075,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPingService(Protocole
     }
 
     std::string ping_server_json;
-    ServerPingInfo server_ping_info;
+    service::ServerPingInfo server_ping_info;
     common::Error err_ser = server_ping_info.SerializeToString(&ping_server_json);
     if (err_ser) {
       const std::string err_str = err_ser->GetDescription();

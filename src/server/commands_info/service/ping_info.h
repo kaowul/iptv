@@ -24,6 +24,7 @@
 
 namespace iptv_cloud {
 namespace server {
+namespace service {
 
 typedef common::time64_t timestamp_t;
 
@@ -55,5 +56,6 @@ class ClientPingInfo : public common::serializer::JsonSerializer<ClientPingInfo>
   timestamp_t timestamp_;  // utc time
 };
 
+}  // namespace service
 }  // namespace server
 }  // namespace iptv_cloud

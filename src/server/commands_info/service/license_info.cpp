@@ -12,38 +12,39 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server/commands_info/restart_stream_info.h"
+#include "server/commands_info/service/license_info.h"
 
-#define RESTART_INFO_STREAM_ID_FIELD "id"
+#define LICENSE_INFO_KEY_FIELD "license_key"
 
 namespace iptv_cloud {
 namespace server {
+namespace service {
 
-RestartStreamInfo::RestartStreamInfo() : base_class(), stream_id_() {}
+LicenseInfo::LicenseInfo() : base_class(), license_() {}
 
-RestartStreamInfo::RestartStreamInfo(stream_id_t stream_id) : stream_id_(stream_id) {}
+LicenseInfo::LicenseInfo(const std::string& license) : base_class(), license_(license) {}
 
-RestartStreamInfo::stream_id_t RestartStreamInfo::GetStreamID() const {
-  return stream_id_;
+common::Error LicenseInfo::SerializeFields(json_object* out) const {
+  json_object_object_add(out, LICENSE_INFO_KEY_FIELD, json_object_new_string(license_.c_str()));
+  return common::Error();
 }
 
-common::Error RestartStreamInfo::DoDeSerialize(json_object* serialized) {
-  RestartStreamInfo inf;
-  json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, RESTART_INFO_STREAM_ID_FIELD, &jid);
-  if (!jid_exists) {
-    return common::make_error_inval();
+common::Error LicenseInfo::DoDeSerialize(json_object* serialized) {
+  LicenseInfo inf;
+  json_object* jlicense = nullptr;
+  json_bool jlicense_exists = json_object_object_get_ex(serialized, LICENSE_INFO_KEY_FIELD, &jlicense);
+  if (jlicense_exists) {
+    inf.license_ = json_object_get_string(jlicense);
   }
 
-  inf.stream_id_ = json_object_get_string(jid);
   *this = inf;
   return common::Error();
 }
 
-common::Error RestartStreamInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, RESTART_INFO_STREAM_ID_FIELD, json_object_new_string(stream_id_.c_str()));
-  return common::Error();
+std::string LicenseInfo::GetLicense() const {
+  return license_;
 }
 
+}  // namespace service
 }  // namespace server
 }  // namespace iptv_cloud

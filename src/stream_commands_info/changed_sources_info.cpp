@@ -36,6 +36,10 @@ ChangedSouresInfo::url_t ChangedSouresInfo::GetUrl() const {
   return url_;
 }
 
+channel_id_t ChangedSouresInfo::GetID() const {
+  return id_;
+}
+
 common::Error ChangedSouresInfo::DoDeSerialize(json_object* serialized) {
   json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(serialized, CHANGE_SOURCES_ID_FIELD, &jid);
