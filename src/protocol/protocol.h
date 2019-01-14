@@ -15,6 +15,7 @@
 #pragma once
 
 #include <map>
+#include <string>
 
 #include <common/libev/io_client.h>
 
@@ -28,7 +29,7 @@ enum { MAX_COMMAND_SIZE = 1024 * 8 };
 
 namespace detail {
 common::ErrnoError WriteRequest(common::libev::IoClient* client, const request_t& request) WARN_UNUSED_RESULT;
-common::ErrnoError WriteResponce(common::libev::IoClient* client, const responce_t& responce) WARN_UNUSED_RESULT;
+common::ErrnoError WriteResponce(common::libev::IoClient* client, const response_t& responce) WARN_UNUSED_RESULT;
 common::ErrnoError ReadCommand(common::libev::IoClient* client, std::string* out) WARN_UNUSED_RESULT;
 }  // namespace detail
 
@@ -48,7 +49,7 @@ class ProtocolClient : public Client {
     return err;
   }
 
-  common::ErrnoError WriteResponce(const responce_t& responce) WARN_UNUSED_RESULT {
+  common::ErrnoError WriteResponce(const response_t& responce) WARN_UNUSED_RESULT {
     return detail::WriteResponce(this, responce);
   }
 

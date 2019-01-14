@@ -64,12 +64,12 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   virtual common::ErrnoError HandleRequestServiceCommand(ProtocoledDaemonClient* dclient,
                                                          protocol::request_t* req) WARN_UNUSED_RESULT;
   virtual common::ErrnoError HandleResponceServiceCommand(ProtocoledDaemonClient* dclient,
-                                                          protocol::responce_t* resp) WARN_UNUSED_RESULT;
+                                                          protocol::response_t* resp) WARN_UNUSED_RESULT;
 
   virtual common::ErrnoError HandleRequestStreamsCommand(pipe::ProtocoledPipeClient* pclient,
                                                          protocol::request_t* req) WARN_UNUSED_RESULT;
   virtual common::ErrnoError HandleResponceStreamsCommand(pipe::ProtocoledPipeClient* pclient,
-                                                          protocol::responce_t* resp) WARN_UNUSED_RESULT;
+                                                          protocol::response_t* resp) WARN_UNUSED_RESULT;
 
  private:
   ChildStream* FindChildByID(channel_id_t cid) const;
@@ -107,7 +107,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
                                                     protocol::request_t* req) WARN_UNUSED_RESULT;
 
   common::ErrnoError HandleResponcePingService(ProtocoledDaemonClient* dclient,
-                                               protocol::responce_t* resp) WARN_UNUSED_RESULT;
+                                               protocol::response_t* resp) WARN_UNUSED_RESULT;
 
   void ReadConfig();
   void ClearStat();

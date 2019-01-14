@@ -14,26 +14,34 @@
 
 #pragma once
 
-#include <string>
+#include <common/serializer/json_serializer.h>
 
-#include <common/protocols/json_rpc/json_rpc.h>
-
-#define OK_RESULT "OK"
+#include "types.h"
 
 namespace iptv_cloud {
-namespace protocol {
+namespace server {
 
-typedef common::protocols::json_rpc::JsonRPCResponse response_t;
-typedef common::protocols::json_rpc::JsonRPCRequest request_t;
-typedef uint64_t seq_id_t;
-typedef common::protocols::json_rpc::json_rpc_id sequance_id_t;
-typedef common::protocols::json_rpc::json_rpc_request_params serializet_params_t;
+class StatusStreamInfo : public common::serializer::JsonSerializer<StatusStreamInfo> {
+ public:
+  typedef JsonSerializer<StatusStreamInfo> base_class;
+  typedef channel_id_t stream_id_t;
 
-common::protocols::json_rpc::JsonRPCMessage MakeSuccessMessage(const std::string& result = OK_RESULT);
-common::protocols::json_rpc::JsonRPCError MakeServerErrorFromText(const std::string& error_text);
-common::protocols::json_rpc::JsonRPCError MakeInternalErrorFromText(const std::string& error_text);
+  StatusStreamInfo();
+  explicit StatusStreamInfo(stream_id_t stream_id, int exit_status, int signal);
 
-sequance_id_t MakeRequestID(seq_id_t sid);
+  stream_id_t GetStreamID() const;
+  int GetSignal() const;
+  int GetExitStatus() const;
 
-}  // namespace protocol
+ protected:
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
+
+ private:
+  stream_id_t stream_id_;
+  int exit_status_;
+  int signal_;
+};
+
+}  // namespace server
 }  // namespace iptv_cloud

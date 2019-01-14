@@ -37,6 +37,7 @@
 // Broadcast
 #define CLIENT_CHANGED_SOURCES_STREAM "changed_source_stream"
 #define CLIENT_STATISTIC_STREAM "statistic_stream"
+#define CLIENT_STATUS_STREAM "status_stream"
 #define CLIENT_STATISTIC_SERVICE "statistic_service"
 
 namespace iptv_cloud {
@@ -49,32 +50,33 @@ protocol::request_t PingDaemonRequest(protocol::sequance_id_t id,
                                       protocol::serializet_params_t params);  // ServerPingInfo
 
 // responces service
-protocol::responce_t StopServiceResponceSuccess(protocol::sequance_id_t id);
-protocol::responce_t StopServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
+protocol::response_t StopServiceResponceSuccess(protocol::sequance_id_t id);
+protocol::response_t StopServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::responce_t ActivateResponceSuccess(protocol::sequance_id_t id);
-protocol::responce_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text);
+protocol::response_t ActivateResponceSuccess(protocol::sequance_id_t id);
+protocol::response_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::responce_t StateServiceResponce(protocol::sequance_id_t id, const std::string& result);
+protocol::response_t StateServiceResponce(protocol::sequance_id_t id, const std::string& result);
 
-protocol::responce_t PingServiceResponce(protocol::sequance_id_t id,
+protocol::response_t PingServiceResponce(protocol::sequance_id_t id,
                                          const std::string& result);  // ServerPingInfo
-protocol::responce_t PingServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
+protocol::response_t PingServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
 // responces streams
-protocol::responce_t StartStreamResponceSuccess(protocol::sequance_id_t id);
-protocol::responce_t StartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
+protocol::response_t StartStreamResponceSuccess(protocol::sequance_id_t id);
+protocol::response_t StartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::responce_t StopStreamResponceSuccess(protocol::sequance_id_t id);
-protocol::responce_t StopStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
+protocol::response_t StopStreamResponceSuccess(protocol::sequance_id_t id);
+protocol::response_t StopStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::responce_t RestartStreamResponceSuccess(protocol::sequance_id_t id);
-protocol::responce_t RestartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
+protocol::response_t RestartStreamResponceSuccess(protocol::sequance_id_t id);
+protocol::response_t RestartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
 // Broadcast
 protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params);  // ChangedSouresInfo
-protocol::request_t StatisitcStreamBroadcast(protocol::serializet_params_t params);
-protocol::request_t StatisitcServiceBroadcast(protocol::serializet_params_t params);
+protocol::request_t StatisitcStreamBroadcast(protocol::serializet_params_t params);       // StreamStructInfo
+protocol::request_t StatisitcServiceBroadcast(protocol::serializet_params_t params);      // StatisticServiceInfo
+protocol::request_t StatusStreamBroadcast(protocol::serializet_params_t params);          // StatusStreamInfo
 
 }  // namespace server
 }  // namespace iptv_cloud

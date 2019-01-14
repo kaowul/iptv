@@ -44,6 +44,7 @@
 #include "server/commands_info/prepare_service_info.h"
 #include "server/commands_info/restart_stream_info.h"
 #include "server/commands_info/statistic_service_info.h"
+#include "server/commands_info/status_stream_info.h"
 #include "server/commands_info/stop_service_info.h"
 #include "server/commands_info/stop_stream_info.h"
 #include "server/daemon_client.h"
@@ -415,8 +416,9 @@ void ProcessSlaveWrapper::Moved(common::libev::IoLoop* server, common::libev::Io
 
 void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int status) {
   ChildStream* channel = static_cast<ChildStream*>(child);
+  const channel_id_t cid = channel->GetChannelID();
 
-  INFO_LOG() << "Successful finished children id: " << channel->GetChannelID();
+  INFO_LOG() << "Successful finished children id: " << cid;
   int stabled_status = EXIT_SUCCESS;
   int signal_number = 0;
 
@@ -428,11 +430,22 @@ void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int 
   if (WIFSIGNALED(status)) {
     signal_number = WTERMSIG(status);
   }
-  INFO_LOG() << "Stream id: " << channel->GetChannelID()
-             << ", exit with status: " << (stabled_status ? "FAILURE" : "SUCCESS") << ", signal: " << signal_number;
+  INFO_LOG() << "Stream id: " << cid << ", exit with status: " << (stabled_status ? "FAILURE" : "SUCCESS")
+             << ", signal: " << signal_number;
 
   loop_->UnRegisterChild(child);
   delete child;
+
+  std::string changed_json;
+  StatusStreamInfo ch_status_info(cid, stabled_status, signal_number);
+  common::Error err_ser = ch_status_info.SerializeToString(&changed_json);
+  if (err_ser) {
+    const std::string err_str = err_ser->GetDescription();
+    WARNING_LOG() << "Failed to generate strean exit message: " << err_str;
+    return;
+  }
+
+  BroadcastClients(StatusStreamBroadcast(changed_json));
 }
 
 ChildStream* ProcessSlaveWrapper::FindChildByID(channel_id_t cid) const {
@@ -467,7 +480,7 @@ common::ErrnoError ProcessSlaveWrapper::DaemonDataReceived(ProtocoledDaemonClien
   }
 
   protocol::request_t* req = nullptr;
-  protocol::responce_t* resp = nullptr;
+  protocol::response_t* resp = nullptr;
   common::Error err_parse = common::protocols::json_rpc::ParseJsonRPC(input_command, &req, &resp);
   if (err_parse) {
     const std::string err_str = err_parse->GetDescription();
@@ -506,7 +519,7 @@ common::ErrnoError ProcessSlaveWrapper::PipeDataReceived(pipe::ProtocoledPipeCli
   }
 
   protocol::request_t* req = nullptr;
-  protocol::responce_t* resp = nullptr;
+  protocol::response_t* resp = nullptr;
   common::Error err_parse = common::protocols::json_rpc::ParseJsonRPC(input_command, &req, &resp);
   if (err_parse) {
     const std::string err_str = err_parse->GetDescription();
@@ -604,7 +617,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(Protocole
 
     if (cleanup_timer_ != INVALID_TIMER_ID) {
       // in progress
-      protocol::responce_t resp = StopServiceResponceFail(req->id, "Stop service in progress...");
+      protocol::response_t resp = StopServiceResponceFail(req->id, "Stop service in progress...");
       dclient->WriteResponce(resp);
 
       return common::ErrnoError();
@@ -616,7 +629,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(Protocole
       channel->SendStop(NextRequestID());
     }
 
-    protocol::responce_t resp = StopServiceResponceSuccess(req->id);
+    protocol::response_t resp = StopServiceResponceSuccess(req->id);
     dclient->WriteResponce(resp);
 
     cleanup_timer_ = loop_->CreateTimer(cleanup_seconds, false);
@@ -627,7 +640,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopService(Protocole
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleResponcePingService(ProtocoledDaemonClient* dclient,
-                                                                  protocol::responce_t* resp) {
+                                                                  protocol::response_t* resp) {
   UNUSED(dclient);
   CHECK(loop_->IsLoopThread());
   if (resp->IsMessage()) {
@@ -877,12 +890,12 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStartStream(Protocole
     common::libev::IoLoop* server = dclient->GetServer();
     common::ErrnoError err = CreateChildStream(server, start_info);
     if (err) {
-      protocol::responce_t resp = StartStreamResponceFail(req->id, err->GetDescription());
+      protocol::response_t resp = StartStreamResponceFail(req->id, err->GetDescription());
       dclient->WriteResponce(resp);
       return err;
     }
 
-    protocol::responce_t resp = StartStreamResponceSuccess(req->id);
+    protocol::response_t resp = StartStreamResponceSuccess(req->id);
     dclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -919,13 +932,13 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStopStream(Protocoled
 
     ChildStream* chan = FindChildByID(stop_info.GetStreamID());
     if (!chan) {
-      protocol::responce_t resp = StopStreamResponceFail(req->id, "Stream not found.");
+      protocol::response_t resp = StopStreamResponceFail(req->id, "Stream not found.");
       dclient->WriteResponce(resp);
       return common::ErrnoError();
     }
 
     chan->SendStop(NextRequestID());
-    protocol::responce_t resp = StopStreamResponceSuccess(req->id);
+    protocol::response_t resp = StopStreamResponceSuccess(req->id);
     dclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -957,13 +970,13 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientRestartStream(Protoco
 
     ChildStream* chan = FindChildByID(restart_info.GetStreamID());
     if (!chan) {
-      protocol::responce_t resp = RestartStreamResponceFail(req->id, "Stream not found.");
+      protocol::response_t resp = RestartStreamResponceFail(req->id, "Stream not found.");
       dclient->WriteResponce(resp);
       return common::ErrnoError();
     }
 
     chan->SendRestart(NextRequestID());
-    protocol::responce_t resp = RestartStreamResponceSuccess(req->id);
+    protocol::response_t resp = RestartStreamResponceSuccess(req->id);
     dclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -995,7 +1008,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPrepareService(Protoc
 
     Directories dirs(state_info);
     std::string resp_str = MakeDirectoryResponce(dirs);
-    protocol::responce_t resp = StateServiceResponce(req->id, resp_str);
+    protocol::response_t resp = StateServiceResponce(req->id, resp_str);
     dclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -1018,19 +1031,19 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(ProtocoledDa
     json_object_put(jactivate);
     if (err_des) {
       const std::string err_str = err_des->GetDescription();
-      protocol::responce_t resp = ActivateResponceFail(req->id, err_str);
+      protocol::response_t resp = ActivateResponceFail(req->id, err_str);
       dclient->WriteResponce(resp);
       return common::make_errno_error(err_str, EAGAIN);
     }
 
     bool is_active = activate_info.GetLicense() == license_key_;
     if (!is_active) {
-      protocol::responce_t resp = ActivateResponceFail(req->id, "Wrong license key");
+      protocol::response_t resp = ActivateResponceFail(req->id, "Wrong license key");
       dclient->WriteResponce(resp);
       return common::make_errno_error_inval();
     }
 
-    protocol::responce_t resp = ActivateResponceSuccess(req->id);
+    protocol::response_t resp = ActivateResponceSuccess(req->id);
     dclient->WriteResponce(resp);
     dclient->SetVerified(true);
     return common::ErrnoError();
@@ -1069,7 +1082,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPingService(Protocole
       return common::make_errno_error(err_str, EAGAIN);
     }
 
-    protocol::responce_t resp = PingServiceResponce(req->id, ping_server_json);
+    protocol::response_t resp = PingServiceResponce(req->id, ping_server_json);
     dclient->WriteResponce(resp);
     return common::ErrnoError();
   }
@@ -1100,7 +1113,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(ProtocoledDa
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleResponceServiceCommand(ProtocoledDaemonClient* dclient,
-                                                                     protocol::responce_t* resp) {
+                                                                     protocol::response_t* resp) {
   CHECK(loop_->IsLoopThread());
   if (!dclient->IsVerified()) {
     return common::make_errno_error_inval();
@@ -1129,7 +1142,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStreamsCommand(pipe::Protoc
 }
 
 common::ErrnoError ProcessSlaveWrapper::HandleResponceStreamsCommand(pipe::ProtocoledPipeClient* pclient,
-                                                                     protocol::responce_t* resp) {
+                                                                     protocol::response_t* resp) {
   protocol::request_t req;
   if (pclient->PopRequestByID(resp->id, &req)) {
     if (req.method == STOP_STREAM) {

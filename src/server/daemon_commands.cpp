@@ -17,12 +17,12 @@
 namespace iptv_cloud {
 namespace server {
 
-protocol::responce_t StopServiceResponceSuccess(protocol::sequance_id_t id) {
-  return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
+protocol::response_t StopServiceResponceSuccess(protocol::sequance_id_t id) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::responce_t StopServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
-  return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+protocol::response_t StopServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+  return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
 protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
@@ -33,40 +33,40 @@ protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::ser
   return req;
 }
 
-protocol::responce_t ActivateResponceSuccess(protocol::sequance_id_t id) {
-  return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
+protocol::response_t ActivateResponceSuccess(protocol::sequance_id_t id) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::responce_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
-  return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+protocol::response_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+  return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
-protocol::responce_t StateServiceResponce(protocol::sequance_id_t id, const std::string& result) {
-  return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage(result));
+protocol::response_t StateServiceResponce(protocol::sequance_id_t id, const std::string& result) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage(result));
 }
 
-protocol::responce_t StartStreamResponceSuccess(protocol::sequance_id_t id) {
-  return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
+protocol::response_t StartStreamResponceSuccess(protocol::sequance_id_t id) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::responce_t StartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
-  return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+protocol::response_t StartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+  return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
-protocol::responce_t StopStreamResponceSuccess(protocol::sequance_id_t id) {
-  return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
+protocol::response_t StopStreamResponceSuccess(protocol::sequance_id_t id) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::responce_t StopStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
-  return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+protocol::response_t StopStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+  return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
-protocol::responce_t RestartStreamResponceSuccess(protocol::sequance_id_t id) {
-  return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage());
+protocol::response_t RestartStreamResponceSuccess(protocol::sequance_id_t id) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage());
 }
 
-protocol::responce_t RestartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
-  return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+protocol::response_t RestartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+  return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
 protocol::request_t PingDaemonRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
@@ -77,12 +77,12 @@ protocol::request_t PingDaemonRequest(protocol::sequance_id_t id, protocol::seri
   return req;
 }
 
-protocol::responce_t PingServiceResponce(protocol::sequance_id_t id, const std::string& result) {
-  return protocol::responce_t::MakeMessage(id, protocol::MakeSuccessMessage(result));
+protocol::response_t PingServiceResponce(protocol::sequance_id_t id, const std::string& result) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage(result));
 }
 
-protocol::responce_t PingServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
-  return protocol::responce_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+protocol::response_t PingServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+  return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
 protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params) {
@@ -95,6 +95,10 @@ protocol::request_t StatisitcStreamBroadcast(protocol::serializet_params_t param
 
 protocol::request_t StatisitcServiceBroadcast(protocol::serializet_params_t params) {
   return protocol::request_t::MakeNotification(CLIENT_STATISTIC_SERVICE, params);
+}
+
+protocol::request_t StatusStreamBroadcast(protocol::serializet_params_t params) {
+  return protocol::request_t::MakeNotification(CLIENT_STATUS_STREAM, params);
 }
 
 }  // namespace server

@@ -320,7 +320,7 @@ common::ErrnoError ProcessWrapper::StreamDataRecived(common::libev::IoClient* cl
   }
 
   protocol::request_t* req = nullptr;
-  protocol::responce_t* resp = nullptr;
+  protocol::response_t* resp = nullptr;
   common::Error err_parse = common::protocols::json_rpc::ParseJsonRPC(input_command, &req, &resp);
   if (err_parse) {
     const std::string err_str = err_parse->GetDescription();
@@ -395,7 +395,7 @@ common::ErrnoError ProcessWrapper::HandleRequestCommand(common::libev::IoClient*
   return common::ErrnoError();
 }
 
-common::ErrnoError ProcessWrapper::HandleResponceCommand(common::libev::IoClient* client, protocol::responce_t* resp) {
+common::ErrnoError ProcessWrapper::HandleResponceCommand(common::libev::IoClient* client, protocol::response_t* resp) {
   CHECK(loop_->IsLoopThread());
 
   protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
@@ -413,7 +413,7 @@ protocol::sequance_id_t ProcessWrapper::NextRequestID() {
 common::ErrnoError ProcessWrapper::HandleRequestStopStream(common::libev::IoClient* client, protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
   protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
-  protocol::responce_t resp = StopStreamResponceSuccess(req->id);
+  protocol::response_t resp = StopStreamResponceSuccess(req->id);
   pclient->WriteResponce(resp);
   Stop();
   return common::ErrnoError();
@@ -423,7 +423,7 @@ common::ErrnoError ProcessWrapper::HandleRequestRestartStream(common::libev::IoC
                                                               protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
   protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
-  protocol::responce_t resp = RestartStreamResponceSuccess(req->id);
+  protocol::response_t resp = RestartStreamResponceSuccess(req->id);
   pclient->WriteResponce(resp);
   Restart();
   return common::ErrnoError();

@@ -47,7 +47,7 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
   virtual common::ErrnoError HandleRequestCommand(common::libev::IoClient* client,
                                                   protocol::request_t* req) WARN_UNUSED_RESULT;
   virtual common::ErrnoError HandleResponceCommand(common::libev::IoClient* client,
-                                                   protocol::responce_t* resp) WARN_UNUSED_RESULT;
+                                                   protocol::response_t* resp) WARN_UNUSED_RESULT;
 
  private:
   protocol::sequance_id_t NextRequestID();

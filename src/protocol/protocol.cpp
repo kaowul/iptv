@@ -14,6 +14,8 @@
 
 #include "protocol/protocol.h"
 
+#include <string>
+
 #include <common/sprintf.h>
 #include <common/sys_byteorder.h>
 
@@ -160,9 +162,9 @@ common::ErrnoError WriteRequest(common::libev::IoClient* client, const request_t
   return WriteMessage(client, request_str);
 }
 
-common::ErrnoError WriteResponce(common::libev::IoClient* client, const responce_t& responce) {
+common::ErrnoError WriteResponce(common::libev::IoClient* client, const response_t& responce) {
   std::string responce_str;
-  common::Error err = common::protocols::json_rpc::MakeJsonRPCResponce(responce, &responce_str);
+  common::Error err = common::protocols::json_rpc::MakeJsonRPCResponse(responce, &responce_str);
   if (err) {
     return common::make_errno_error(err->GetDescription(), err->GetErrorCode());
   }
