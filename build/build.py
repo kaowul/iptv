@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     prefix_path = '/usr/local'
     if argc > 4:
-        license_algo = sys.argv[4]
+        prefix_path = sys.argv[4]
 
     pwd = os.getcwd()
 
