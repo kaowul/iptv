@@ -47,7 +47,7 @@ if __name__ == "__main__":
     os.mkdir(abs_dir_path)
     os.chdir(build_dir)
     subprocess.call(['cmake', '../../', '-GNinja', '-DCMAKE_BUILD_TYPE={0}'.format(build_type),
-                     '-DCMAKE_INSTALL_PREFIX={0}', '-DLICENSE_KEY={1}'.format(prefix_path, license_key),
+                     '-DCMAKE_INSTALL_PREFIX={0}'.format(prefix_path), '-DLICENSE_KEY={0}'.format(license_key),
                      '-DHARDWARE_LICENSE_ALGO={0}'.format(license_algo),
                      '-DJSONC_USE_STATIC=ON'])
     subprocess.call(['ninja', 'install'])
