@@ -11,7 +11,8 @@ def print_usage():
     print("Usage:\n"
           "[required] argv[1] build type(release/debug)\n"
           "[required] argv[2] license key\n"
-          "[optional] argv[3] license algo\n")
+          "[optional] argv[3] license algo\n"
+          "[optional] argv[4] prefix_path\n")
 
 
 if __name__ == "__main__":
@@ -33,6 +34,10 @@ if __name__ == "__main__":
     if argc > 3:
         license_algo = sys.argv[3]
 
+    prefix_path = '/usr/local'
+    if argc > 4:
+        license_algo = sys.argv[4]
+
     pwd = os.getcwd()
 
     abs_dir_path = os.path.abspath(build_dir)
@@ -42,8 +47,8 @@ if __name__ == "__main__":
     os.mkdir(abs_dir_path)
     os.chdir(build_dir)
     subprocess.call(['cmake', '../../', '-GNinja', '-DCMAKE_BUILD_TYPE={0}'.format(build_type),
-                     '-DCMAKE_INSTALL_PREFIX=/usr/local', '-DLICENSE_KEY={0}'.format(license_key),
-                     '-DHARDWARE_LICENSE_ALGO=0'.format(license_algo),
+                     '-DCMAKE_INSTALL_PREFIX={0}', '-DLICENSE_KEY={1}'.format(prefix_path, license_key),
+                     '-DHARDWARE_LICENSE_ALGO={0}'.format(license_algo),
                      '-DJSONC_USE_STATIC=ON'])
     subprocess.call(['ninja', 'install'])
     os.chdir(pwd)
