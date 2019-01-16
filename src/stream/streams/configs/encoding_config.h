@@ -51,8 +51,8 @@ class EncodingConfig : public AudioVideoConfig {
   bool IsGpu() const;     // encoding
   bool IsMfxGpu() const;  // encoding
 
-  audio_channel_count_t GetAudioChannels() const;  // encoding
-  void SetAudioChannels(audio_channel_count_t channels);
+  audio_channels_count_t GetAudioChannelsCount() const;  // encoding
+  void SetAudioChannelsCount(audio_channels_count_t channels);
 
   video_encoders_args_t GetVideoEncoderArgs() const;  // encoding
   void SetVideoEncoderArgs(const video_encoders_args_t& args);
@@ -96,7 +96,7 @@ class EncodingConfig : public AudioVideoConfig {
   std::string video_encoder_;
   std::string audio_encoder_;
 
-  int audio_channels_;
+  audio_channels_count_t audio_channels_count_;
 
   video_encoders_args_t video_encoder_args_;
   video_encoders_str_args_t video_encoder_str_args_;

@@ -31,7 +31,7 @@ class ChildStream : public common::libev::IoChild {
  public:
   typedef common::libev::IoChild base_class;
   ChildStream(common::libev::IoLoop* server, StreamStruct* mem);
-  ~ChildStream();
+  ~ChildStream() override;
 
   common::ErrnoError SendStop(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
   common::ErrnoError SendRestart(protocol::sequance_id_t id) WARN_UNUSED_RESULT;

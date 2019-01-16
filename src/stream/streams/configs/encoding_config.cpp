@@ -32,12 +32,12 @@ const common::media::Rational kDefaultAspectRatio = {DEFAULT_ASPECT_RATIO_NUM, D
 
 EncodingConfig::EncodingConfig(const base_class& config)
     : base_class(config),
-      deinterlace_(false),
-      frame_rate_(DEFAULT_FRAME_RATE),
+      deinterlace_(DEFAULT_DEINTERLACE),
+      frame_rate_(INVALID_FRAME_RATE),
       volume_(DEFAULT_VOLUME),
       video_encoder_(DEFAULT_VIDEO_ENCODER),
       audio_encoder_(DEFAULT_AUDIO_ENCODER),
-      audio_channels_(DEFAULT_AUDIO_CHANNEL_COUNT),
+      audio_channels_count_(INVALID_AUDIO_CHANNELS_COUNT),
       video_encoder_args_(),
       video_encoder_str_args_(),
       width_(DEFAULT_VIDEO_WIDTH),
@@ -110,12 +110,12 @@ bool EncodingConfig::IsMfxGpu() const {
   return false;
 }
 
-audio_channel_count_t EncodingConfig::GetAudioChannels() const {
-  return audio_channels_;
+audio_channels_count_t EncodingConfig::GetAudioChannelsCount() const {
+  return audio_channels_count_;
 }
 
-void EncodingConfig::SetAudioChannels(audio_channel_count_t channels) {
-  audio_channels_ = channels;
+void EncodingConfig::SetAudioChannelsCount(audio_channels_count_t channels) {
+  audio_channels_count_ = channels;
 }
 
 int EncodingConfig::GetWidth() const {

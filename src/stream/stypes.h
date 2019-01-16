@@ -98,7 +98,7 @@ namespace iptv_cloud {
 namespace stream {
 
 typedef size_t element_id_t;
-typedef int audio_channel_count_t;
+typedef int audio_channels_count_t;
 typedef double alpha_t;
 typedef uint8_t decklink_video_mode_t;
 

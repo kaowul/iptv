@@ -133,7 +133,7 @@ void RelayStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
       const char* gst_pad_name = GST_PAD_NAME(new_pad);
       int audio_select = rconf->GetAudioSelect();
       int current_audio_track = 0;
-      if (audio_select == DEFAULT_AUDIO_SELECT ||
+      if (audio_select == INVALID_AUDIO_SELECT ||
           (GetPadId(gst_pad_name, &current_audio_track) && audio_select == current_audio_track)) {
         dest = GetElementByName(common::MemSPrintf(UDB_AUDIO_NAME_1U, 0));
       }

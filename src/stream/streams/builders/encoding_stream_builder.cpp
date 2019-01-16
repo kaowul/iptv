@@ -150,7 +150,7 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
         post->SetWidth(width);
         post->SetHeight(height);
       }
-      if (framerate != DEFAULT_FRAME_RATE) {
+      if (framerate != INVALID_FRAME_RATE) {
         post->SetFrameRate(framerate);
       }
       if (conf->GetDeinterlace()) {
@@ -188,7 +188,7 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
       last = aspect_ratio;
     }
 
-    if (framerate != DEFAULT_FRAME_RATE) {
+    if (framerate != INVALID_FRAME_RATE) {
       last = elements::encoders::build_video_framerate(framerate, this, last, video_id);
     }
   }
@@ -222,7 +222,7 @@ elements_line_t EncodingStreamBuilder::BuildAudioPostProc(element_id_t audio_id)
   EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
 
   const volume_t volume = conf->GetVolume();
-  audio_channel_count_t achannels = conf->GetAudioChannels();
+  audio_channels_count_t achannels = conf->GetAudioChannelsCount();
   elements_line_t first_last = elements::encoders::build_audio_converters(volume, achannels, this, audio_id);
   return first_last;
 }

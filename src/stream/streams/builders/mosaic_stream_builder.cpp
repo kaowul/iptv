@@ -207,7 +207,7 @@ bool MosaicStreamBuilder::InitPipeline() {
   }
   if (config->HaveAudio()) {
     const volume_t volume = config->GetVolume();
-    audio_channel_count_t achannels = config->GetAudioChannels();
+    audio_channels_count_t achannels = config->GetAudioChannelsCount();
     elements_line_t first_last = elements::encoders::build_audio_converters(volume, achannels, this, 0);
     ElementLink(conn.audio, first_last.front());
     conn.audio = first_last.back();
@@ -310,7 +310,7 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       }
 
       const int framerate = config->GetFramerate();
-      if (framerate != DEFAULT_FRAME_RATE && !config->IsMfxGpu()) {
+      if (framerate != INVALID_FRAME_RATE && !config->IsMfxGpu()) {
         last = elements::encoders::build_video_framerate(framerate, this, last, i);
       }
 

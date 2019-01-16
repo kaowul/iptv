@@ -203,16 +203,16 @@ Config* make_config(const utils::ArgsMap& config) {
   } else if (stream_type == ENCODE) {
     streams::EncodingConfig econf(aconf);
     streams::PlaylistEncodingConfig* econfig = new streams::PlaylistEncodingConfig(econf);
-    bool deinterlace = false;
+    bool deinterlace;
     if (utils::ArgsGetValue(config, DEINTERLACE_FIELD, &deinterlace)) {
       econfig->SetDeinterlace(deinterlace);
     }
-    int frame_rate = 0;
+    int frame_rate;
     if (utils::ArgsGetValue(config, FRAME_RATE_FIELD, &frame_rate)) {
       econfig->SetFrameRate(frame_rate);
     }
 
-    volume_t volume = 0;
+    volume_t volume;
     if (utils::ArgsGetValue(config, VOLUME_FIELD, &volume)) {
       econfig->SetVolume(volume);
     }
@@ -226,9 +226,9 @@ Config* make_config(const utils::ArgsMap& config) {
       econfig->SetAudioEncoder(audio_codec);
     }
 
-    int audio_channels = 0;
+    int audio_channels;
     if (utils::ArgsGetValue(config, AUDIO_CHANNELS_FIELD, &audio_channels)) {
-      econfig->SetAudioChannels(audio_channels);
+      econfig->SetAudioChannelsCount(audio_channels);
     }
 
     int width;

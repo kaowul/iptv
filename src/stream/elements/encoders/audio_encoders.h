@@ -79,7 +79,7 @@ Element* make_audio_encoder(const std::string& codec, const std::string& name, g
 Element* make_audio_encoder(const std::string& codec, const std::string& name);
 
 elements_line_t build_audio_converters(volume_t volume,
-                                       audio_channel_count_t achannels,
+                                       audio_channels_count_t achannels,
                                        ILinker* linker,
                                        element_id_t audio_convert_id);
 

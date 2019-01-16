@@ -14,10 +14,10 @@
 
 #include "gst_constants.h"
 
-const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> kSupportedVideoParsers = {
+const std::array<const char*, SUPPORTED_VIDEO_PARSERS_COUNT> kSupportedVideoParsers = {
     {TS_PARSE, H264_PARSE, H265_PARSE}};
 
-const std::array<const char*, SUPPORTED_AUDIO_ENCODERS_COUNT> kSupportedAudioParsers = {
+const std::array<const char*, SUPPORTED_AUDIO_PARSERS_COUNT> kSupportedAudioParsers = {
     {MPEG_AUDIO_PARSE, AAC_PARSE, AC3_PARSE}};
 
 const std::array<const char*, SUPPORTED_VIDEO_ENCODERS_COUNT> kSupportedVideoEncoders = {

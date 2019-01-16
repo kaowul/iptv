@@ -24,7 +24,7 @@ AudioVideoConfig::AudioVideoConfig(const base_class& config)
     : base_class(config),
       have_video_(DEFAULT_HAVE_VIDEO),
       have_audio_(DEFAULT_HAVE_AUDIO),
-      audio_select_(DEFAULT_AUDIO_SELECT) {}
+      audio_select_(INVALID_AUDIO_SELECT) {}
 
 bool AudioVideoConfig::HaveVideo() const {
   return have_video_;

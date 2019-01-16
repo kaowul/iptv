@@ -212,7 +212,7 @@ Validity validate_audio_select(const std::string& value) {
     return Validity::INVALID;
   }
 
-  return i >= DEFAULT_AUDIO_SELECT ? Validity::VALID : Validity::INVALID;
+  return i >= INVALID_AUDIO_SELECT ? Validity::VALID : Validity::INVALID;
 }
 
 Validity validate_mfxh264_preset(const std::string& value) {

@@ -96,7 +96,7 @@ Element* make_audio_encoder(const std::string& codec, const std::string& name) {
 }
 
 elements_line_t build_audio_converters(volume_t volume,
-                                       audio_channel_count_t achannels,
+                                       audio_channels_count_t achannels,
                                        ILinker* linker,
                                        element_id_t audio_convert_id) {
   elements::audio::ElementAudioConvert* audio_convert =
@@ -105,7 +105,7 @@ elements_line_t build_audio_converters(volume_t volume,
   elements::Element* last = audio_convert;
 
   linker->ElementAdd(audio_convert);
-  if (achannels != DEFAULT_AUDIO_CHANNEL_COUNT) {
+  if (achannels != INVALID_AUDIO_CHANNELS_COUNT) {
     elements::ElementCapsFilter* caps =
         new elements::ElementCapsFilter(common::MemSPrintf(AUDIO_CONVERT_CAPS_FILTER_NAME_1U, audio_convert_id));
     GstCaps* cap_convert = gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, achannels, nullptr);
