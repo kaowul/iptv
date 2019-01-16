@@ -140,9 +140,11 @@ common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInf
     return common::make_errno_error("Define " ID_FIELD " variable and make it valid.", EAGAIN);
   }
 
-  if (!utils::ArgsGetValue(config_args, TYPE_FIELD, &lsha.type)) {
+  uint8_t type;
+  if (!utils::ArgsGetValue(config_args, TYPE_FIELD, &type)) {
     return common::make_errno_error("Define " TYPE_FIELD " variable and make it valid.", EAGAIN);
   }
+  lsha.type = static_cast<StreamType>(type);
 
   std::string feedback_dir;
   if (!utils::ArgsGetValue(config_args, FEEDBACK_DIR_FIELD, &feedback_dir)) {
@@ -166,8 +168,7 @@ common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInf
   }
 
   bool is_multi_input = input.size() > 1;
-  bool is_timeshift_and_rec =
-      (lsha.type == TIMESHIFT_RECORDER && !is_multi_input) || (lsha.type == CATCHUP && !is_multi_input);
+  bool is_timeshift_and_rec = (type == TIMESHIFT_RECORDER && !is_multi_input) || (type == CATCHUP && !is_multi_input);
   if (is_timeshift_and_rec) {
     std::string timeshift_dir;
     if (utils::ArgsGetValue(config_args, TIMESHIFT_DIR_FIELD, &timeshift_dir)) {

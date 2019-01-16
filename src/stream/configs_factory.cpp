@@ -138,7 +138,7 @@ bool InitVideoEncodersWithArgs(const utils::ArgsMap& config,
 }  // namespace
 
 Config* make_config(const utils::ArgsMap& config) {
-  StreamType stream_type = SCREEN;
+  uint8_t stream_type;
   if (!utils::ArgsGetValue(config, TYPE_FIELD, &stream_type)) {
     WARNING_LOG() << "Define " TYPE_FIELD " variable and make it valid.";
     return nullptr;
@@ -162,15 +162,15 @@ Config* make_config(const utils::ArgsMap& config) {
     }
   }
 
-  Config conf(stream_type, input_urls, output_urls);
+  Config conf(static_cast<StreamType>(stream_type), input_urls, output_urls);
 
   streams::AudioVideoConfig aconf(conf);
-  bool no_video = false;
+  bool no_video = DEFAULT_NO_VIDEO;
   if (utils::ArgsGetValue(config, NO_VIDEO_FIELD, &no_video)) {
     aconf.SetHaveVideo(!no_video);
   }
 
-  bool no_audio = false;
+  bool no_audio = DEFAULT_NO_AUDIO;
   if (utils::ArgsGetValue(config, NO_AUDIO_FIELD, &no_audio)) {
     aconf.SetHaveAudio(!no_audio);
   }

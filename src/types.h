@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <stdint.h>
+
 #include <string>  // for string
 
 namespace iptv_cloud {
@@ -24,19 +26,13 @@ typedef double volume_t;
 
 extern const stream_id_t kInvalidStreamID;
 
-enum StreamType {
+enum StreamType : uint8_t {
   RELAY = 0,
-  ENCODE,
-  TIMESHIFT_PLAYER,
-  TIMESHIFT_RECORDER,
-  CATCHUP,
-  SCREEN,  // for inner use
-  NUM_STREAM_TYPES
+  ENCODE = 1,
+  TIMESHIFT_PLAYER = 2,
+  TIMESHIFT_RECORDER = 3,
+  CATCHUP = 4,
+  SCREEN  // for inner use
 };
 
 }  // namespace iptv_cloud
-
-namespace common {
-std::string ConvertToString(iptv_cloud::StreamType type);
-bool ConvertFromString(const std::string& from, iptv_cloud::StreamType* out);
-}  // namespace common

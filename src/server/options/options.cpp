@@ -25,6 +25,7 @@
 #include <common/file_system/file_system.h>
 
 #include "config_fields.h"
+#include "constants.h"
 #include "gst_constants.h"
 #include "inputs_outputs.h"
 
@@ -41,22 +42,22 @@ Validity dont_validate(const std::string&) {
 }
 
 template <typename T>
-Validity validate_range(const std::string& value, T min, T max, bool isFatal) {
+Validity validate_range(const std::string& value, T min, T max, bool is_fatal) {
   T i;
   if (common::ConvertFromString(value, &i) && i >= min && i <= max) {
     return Validity::VALID;
   }
 
-  return isFatal ? Validity::FATAL : Validity::INVALID;
+  return is_fatal ? Validity::FATAL : Validity::INVALID;
 }
 
-Validity validate_is_positive(const std::string& value, bool isFatal) {
+Validity validate_is_positive(const std::string& value, bool is_fatal) {
   int64_t i;
   if (common::ConvertFromString(value, &i) && i >= 0) {
     return Validity::VALID;
   }
 
-  return isFatal ? Validity::FATAL : Validity::INVALID;
+  return is_fatal ? Validity::FATAL : Validity::INVALID;
 }
 
 Validity validate_id(const std::string& value) {
@@ -133,11 +134,7 @@ Validity validate_audio_codec(const std::string& value) {
 }
 
 Validity validate_type(const std::string& value) {
-  iptv_cloud::StreamType st;
-  if (!common::ConvertFromString(value, &st)) {
-    return Validity::INVALID;
-  }
-  return Validity::VALID;
+  return validate_range<uint8_t>(value, iptv_cloud::StreamType::RELAY, iptv_cloud::StreamType::SCREEN, false);
 }
 
 Validity validate_log_level(const std::string& value) {
@@ -210,7 +207,12 @@ Validity validate_audio_channels(const std::string& value) {
 }
 
 Validity validate_audio_select(const std::string& value) {
-  return validate_is_positive(value, false);
+  int i;
+  if (!common::ConvertFromString(value, &i)) {
+    return Validity::INVALID;
+  }
+
+  return i >= DEFAULT_AUDIO_SELECT ? Validity::VALID : Validity::INVALID;
 }
 
 Validity validate_mfxh264_preset(const std::string& value) {

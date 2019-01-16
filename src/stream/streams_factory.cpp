@@ -135,7 +135,7 @@ bool IsTimeshiftPlayer(const utils::ArgsMap& args, TimeShiftInfo* tinfo) {
     CRITICAL_LOG() << "Define " TYPE_FIELD " variable and make it valid.";
   }
 
-  StreamType type;
+  uint8_t type;
   if (!common::ConvertFromString(type_str, &type)) {
     return false;
   }

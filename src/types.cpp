@@ -14,45 +14,10 @@
 
 #include "types.h"
 
-#include <array>
 #include <limits>
 
-#include <common/macros.h>
-
 namespace iptv_cloud {
-namespace {
-const std::array<const char*, NUM_STREAM_TYPES> kStreamTypes = {
-    {"relay", "encode", "timeshift_player", "timeshift_recorder", "catchup", "screen"}};
-}
 
 const stream_id_t kInvalidStreamID = std::numeric_limits<stream_id_t>::max();
+
 }  // namespace iptv_cloud
-
-namespace common {
-
-std::string ConvertToString(iptv_cloud::StreamType stream_type) {
-  if (stream_type < 0 || stream_type >= iptv_cloud::NUM_STREAM_TYPES) {
-    DNOTREACHED();
-    return std::string();
-  }
-
-  return iptv_cloud::kStreamTypes[stream_type];
-}
-
-bool ConvertFromString(const std::string& from, iptv_cloud::StreamType* out) {
-  if (!out) {
-    return false;
-  }
-
-  for (size_t i = 0; i < iptv_cloud::kStreamTypes.size(); ++i) {
-    if (from == iptv_cloud::kStreamTypes[i]) {
-      *out = static_cast<iptv_cloud::StreamType>(i);
-      return true;
-    }
-  }
-
-  NOTREACHED() << "Unknown stream type: " << from;
-  return false;
-}
-
-}  // namespace common
