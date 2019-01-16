@@ -22,8 +22,8 @@
 
 #define INPUT_FIELD "input"  // required
 #define OUTPUT_FIELD "output"
-#define NO_VIDEO_FIELD "no_video"
-#define NO_AUDIO_FIELD "no_audio"
+#define HAVE_VIDEO_FIELD "have_video"
+#define HAVE_AUDIO_FIELD "have_audio"
 #define DEINTERLACE_FIELD "deinterlace"
 #define FRAME_RATE_FIELD "framerate"
 #define AUDIO_CHANNELS_FIELD "audio_channels"

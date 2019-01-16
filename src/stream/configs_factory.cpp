@@ -18,7 +18,6 @@
 #include <string>
 
 #include "config_fields.h"
-#include "constants.h"
 #include "gst_constants.h"
 
 #include "stream/streams/configs/encoding_config.h"
@@ -165,17 +164,17 @@ Config* make_config(const utils::ArgsMap& config) {
   Config conf(static_cast<StreamType>(stream_type), input_urls, output_urls);
 
   streams::AudioVideoConfig aconf(conf);
-  bool no_video = DEFAULT_NO_VIDEO;
-  if (utils::ArgsGetValue(config, NO_VIDEO_FIELD, &no_video)) {
-    aconf.SetHaveVideo(!no_video);
+  bool have_video;
+  if (utils::ArgsGetValue(config, HAVE_VIDEO_FIELD, &have_video)) {
+    aconf.SetHaveVideo(have_video);
   }
 
-  bool no_audio = DEFAULT_NO_AUDIO;
-  if (utils::ArgsGetValue(config, NO_AUDIO_FIELD, &no_audio)) {
-    aconf.SetHaveAudio(!no_audio);
+  bool have_audio;
+  if (utils::ArgsGetValue(config, HAVE_AUDIO_FIELD, &have_audio)) {
+    aconf.SetHaveAudio(have_audio);
   }
 
-  int audio_select = DEFAULT_AUDIO_SELECT;
+  int audio_select;
   if (utils::ArgsGetValue(config, AUDIO_SELECT_FIELD, &audio_select)) {
     aconf.SetAudioSelect(audio_select);
   }

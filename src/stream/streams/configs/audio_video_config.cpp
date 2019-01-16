@@ -21,7 +21,10 @@ namespace stream {
 namespace streams {
 
 AudioVideoConfig::AudioVideoConfig(const base_class& config)
-    : base_class(config), have_video_(true), have_audio_(true), audio_select_(DEFAULT_AUDIO_SELECT) {}
+    : base_class(config),
+      have_video_(DEFAULT_HAVE_VIDEO),
+      have_audio_(DEFAULT_HAVE_AUDIO),
+      audio_select_(DEFAULT_AUDIO_SELECT) {}
 
 bool AudioVideoConfig::HaveVideo() const {
   return have_video_;
