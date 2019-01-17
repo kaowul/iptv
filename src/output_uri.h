@@ -40,11 +40,11 @@ class OutputUri {
   common::draw::Size GetSize() const;
   void SetSize(common::draw::Size size);
 
-  int GetAudioBitrate() const;
-  void SetAudioBitrate(int rate);
+  bit_rate_t GetAudioBitrate() const;
+  void SetAudioBitrate(bit_rate_t rate);
 
-  int GetVideoBitrate() const;
-  void SetVideoBitrate(int rate);
+  bit_rate_t GetVideoBitrate() const;
+  void SetVideoBitrate(bit_rate_t rate);
 
   bool Equals(const OutputUri& inf) const;
 
@@ -55,8 +55,8 @@ class OutputUri {
 
   common::draw::Size size_;
 
-  int audio_bit_rate_;
-  int video_bit_rate_;
+  bit_rate_t audio_bit_rate_;
+  bit_rate_t video_bit_rate_;
 };
 
 inline bool operator==(const OutputUri& left, const OutputUri& right) {

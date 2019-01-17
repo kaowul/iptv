@@ -43,8 +43,8 @@ void ElementDeinterlace::SetMethod(int method) {
   SetProperty("method", method);
 }
 
-void ElementAspectRatio::SetAspectRatio(int num, int den) {
-  SetFractionProperty("aspect-ratio", num, den);
+void ElementAspectRatio::SetAspectRatio(const common::media::Rational& rat) {
+  SetFractionProperty("aspect-ratio", rat.num, rat.den);
 }
 
 Element* make_video_deinterlace(const std::string& deinterlace, const std::string& name) {

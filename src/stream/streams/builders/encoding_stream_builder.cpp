@@ -140,7 +140,7 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
   elements::Element* last = nullptr;
 
   const common::draw::Size size = conf->GetSize();
-  const int framerate = conf->GetFramerate();
+  const auto framerate = conf->GetFramerate();
   if (conf->IsGpu()) {
     if (conf->IsMfxGpu()) {
       elements::ElementMFXVpp* post = new elements::ElementMFXVpp(common::MemSPrintf(POST_PROC_NAME_1U, video_id));
@@ -149,8 +149,8 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
         post->SetWidth(size.width);
         post->SetHeight(size.height);
       }
-      if (framerate != INVALID_FRAME_RATE) {
-        post->SetFrameRate(framerate);
+      if (framerate) {
+        post->SetFrameRate(*framerate);
       }
       if (conf->GetDeinterlace()) {
         post->SetDinterlaceMode(1);
@@ -177,18 +177,18 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
       last = elements::encoders::build_video_scale(size.width, size.height, this, last, video_id);
     }
 
-    common::media::Rational rat = conf->GetAspectRatio();
-    if (rat != kDefaultAspectRatio) {
+    const auto aratio = conf->GetAspectRatio();
+    if (aratio) {
       elements::video::ElementAspectRatio* aspect_ratio =
           new elements::video::ElementAspectRatio(common::MemSPrintf(ASPECT_RATIO_NAME_1U, video_id));
-      aspect_ratio->SetAspectRatio(rat.num, rat.den);
+      aspect_ratio->SetAspectRatio(*aratio);
       ElementAdd(aspect_ratio);
       ElementLink(last, aspect_ratio);
       last = aspect_ratio;
     }
 
-    if (framerate != INVALID_FRAME_RATE) {
-      last = elements::encoders::build_video_framerate(framerate, this, last, video_id);
+    if (framerate) {
+      last = elements::encoders::build_video_framerate(*framerate, this, last, video_id);
     }
   }
 
@@ -221,8 +221,8 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
 elements_line_t EncodingStreamBuilder::BuildAudioPostProc(element_id_t audio_id) {
   EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
 
-  const volume_t volume = conf->GetVolume();
-  audio_channels_count_t achannels = conf->GetAudioChannelsCount();
+  const auto volume = conf->GetVolume();
+  const auto achannels = conf->GetAudioChannelsCount();
   elements_line_t first_last = elements::encoders::build_audio_converters(volume, achannels, this, audio_id);
   return first_last;
 }
@@ -230,7 +230,7 @@ elements_line_t EncodingStreamBuilder::BuildAudioPostProc(element_id_t audio_id)
 elements_line_t EncodingStreamBuilder::BuildVideoConverter(element_id_t video_id) {
   EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
 
-  int video_bitrate = conf->GetVideoBitrate();
+  const auto video_bitrate = conf->GetVideoBitrate();
   elements_line_t video_encoder =
       elements::encoders::build_video_encoder(conf->GetVideoEncoder(), video_bitrate, conf->GetVideoEncoderArgs(),
                                               conf->GetVideoEncoderStrArgs(), this, video_id);
@@ -241,7 +241,7 @@ elements_line_t EncodingStreamBuilder::BuildAudioConverter(element_id_t audio_id
   EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
 
   const std::string audio_encoder_str = conf->GetAudioEncoder();
-  int audiorate = conf->GetAudioBitrate();
+  const auto audiorate = conf->GetAudioBitrate();
   std::string name_codec = common::MemSPrintf(AUDIO_CODEC_NAME_1U, audio_id);
   elements::Element* enc = elements::encoders::make_audio_encoder(audio_encoder_str, name_codec, audiorate);
   ElementAdd(enc);

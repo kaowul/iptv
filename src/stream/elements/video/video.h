@@ -17,6 +17,8 @@
 #include <cairo.h>  // for cairo_t
 #include <string>   // for string
 
+#include <common/media/types.h>
+
 #include "types.h"
 
 #include "stream/stypes.h"
@@ -63,7 +65,7 @@ class ElementAspectRatio : public ElementEx<ELEMENT_ASPECT_RATIO> {
   typedef ElementEx<ELEMENT_ASPECT_RATIO> base_class;
   using base_class::base_class;
 
-  void SetAspectRatio(int num, int den);
+  void SetAspectRatio(const common::media::Rational& rat);
 };
 
 typedef ElementEx<ELEMENT_IMAGE_FREEZE> ElementImageFreeze;

@@ -22,6 +22,7 @@
 #include "stream/ilinker.h"  // for ILinker (ptr only), elements_line_t
 
 #include "stream/stypes.h"
+#include "types.h"
 
 #include "stream/elements/element.h"
 
@@ -115,7 +116,7 @@ Element* make_video_encoder(const std::string& codec, const std::string& name);
 elements_line_t build_video_convert(bool is_deinterlace, ILinker* linker, element_id_t video_convert_id);
 
 elements_line_t build_video_encoder(const std::string& codec,
-                                    int video_bitrate,
+                                    bit_rate_t video_bitrate,
                                     const video_encoders_args_t& video_args,
                                     const video_encoders_str_args_t& video_str_args,
                                     ILinker* linker,

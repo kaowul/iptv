@@ -28,8 +28,6 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-extern const common::media::Rational kDefaultAspectRatio;
-
 class EncodingConfig : public AudioVideoConfig {
  public:
   typedef AudioVideoConfig base_class;
@@ -38,8 +36,8 @@ class EncodingConfig : public AudioVideoConfig {
   volume_t GetVolume() const;  // encoding
   void SetVolume(volume_t volume);
 
-  int GetFramerate() const;  // encoding
-  void SetFrameRate(int rate);
+  frame_rate_t GetFramerate() const;  // encoding
+  void SetFrameRate(frame_rate_t rate);
 
   bool GetDeinterlace() const;  // encoding
   void SetDeinterlace(bool deinterlace);
@@ -65,17 +63,17 @@ class EncodingConfig : public AudioVideoConfig {
   common::draw::Size GetSize() const;  // encoding
   void SetSize(common::draw::Size size);
 
-  int GetVideoBitrate() const;  // encoding
-  void SetVideoBitrate(int bitr);
+  bit_rate_t GetVideoBitrate() const;  // encoding
+  void SetVideoBitrate(bit_rate_t bitr);
 
-  int GetAudioBitrate() const;  // encoding
-  void SetAudioBitrate(int bitr);
+  bit_rate_t GetAudioBitrate() const;  // encoding
+  void SetAudioBitrate(bit_rate_t bitr);
 
   Logo GetLogo() const;  // encoding
   void SetLogo(const Logo& logo);
 
-  common::media::Rational GetAspectRatio() const;  // encoding
-  void SetAspectRatio(common::media::Rational rat);
+  rational_t GetAspectRatio() const;  // encoding
+  void SetAspectRatio(rational_t rat);
 
   decklink_video_mode_t GetDecklinkMode() const;  // mosaic
   void SetDecklinkMode(decklink_video_mode_t decl);
@@ -83,7 +81,7 @@ class EncodingConfig : public AudioVideoConfig {
  private:
   bool deinterlace_;
 
-  int frame_rate_;
+  frame_rate_t frame_rate_;
   volume_t volume_;
 
   std::string video_encoder_;
@@ -95,13 +93,13 @@ class EncodingConfig : public AudioVideoConfig {
   video_encoders_str_args_t video_encoder_str_args_;
 
   common::draw::Size size_;
-  int video_bit_rate_;
-  int audio_bit_rate_;
+  bit_rate_t video_bit_rate_;
+  bit_rate_t audio_bit_rate_;
 
   Logo logo_;
 
   decklink_video_mode_t decklink_video_mode_;
-  common::media::Rational aspect_ratio_;
+  rational_t aspect_ratio_;
 };
 
 typedef EncodingConfig PlaylistEncodingConfig;

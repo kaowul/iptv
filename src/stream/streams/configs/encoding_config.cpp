@@ -28,24 +28,22 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-const common::media::Rational kDefaultAspectRatio = {INVALID_ASPECT_RATIO_NUM, INVALID_ASPECT_RATIO_DEN};
-
 EncodingConfig::EncodingConfig(const base_class& config)
     : base_class(config),
       deinterlace_(DEFAULT_DEINTERLACE),
-      frame_rate_(INVALID_FRAME_RATE),
-      volume_(DEFAULT_VOLUME),
+      frame_rate_(),
+      volume_(),
       video_encoder_(DEFAULT_VIDEO_ENCODER),
       audio_encoder_(DEFAULT_AUDIO_ENCODER),
-      audio_channels_count_(INVALID_AUDIO_CHANNELS_COUNT),
+      audio_channels_count_(),
       video_encoder_args_(),
       video_encoder_str_args_(),
       size_(),
-      video_bit_rate_(INVALID_VIDEO_BIT_RATE),
-      audio_bit_rate_(INVALID_AUDIO_BIT_RATE),
+      video_bit_rate_(),
+      audio_bit_rate_(),
       logo_(),
       decklink_video_mode_(DEFAULT_DECKLINK_VIDEO_MODE),
-      aspect_ratio_(kDefaultAspectRatio) {}
+      aspect_ratio_() {}
 
 void EncodingConfig::SetVolume(volume_t volume) {
   volume_ = volume;
@@ -55,11 +53,11 @@ volume_t EncodingConfig::GetVolume() const {
   return volume_;
 }
 
-int EncodingConfig::GetFramerate() const {
+frame_rate_t EncodingConfig::GetFramerate() const {
   return frame_rate_;
 }
 
-void EncodingConfig::SetFrameRate(int rate) {
+void EncodingConfig::SetFrameRate(frame_rate_t rate) {
   frame_rate_ = rate;
 }
 
@@ -123,19 +121,19 @@ void EncodingConfig::SetSize(common::draw::Size size) {
   size_ = size;
 }
 
-int EncodingConfig::GetVideoBitrate() const {
+bit_rate_t EncodingConfig::GetVideoBitrate() const {
   return video_bit_rate_;
 }
 
-void EncodingConfig::SetVideoBitrate(int bitr) {
+void EncodingConfig::SetVideoBitrate(bit_rate_t bitr) {
   video_bit_rate_ = bitr;
 }
 
-int EncodingConfig::GetAudioBitrate() const {
+bit_rate_t EncodingConfig::GetAudioBitrate() const {
   return audio_bit_rate_;
 }
 
-void EncodingConfig::SetAudioBitrate(int bitr) {
+void EncodingConfig::SetAudioBitrate(bit_rate_t bitr) {
   audio_bit_rate_ = bitr;
 }
 
@@ -163,11 +161,11 @@ Logo EncodingConfig::GetLogo() const {
   return logo_;
 }
 
-common::media::Rational EncodingConfig::GetAspectRatio() const {
+rational_t EncodingConfig::GetAspectRatio() const {
   return aspect_ratio_;
 }
 
-void EncodingConfig::SetAspectRatio(common::media::Rational rat) {
+void EncodingConfig::SetAspectRatio(rational_t rat) {
   aspect_ratio_ = rat;
 }
 

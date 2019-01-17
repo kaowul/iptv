@@ -19,8 +19,6 @@
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
 
-#include <common/sprintf.h>
-
 #include "constants.h"
 
 #define FIELD_INPUT_ID "id"
@@ -38,7 +36,7 @@ namespace iptv_cloud {
 InputUri::InputUri() : InputUri(0, common::uri::Url()) {}
 
 InputUri::InputUri(stream_id_t id, const common::uri::Url& input)
-    : id_(id), input_(input), volume_(DEFAULT_AUDIO_VOLUME), mute_(false), relay_video_(false), relay_audio_(false) {}
+    : id_(id), input_(input), volume_(), mute_(false), relay_video_(false), relay_audio_(false) {}
 
 bool InputUri::GetRelayVideo() const {
   return relay_video_;
@@ -102,11 +100,20 @@ bool IsTestUrl(const InputUri& url) {
 namespace common {
 
 std::string ConvertToString(const iptv_cloud::InputUri& value) {
-  return common::MemSPrintf("{ \"" FIELD_INPUT_ID "\": %llu, \"" FIELD_INPUT_URI "\": \"%s\", \"" FIELD_VOLUME_AUDIO
-                            "\": %.2f, \"" FIELD_MUTE_AUDIO "\": %d, \"" FIELD_RELAY_VIDEO
-                            "\": %d, \"" FIELD_RELAY_AUDIO "\": %d}",
-                            value.GetID(), common::ConvertToString(value.GetInput()), value.GetVolume(),
-                            value.GetMute(), value.GetRelayVideo(), value.GetRelayAudio());
+  json_object* obj = json_object_new_object();
+  json_object_object_add(obj, FIELD_INPUT_ID, json_object_new_int64(value.GetID()));
+  std::string url_str = common::ConvertToString(value.GetInput());
+  json_object_object_add(obj, FIELD_INPUT_URI, json_object_new_string(url_str.c_str()));
+  const auto vol = value.GetVolume();
+  if (vol) {
+    json_object_object_add(obj, FIELD_VOLUME_AUDIO, json_object_new_double(*vol));
+  }
+  json_object_object_add(obj, FIELD_INPUT_URI, json_object_new_boolean(value.GetMute()));
+  json_object_object_add(obj, FIELD_INPUT_URI, json_object_new_boolean(value.GetRelayVideo()));
+  json_object_object_add(obj, FIELD_INPUT_URI, json_object_new_boolean(value.GetRelayAudio()));
+  std::string res = json_object_get_string(obj);
+  json_object_put(obj);
+  return res;
 }
 
 bool ConvertFromString(const std::string& from, iptv_cloud::InputUri* out) {

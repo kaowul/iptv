@@ -17,6 +17,8 @@
 #include <map>
 #include <string>  // for string
 
+#include <common/media/types.h>
+#include <common/optional.h>
 #include <common/uri/url.h>
 
 #define TS_DURATION 10
@@ -98,8 +100,10 @@ namespace iptv_cloud {
 namespace stream {
 
 typedef size_t element_id_t;
-typedef int audio_channels_count_t;
+typedef common::Optional<int> audio_channels_count_t;
 typedef uint8_t decklink_video_mode_t;
+typedef common::Optional<common::media::Rational> rational_t;
+typedef common::Optional<int> frame_rate_t;
 
 typedef std::map<std::string, uint32_t> video_encoders_args_t;
 typedef std::map<std::string, std::string> video_encoders_str_args_t;

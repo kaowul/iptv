@@ -24,7 +24,7 @@ AudioVideoConfig::AudioVideoConfig(const base_class& config)
     : base_class(config),
       have_video_(DEFAULT_HAVE_VIDEO),
       have_audio_(DEFAULT_HAVE_AUDIO),
-      audio_select_(INVALID_AUDIO_SELECT),
+      audio_select_(),
       loop_(DEFAULT_LOOP) {}
 
 bool AudioVideoConfig::HaveVideo() const {
@@ -43,11 +43,11 @@ void AudioVideoConfig::SetHaveAudio(bool have_audio) {
   have_audio_ = have_audio;
 }
 
-int AudioVideoConfig::GetAudioSelect() const {
+AudioVideoConfig::audio_select_t AudioVideoConfig::GetAudioSelect() const {
   return audio_select_;
 }
 
-void AudioVideoConfig::SetAudioSelect(int sel) {
+void AudioVideoConfig::SetAudioSelect(audio_select_t sel) {
   audio_select_ = sel;
 }
 

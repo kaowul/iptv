@@ -195,12 +195,8 @@ Validity validate_audio_channels(const std::string& value) {
 }
 
 Validity validate_audio_select(const std::string& value) {
-  int i;
-  if (!common::ConvertFromString(value, &i)) {
-    return Validity::INVALID;
-  }
-
-  return i >= INVALID_AUDIO_SELECT ? Validity::VALID : Validity::INVALID;
+  int ais;
+  return common::ConvertFromString(value, &ais) ? Validity::VALID : Validity::INVALID;
 }
 
 Validity validate_mfxh264_preset(const std::string& value) {

@@ -17,8 +17,6 @@
 #include <json-c/json_object.h>
 #include <json-c/json_tokener.h>
 
-#include <common/sprintf.h>
-
 #include "constants.h"
 
 #define FIELD_OUTPUT_ID "id"
@@ -33,12 +31,7 @@ namespace iptv_cloud {
 OutputUri::OutputUri() : OutputUri(0, common::uri::Url()) {}
 
 OutputUri::OutputUri(stream_id_t id, const common::uri::Url& output)
-    : id_(id),
-      output_(output),
-      http_root_(),
-      size_(),
-      audio_bit_rate_(INVALID_AUDIO_BIT_RATE),
-      video_bit_rate_(INVALID_VIDEO_BIT_RATE) {}
+    : id_(id), output_(output), http_root_(), size_(), audio_bit_rate_(), video_bit_rate_() {}
 
 stream_id_t OutputUri::GetID() const {
   return id_;
@@ -72,19 +65,19 @@ void OutputUri::SetSize(common::draw::Size size) {
   size_ = size;
 }
 
-int OutputUri::GetAudioBitrate() const {
+bit_rate_t OutputUri::GetAudioBitrate() const {
   return audio_bit_rate_;
 }
 
-void OutputUri::SetAudioBitrate(int rate) {
+void OutputUri::SetAudioBitrate(bit_rate_t rate) {
   audio_bit_rate_ = rate;
 }
 
-int OutputUri::GetVideoBitrate() const {
+bit_rate_t OutputUri::GetVideoBitrate() const {
   return video_bit_rate_;
 }
 
-void OutputUri::SetVideoBitrate(int rate) {
+void OutputUri::SetVideoBitrate(bit_rate_t rate) {
   video_bit_rate_ = rate;
 }
 
@@ -105,12 +98,25 @@ const std::string hls_out_type_str[] = {"main", "adaptive"};
 std::string ConvertToString(const iptv_cloud::OutputUri& value) {
   common::file_system::ascii_directory_string_path ps = value.GetHttpRoot();
   const std::string http_root_str = ps.GetPath();
-  return common::MemSPrintf("{ \"" FIELD_OUTPUT_ID "\": %llu, \"" FIELD_OUTPUT_URI
-                            "\": \"%s\", \"" FIELD_OUTPUT_HTTP_ROOT "\": \"%s\", \"" FIELD_OUTPUT_SIZE
-                            "\": \"%s\", \"" FIELD_OUTPUT_VIDEO_BITRATE "\": %d, \"" FIELD_OUTPUT_AUDIO_BITRATE
-                            "\": %d }",
-                            value.GetID(), common::ConvertToString(value.GetOutput()), http_root_str,
-                            common::ConvertToString(value.GetSize()), value.GetVideoBitrate(), value.GetAudioBitrate());
+
+  json_object* obj = json_object_new_object();
+  json_object_object_add(obj, FIELD_OUTPUT_ID, json_object_new_int64(value.GetID()));
+  std::string url_str = common::ConvertToString(value.GetOutput());
+  json_object_object_add(obj, FIELD_OUTPUT_URI, json_object_new_string(url_str.c_str()));
+  json_object_object_add(obj, FIELD_OUTPUT_HTTP_ROOT, json_object_new_string(http_root_str.c_str()));
+  const std::string size_str = common::ConvertToString(value.GetSize());
+  json_object_object_add(obj, FIELD_OUTPUT_SIZE, json_object_new_string(size_str.c_str()));
+  const auto vid_bit_rate = value.GetVideoBitrate();
+  if (vid_bit_rate) {
+    json_object_object_add(obj, FIELD_OUTPUT_VIDEO_BITRATE, json_object_new_int(*vid_bit_rate));
+  }
+  const auto audio_bit_rate = value.GetAudioBitrate();
+  if (audio_bit_rate) {
+    json_object_object_add(obj, FIELD_OUTPUT_AUDIO_BITRATE, json_object_new_int(*audio_bit_rate));
+  }
+  std::string res = json_object_get_string(obj);
+  json_object_put(obj);
+  return res;
 }
 
 bool ConvertFromString(const std::string& from, iptv_cloud::OutputUri* out) {

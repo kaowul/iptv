@@ -225,7 +225,7 @@ elements_line_t build_video_convert(bool is_deinterlace, ILinker* linker, elemen
 }
 
 elements_line_t build_video_encoder(const std::string& codec,
-                                    int video_bitrate,
+                                    bit_rate_t video_bitrate,
                                     const video_encoders_args_t& video_args,
                                     const video_encoders_str_args_t& video_str_args,
                                     ILinker* linker,
@@ -234,11 +234,11 @@ elements_line_t build_video_encoder(const std::string& codec,
   Element* const first = codec_element;
   linker->ElementAdd(codec_element);
 
-  if (video_bitrate != INVALID_VIDEO_BIT_RATE) {
+  if (video_bitrate) {
     if (codec_element->GetPluginName() == ElementEAVCEnc::GetPluginName()) {
-      codec_element->SetProperty("bitrate-avg", video_bitrate * 1024);
+      codec_element->SetProperty("bitrate-avg", *video_bitrate * 1024);
     } else {
-      int bitrate = video_bitrate;
+      int bitrate = *video_bitrate;
       if (codec_element->GetPluginName() == ElementOpenH264Enc::GetPluginName()) {
         bitrate *= 1024;
       } else if (codec_element->GetPluginName() == ElementNvX264Enc::GetPluginName()) {

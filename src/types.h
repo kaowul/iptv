@@ -18,12 +18,15 @@
 
 #include <string>  // for string
 
+#include <common/optional.h>
+
 namespace iptv_cloud {
 
 typedef uint64_t stream_id_t;
 typedef std::string channel_id_t;
-typedef double volume_t;
+typedef common::Optional<double> volume_t;
 typedef double alpha_t;
+typedef common::Optional<int> bit_rate_t;
 
 extern const stream_id_t kInvalidStreamID;
 

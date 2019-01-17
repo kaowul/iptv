@@ -131,10 +131,9 @@ void RelayStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
   } else if (is_audio) {
     if (rconf->HaveAudio() && !IsAudioInited()) {
       const char* gst_pad_name = GST_PAD_NAME(new_pad);
-      int audio_select = rconf->GetAudioSelect();
+      const auto audio_select = rconf->GetAudioSelect();
       int current_audio_track = 0;
-      if (audio_select == INVALID_AUDIO_SELECT ||
-          (GetPadId(gst_pad_name, &current_audio_track) && audio_select == current_audio_track)) {
+      if (!audio_select || (GetPadId(gst_pad_name, &current_audio_track) && *audio_select == current_audio_track)) {
         dest = GetElementByName(common::MemSPrintf(UDB_AUDIO_NAME_1U, 0));
       }
     }

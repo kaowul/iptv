@@ -165,8 +165,8 @@ bool MosaicStreamBuilder::InitPipeline() {
         volume_t vol = uri.GetVolume();
         bool mute = uri.GetMute();
         if (sink_pad->IsValid()) {
-          if (vol != DEFAULT_AUDIO_VOLUME) {
-            sink_pad->SetProperty("volume", vol);
+          if (vol) {
+            sink_pad->SetProperty("volume", *vol);
           }
           if (mute) {
             sink_pad->SetProperty("mute", true);
@@ -174,7 +174,7 @@ bool MosaicStreamBuilder::InitPipeline() {
         }
         delete sink_pad;
 
-        sound.volume = vol;
+        sound.volume = vol ? *vol : DEFAULT_VOLUME;
         sound.mute = mute;
       }
       StreamInfo stream{image, sound};
@@ -206,8 +206,8 @@ bool MosaicStreamBuilder::InitPipeline() {
     conn.video = tee;
   }
   if (config->HaveAudio()) {
-    const volume_t volume = config->GetVolume();
-    audio_channels_count_t achannels = config->GetAudioChannelsCount();
+    const auto volume = config->GetVolume();
+    const auto achannels = config->GetAudioChannelsCount();
     elements_line_t first_last = elements::encoders::build_audio_converters(volume, achannels, this, 0);
     ElementLink(conn.audio, first_last.front());
     conn.audio = first_last.back();
@@ -292,25 +292,25 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       ElementLink(video, next);
 
       common::draw::Size size = output.GetSize();
-      int video_bitrate = output.GetVideoBitrate();
+      const auto video_bitrate = output.GetVideoBitrate();
       elements::Element* last = next;
       if (size.IsValid() && !config->IsMfxGpu()) {
         last = elements::encoders::build_video_scale(size.width, size.height, this, last, i);
       }
 
-      common::media::Rational rat = config->GetAspectRatio();
-      if (rat != kDefaultAspectRatio) {
+      const auto aratio = config->GetAspectRatio();
+      if (aratio) {
         elements::video::ElementAspectRatio* aspect_ratio =
             new elements::video::ElementAspectRatio(common::MemSPrintf(ASPECT_RATIO_NAME_1U, i));
-        aspect_ratio->SetAspectRatio(rat.num, rat.den);
+        aspect_ratio->SetAspectRatio(*aratio);
         ElementAdd(aspect_ratio);
         ElementLink(last, aspect_ratio);
         last = aspect_ratio;
       }
 
-      const int framerate = config->GetFramerate();
-      if (framerate != INVALID_FRAME_RATE && !config->IsMfxGpu()) {
-        last = elements::encoders::build_video_framerate(framerate, this, last, i);
+      const auto framerate = config->GetFramerate();
+      if (framerate && !config->IsMfxGpu()) {
+        last = elements::encoders::build_video_framerate(*framerate, this, last, i);
       }
 
       elements_line_t video_encoder = elements::encoders::build_video_encoder(
@@ -353,7 +353,7 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       elements::Element* next = audio_tee_queue;
       ElementLink(audio, next);
 
-      int audiorate = output.GetAudioBitrate();
+      const auto audiorate = output.GetAudioBitrate();
       const std::string audio_encoder_str = config->GetAudioEncoder();
       std::string name_codec = common::MemSPrintf(AUDIO_CODEC_NAME_1U, i);
       elements::Element* audio_encoder =

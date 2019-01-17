@@ -50,27 +50,25 @@ ElementFAAC* make_mp3_encoder(element_id_t encoder_id) {
   return make_audio_encoder<ElementFAAC>(encoder_id);
 }
 
-Element* make_audio_encoder(const std::string& codec, const std::string& name, gint audiorate) {
+Element* make_audio_encoder(const std::string& codec, const std::string& name, bit_rate_t audiorate) {
   if (codec == ElementFAAC::GetPluginName()) {
     ElementFAAC* aac = new ElementFAAC(name);
-    if (audiorate != INVALID_AUDIO_BIT_RATE) {
+    if (audiorate) {
       aac->SetRateControl(2);
-      audiorate *= 1024;
-      aac->SetBitRate(audiorate);
+      aac->SetBitRate(*audiorate * 1024);
     }
     return aac;
   } else if (codec == ElementVoaacEnc::GetPluginName()) {
     ElementVoaacEnc* aac = new ElementVoaacEnc(name);
-    if (audiorate != INVALID_AUDIO_BIT_RATE) {
-      audiorate *= 1024;
-      aac->SetBitRate(audiorate);
+    if (audiorate) {
+      aac->SetBitRate(*audiorate * 1024);
     }
     return aac;
   } else if (codec == ElementMP3Enc::GetPluginName()) {
     ElementMP3Enc* mp3 = new ElementMP3Enc(name);
-    if (audiorate != INVALID_AUDIO_BIT_RATE) {
+    if (audiorate) {
       mp3->SetTarget(1);
-      mp3->SetBitRate(audiorate);
+      mp3->SetBitRate(*audiorate);
     }
     return mp3;
   }
@@ -105,10 +103,10 @@ elements_line_t build_audio_converters(volume_t volume,
   elements::Element* last = audio_convert;
 
   linker->ElementAdd(audio_convert);
-  if (achannels != INVALID_AUDIO_CHANNELS_COUNT) {
+  if (achannels) {
     elements::ElementCapsFilter* caps =
         new elements::ElementCapsFilter(common::MemSPrintf(AUDIO_CONVERT_CAPS_FILTER_NAME_1U, audio_convert_id));
-    GstCaps* cap_convert = gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, achannels, nullptr);
+    GstCaps* cap_convert = gst_caps_new_simple("audio/x-raw", "channels", G_TYPE_INT, *achannels, nullptr);
     caps->SetCaps(cap_convert);
     gst_caps_unref(cap_convert);
 
@@ -117,9 +115,9 @@ elements_line_t build_audio_converters(volume_t volume,
     last = caps;
   }
 
-  if (volume != DEFAULT_VOLUME) {
+  if (volume) {
     audio::ElementVolume* vol = new audio::ElementVolume(common::MemSPrintf(VOLUME_NAME_1U, audio_convert_id));
-    vol->SetVolume(volume);
+    vol->SetVolume(*volume);
     linker->ElementAdd(vol);
     linker->ElementLink(last, vol);
     return {first, vol};

@@ -75,7 +75,7 @@ ElementFAAC* make_aac_encoder(element_id_t encoder_id);
 ElementVoaacEnc* make_voaac_encoder(element_id_t encoder_id);
 ElementFAAC* make_mp3_encoder(element_id_t encoder_id);
 
-Element* make_audio_encoder(const std::string& codec, const std::string& name, gint audiorate);
+Element* make_audio_encoder(const std::string& codec, const std::string& name, bit_rate_t audiorate);
 Element* make_audio_encoder(const std::string& codec, const std::string& name);
 
 elements_line_t build_audio_converters(volume_t volume,

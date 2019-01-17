@@ -210,7 +210,7 @@ Config* make_config(const utils::ArgsMap& config) {
       econfig->SetFrameRate(frame_rate);
     }
 
-    volume_t volume;
+    double volume;
     if (utils::ArgsGetValue(config, VOLUME_FIELD, &volume)) {
       econfig->SetVolume(volume);
     }
