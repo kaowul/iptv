@@ -139,16 +139,15 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
   elements::Element* first = nullptr;
   elements::Element* last = nullptr;
 
-  const int width = conf->GetWidth();
-  const int height = conf->GetHeight();
+  const common::draw::Size size = conf->GetSize();
   const int framerate = conf->GetFramerate();
   if (conf->IsGpu()) {
     if (conf->IsMfxGpu()) {
       elements::ElementMFXVpp* post = new elements::ElementMFXVpp(common::MemSPrintf(POST_PROC_NAME_1U, video_id));
       post->SetForceAspectRatio(false);
-      if (width != INVALID_VIDEO_WIDTH && height != INVALID_VIDEO_HEIGHT) {
-        post->SetWidth(width);
-        post->SetHeight(height);
+      if (size.IsValid()) {
+        post->SetWidth(size.width);
+        post->SetHeight(size.height);
       }
       if (framerate != INVALID_FRAME_RATE) {
         post->SetFrameRate(framerate);
@@ -174,8 +173,8 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
     first = first_last.front();
     last = first_last.back();
 
-    if (width != INVALID_VIDEO_WIDTH && height != INVALID_VIDEO_HEIGHT) {
-      last = elements::encoders::build_video_scale(width, height, this, last, video_id);
+    if (size.IsValid()) {
+      last = elements::encoders::build_video_scale(size.width, size.height, this, last, video_id);
     }
 
     common::media::Rational rat = conf->GetAspectRatio();
@@ -193,10 +192,11 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
     }
   }
 
-  common::uri::Url logo_uri = conf->GetLogoPath();
-  common::draw::Point logo_point = conf->GetLogoPos();
-  alpha_t alpha = conf->GetLogoAlpha();
-  if (logo_uri.IsValid()) {
+  Logo logo = conf->GetLogo();
+  if (logo.IsValid()) {
+    common::uri::Url logo_uri = logo.GetPath();
+    common::draw::Point logo_point = logo.GetPosition();
+    alpha_t alpha = logo.GetAlpha();
     elements::video::ElementGDKPixBufOverlay* videologo =
         new elements::video::ElementGDKPixBufOverlay(common::MemSPrintf(VIDEO_LOGO_NAME_1U, video_id));
     common::uri::Url::scheme scheme = logo_uri.GetScheme();

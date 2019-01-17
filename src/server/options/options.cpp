@@ -28,6 +28,7 @@
 #include "constants.h"
 #include "gst_constants.h"
 #include "inputs_outputs.h"
+#include "logo.h"
 
 #include "utils/arg_converter.h"
 
@@ -158,27 +159,22 @@ Validity validate_auto_exit_time(const std::string& value) {
   return validate_is_positive(value, false);
 }
 
-Validity validate_width(const std::string& value) {
-  return validate_is_positive(value, false);
+Validity validate_size(const std::string& value) {
+  common::draw::Size size;
+  if (!common::ConvertFromString(value, &size)) {
+    return Validity::INVALID;
+  }
+
+  return size.IsValid() ? Validity::VALID : Validity::INVALID;
 }
 
-Validity validate_height(const std::string& value) {
-  return validate_is_positive(value, false);
-}
+Validity validate_logo(const std::string& value) {
+  Logo logo;
+  if (!common::ConvertFromString(value, &logo)) {
+    return Validity::INVALID;
+  }
 
-Validity validate_logo_path(const std::string& value) {
-  common::uri::Url uri(value);
-  return uri.IsValid() ? Validity::VALID : Validity::INVALID;
-}
-
-Validity validate_logo_alpha(const std::string& value) {
-  return validate_range(value, 0.0, 1.0, false);
-}
-
-Validity validate_logo_pos(const std::string& value) {
-  // return validate_range(value, std::numeric_limits<int>::min(),
-  // std::numeric_limits<int>::max(), false);
-  return dont_validate(value);
+  return logo.IsValid() ? Validity::VALID : Validity::INVALID;
 }
 
 Validity validate_framerate(const std::string& value) {
@@ -451,11 +447,8 @@ bool FindOption(const std::string& key, option_t* opt) {
       {HAVE_AUDIO_FIELD, dont_validate},
       {DEINTERLACE_FIELD, dont_validate},
       {LOOP_FIELD, dont_validate},
-      {WIDTH_FIELD, validate_width},
-      {HEIGHT_FIELD, validate_height},
-      {LOGO_PATH_FIELD, validate_logo_path},
-      {LOGO_ALPHA_FIELD, validate_logo_alpha},
-      {LOGO_POS_FIELD, validate_logo_pos},
+      {SIZE_FIELD, validate_size},
+      {LOGO_FIELD, validate_logo},
       {FRAME_RATE_FIELD, validate_framerate},
       {ASPECT_RATIO_FIELD, validate_aspect_ratio},
       {VIDEO_BIT_RATE_FIELD, validate_video_bitrate},

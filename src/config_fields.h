@@ -37,14 +37,11 @@
 #define TIMESHIFT_CHUNK_MAX_LIFE_TIME_FIELD "chunk_max_life_time"  // in hours
 #define TIMESHIFT_DELAY_FIELD "timeshift_delay"                    // in mins
 #define TIMESHIFT_CHUNK_DURATION_FIELD "timeshift_chunk_duration"
-#define LOGO_PATH_FIELD "logo_path"
-#define LOGO_POS_FIELD "logo_pos"
-#define LOGO_ALPHA_FIELD "logo_alpha"
+#define LOGO_FIELD "logo"
 #define LOOP_FIELD "loop"
 #define RESTART_ATTEMPTS_FIELD "restart_attempts"
 #define DELAY_TIME_FIELD "delay_time"
-#define WIDTH_FIELD "width"
-#define HEIGHT_FIELD "height"
+#define SIZE_FIELD "size"
 #define VIDEO_BIT_RATE_FIELD "video_bitrate"
 #define AUDIO_BIT_RATE_FIELD "audio_bitrate"
 #define MAIN_PROFILE_FIELD "mainprofile"

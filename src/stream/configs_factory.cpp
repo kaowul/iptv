@@ -231,14 +231,9 @@ Config* make_config(const utils::ArgsMap& config) {
       econfig->SetAudioChannelsCount(audio_channels);
     }
 
-    int width;
-    if (utils::ArgsGetValue(config, WIDTH_FIELD, &width)) {
-      econfig->SetWidth(width);
-    }
-
-    int height;
-    if (utils::ArgsGetValue(config, HEIGHT_FIELD, &height)) {
-      econfig->SetHeight(height);
+    common::draw::Size size;
+    if (utils::ArgsGetValue(config, SIZE_FIELD, &size)) {
+      econfig->SetSize(size);
     }
 
     int v_bitrate;
@@ -251,19 +246,9 @@ Config* make_config(const utils::ArgsMap& config) {
       econfig->SetAudioBitrate(a_bitrate);
     }
 
-    common::uri::Url logo_path;
-    if (utils::ArgsGetValue(config, LOGO_PATH_FIELD, &logo_path)) {
-      econfig->SetLogoPath(logo_path);
-    }
-
-    common::draw::Point pos;
-    if (utils::ArgsGetValue(config, LOGO_POS_FIELD, &pos)) {
-      econfig->SetLogoPos(pos);
-    }
-
-    alpha_t lalpha;
-    if (utils::ArgsGetValue(config, LOGO_ALPHA_FIELD, &lalpha)) {
-      econfig->SetLogoAlpha(lalpha);
+    Logo logo;
+    if (utils::ArgsGetValue(config, LOGO_FIELD, &logo)) {
+      econfig->SetLogo(logo);
     }
 
     common::media::Rational rat;

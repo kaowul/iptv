@@ -99,7 +99,6 @@ namespace stream {
 
 typedef size_t element_id_t;
 typedef int audio_channels_count_t;
-typedef double alpha_t;
 typedef uint8_t decklink_video_mode_t;
 
 typedef std::map<std::string, uint32_t> video_encoders_args_t;

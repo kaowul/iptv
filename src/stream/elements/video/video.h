@@ -17,6 +17,8 @@
 #include <cairo.h>  // for cairo_t
 #include <string>   // for string
 
+#include "types.h"
+
 #include "stream/stypes.h"
 
 #include "stream/elements/element.h"  // for ElementEx, Element (ptr only), GstElement

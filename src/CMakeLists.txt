@@ -12,6 +12,7 @@ SET(GLOBAL_COMMON_HEADERS
   ${CMAKE_SOURCE_DIR}/src/output_uri.h
   ${CMAKE_SOURCE_DIR}/src/inputs_outputs.h
   ${CMAKE_SOURCE_DIR}/src/input_uri.h
+  ${CMAKE_SOURCE_DIR}/src/logo.h
   ${CMAKE_SOURCE_DIR}/src/stream_struct.h
   ${CMAKE_SOURCE_DIR}/src/stream_stats.h
   ${CMAKE_SOURCE_DIR}/src/stream_commands.h
@@ -24,6 +25,7 @@ SET(GLOBAL_COMMON_SOURCES
   ${CMAKE_SOURCE_DIR}/src/output_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/inputs_outputs.cpp
   ${CMAKE_SOURCE_DIR}/src/input_uri.cpp
+  ${CMAKE_SOURCE_DIR}/src/logo.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_struct.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_stats.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_commands.cpp

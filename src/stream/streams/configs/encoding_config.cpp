@@ -40,13 +40,10 @@ EncodingConfig::EncodingConfig(const base_class& config)
       audio_channels_count_(INVALID_AUDIO_CHANNELS_COUNT),
       video_encoder_args_(),
       video_encoder_str_args_(),
-      width_(INVALID_VIDEO_WIDTH),
-      height_(INVALID_VIDEO_HEIGHT),
+      size_(),
       video_bit_rate_(INVALID_VIDEO_BIT_RATE),
       audio_bit_rate_(INVALID_AUDIO_BIT_RATE),
-      logo_path_(),
-      logo_pos_point_(),
-      logo_alpha_(DEFAULT_LOGO_ALPHA),
+      logo_(),
       decklink_video_mode_(DEFAULT_DECKLINK_VIDEO_MODE),
       aspect_ratio_(kDefaultAspectRatio) {}
 
@@ -118,20 +115,12 @@ void EncodingConfig::SetAudioChannelsCount(audio_channels_count_t channels) {
   audio_channels_count_ = channels;
 }
 
-int EncodingConfig::GetWidth() const {
-  return width_;
+common::draw::Size EncodingConfig::GetSize() const {
+  return size_;
 }
 
-void EncodingConfig::SetWidth(int w) {
-  width_ = w;
-}
-
-int EncodingConfig::GetHeight() const {
-  return height_;
-}
-
-void EncodingConfig::SetHeight(int h) {
-  height_ = h;
+void EncodingConfig::SetSize(common::draw::Size size) {
+  size_ = size;
 }
 
 int EncodingConfig::GetVideoBitrate() const {
@@ -166,28 +155,12 @@ void EncodingConfig::SetVideoEncoderStrArgs(const video_encoders_str_args_t& arg
   video_encoder_str_args_ = args;
 }
 
-void EncodingConfig::SetLogoPath(const common::uri::Url& url) {
-  logo_path_ = url;
+void EncodingConfig::SetLogo(const Logo& logo) {
+  logo_ = logo;
 }
 
-common::uri::Url EncodingConfig::GetLogoPath() const {
-  return logo_path_;
-}
-
-alpha_t EncodingConfig::GetLogoAlpha() const {
-  return logo_alpha_;
-}
-
-void EncodingConfig::SetLogoAlpha(alpha_t al) {
-  logo_alpha_ = al;
-}
-
-common::draw::Point EncodingConfig::GetLogoPos() const {
-  return logo_pos_point_;
-}
-
-void EncodingConfig::SetLogoPos(const common::draw::Point& point) {
-  logo_pos_point_ = point;
+Logo EncodingConfig::GetLogo() const {
+  return logo_;
 }
 
 common::media::Rational EncodingConfig::GetAspectRatio() const {

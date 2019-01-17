@@ -291,12 +291,11 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       elements::Element* next = video_tee_queue;
       ElementLink(video, next);
 
-      int width = output.GetWidth();
-      int height = output.GetHeight();
+      common::draw::Size size = output.GetSize();
       int video_bitrate = output.GetVideoBitrate();
       elements::Element* last = next;
-      if (width != INVALID_VIDEO_WIDTH && height != INVALID_VIDEO_HEIGHT && !config->IsMfxGpu()) {
-        last = elements::encoders::build_video_scale(width, height, this, last, i);
+      if (size.IsValid() && !config->IsMfxGpu()) {
+        last = elements::encoders::build_video_scale(size.width, size.height, this, last, i);
       }
 
       common::media::Rational rat = config->GetAspectRatio();

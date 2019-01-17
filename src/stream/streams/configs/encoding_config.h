@@ -18,6 +18,8 @@
 
 #include <common/draw/types.h>
 
+#include "logo.h"
+
 #include "stream/streams/configs/audio_video_config.h"
 
 #include "stream/stypes.h"
@@ -60,11 +62,8 @@ class EncodingConfig : public AudioVideoConfig {
   video_encoders_str_args_t GetVideoEncoderStrArgs() const;  // encoding
   void SetVideoEncoderStrArgs(const video_encoders_str_args_t& args);
 
-  int GetWidth() const;  // encoding
-  void SetWidth(int w);
-
-  int GetHeight() const;  // encoding
-  void SetHeight(int h);
+  common::draw::Size GetSize() const;  // encoding
+  void SetSize(common::draw::Size size);
 
   int GetVideoBitrate() const;  // encoding
   void SetVideoBitrate(int bitr);
@@ -72,14 +71,8 @@ class EncodingConfig : public AudioVideoConfig {
   int GetAudioBitrate() const;  // encoding
   void SetAudioBitrate(int bitr);
 
-  common::uri::Url GetLogoPath() const;  // encoding
-  void SetLogoPath(const common::uri::Url& url);
-
-  common::draw::Point GetLogoPos() const;  // encoding
-  void SetLogoPos(const common::draw::Point& point);
-
-  alpha_t GetLogoAlpha() const;
-  void SetLogoAlpha(alpha_t al);
+  Logo GetLogo() const;  // encoding
+  void SetLogo(const Logo& logo);
 
   common::media::Rational GetAspectRatio() const;  // encoding
   void SetAspectRatio(common::media::Rational rat);
@@ -101,14 +94,11 @@ class EncodingConfig : public AudioVideoConfig {
   video_encoders_args_t video_encoder_args_;
   video_encoders_str_args_t video_encoder_str_args_;
 
-  int width_;
-  int height_;
+  common::draw::Size size_;
   int video_bit_rate_;
   int audio_bit_rate_;
 
-  common::uri::Url logo_path_;
-  common::draw::Point logo_pos_point_;
-  alpha_t logo_alpha_;
+  Logo logo_;
 
   decklink_video_mode_t decklink_video_mode_;
   common::media::Rational aspect_ratio_;

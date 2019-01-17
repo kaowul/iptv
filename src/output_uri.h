@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <common/uri/url.h>
-
+#include <common/draw/types.h>
 #include <common/file_system/path.h>
+#include <common/uri/url.h>
 
 #include "types.h"
 
@@ -37,11 +37,8 @@ class OutputUri {
   http_root_t GetHttpRoot() const;
   void SetHttpRoot(const http_root_t& root);
 
-  int GetWidth() const;
-  void SetWidth(int width);
-
-  int GetHeight() const;
-  void SetHeight(int height);
+  common::draw::Size GetSize() const;
+  void SetSize(common::draw::Size size);
 
   int GetAudioBitrate() const;
   void SetAudioBitrate(int rate);
@@ -56,8 +53,7 @@ class OutputUri {
   common::uri::Url output_;
   http_root_t http_root_;
 
-  int width_;
-  int height_;
+  common::draw::Size size_;
 
   int audio_bit_rate_;
   int video_bit_rate_;

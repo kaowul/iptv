@@ -24,8 +24,7 @@
 #define FIELD_OUTPUT_ID "id"
 #define FIELD_OUTPUT_URI "uri"
 #define FIELD_OUTPUT_HTTP_ROOT "http_root"
-#define FIELD_OUTPUT_WIDTH "width"
-#define FIELD_OUTPUT_HEIGHT "height"
+#define FIELD_OUTPUT_SIZE "size"
 #define FIELD_OUTPUT_VIDEO_BITRATE "video_bitrate"
 #define FIELD_OUTPUT_AUDIO_BITRATE "audio_bitrate"
 
@@ -37,8 +36,7 @@ OutputUri::OutputUri(stream_id_t id, const common::uri::Url& output)
     : id_(id),
       output_(output),
       http_root_(),
-      width_(INVALID_VIDEO_WIDTH),
-      height_(INVALID_VIDEO_HEIGHT),
+      size_(),
       audio_bit_rate_(INVALID_AUDIO_BIT_RATE),
       video_bit_rate_(INVALID_VIDEO_BIT_RATE) {}
 
@@ -66,20 +64,12 @@ void OutputUri::SetHttpRoot(const http_root_t& root) {
   http_root_ = root;
 }
 
-int OutputUri::GetWidth() const {
-  return width_;
+common::draw::Size OutputUri::GetSize() const {
+  return size_;
 }
 
-void OutputUri::SetWidth(int width) {
-  width_ = width;
-}
-
-int OutputUri::GetHeight() const {
-  return height_;
-}
-
-void OutputUri::SetHeight(int height) {
-  height_ = height;
+void OutputUri::SetSize(common::draw::Size size) {
+  size_ = size;
 }
 
 int OutputUri::GetAudioBitrate() const {
@@ -99,8 +89,8 @@ void OutputUri::SetVideoBitrate(int rate) {
 }
 
 bool OutputUri::Equals(const OutputUri& inf) const {
-  return id_ == inf.id_ && output_ == inf.output_ && http_root_ == inf.http_root_ && width_ == inf.width_ &&
-         height_ == inf.height_ && audio_bit_rate_ == inf.audio_bit_rate_ && video_bit_rate_ == inf.video_bit_rate_;
+  return id_ == inf.id_ && output_ == inf.output_ && http_root_ == inf.http_root_ && size_ == inf.size_ &&
+         audio_bit_rate_ == inf.audio_bit_rate_ && video_bit_rate_ == inf.video_bit_rate_;
 }
 
 }  // namespace iptv_cloud
@@ -116,11 +106,11 @@ std::string ConvertToString(const iptv_cloud::OutputUri& value) {
   common::file_system::ascii_directory_string_path ps = value.GetHttpRoot();
   const std::string http_root_str = ps.GetPath();
   return common::MemSPrintf("{ \"" FIELD_OUTPUT_ID "\": %llu, \"" FIELD_OUTPUT_URI
-                            "\": \"%s\", \"" FIELD_OUTPUT_HTTP_ROOT "\": \"%s\", \"" FIELD_OUTPUT_WIDTH
-                            "\": %d, \"" FIELD_OUTPUT_HEIGHT "\": %d, \"" FIELD_OUTPUT_VIDEO_BITRATE
-                            "\": %d, \"" FIELD_OUTPUT_AUDIO_BITRATE "\": %d }",
-                            value.GetID(), common::ConvertToString(value.GetOutput()), http_root_str, value.GetWidth(),
-                            value.GetHeight(), value.GetVideoBitrate(), value.GetAudioBitrate());
+                            "\": \"%s\", \"" FIELD_OUTPUT_HTTP_ROOT "\": \"%s\", \"" FIELD_OUTPUT_SIZE
+                            "\": \"%s\", \"" FIELD_OUTPUT_VIDEO_BITRATE "\": %d, \"" FIELD_OUTPUT_AUDIO_BITRATE
+                            "\": %d }",
+                            value.GetID(), common::ConvertToString(value.GetOutput()), http_root_str,
+                            common::ConvertToString(value.GetSize()), value.GetVideoBitrate(), value.GetAudioBitrate());
 }
 
 bool ConvertFromString(const std::string& from, iptv_cloud::OutputUri* out) {
@@ -154,16 +144,13 @@ bool ConvertFromString(const std::string& from, iptv_cloud::OutputUri* out) {
     res.SetHttpRoot(http_root);
   }
 
-  json_object* jwidth = nullptr;
-  json_bool jwidth_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_WIDTH, &jwidth);
-  if (jwidth_exists) {
-    res.SetWidth(json_object_get_int(jwidth));
-  }
-
-  json_object* jheight = nullptr;
-  json_bool jheight_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_HEIGHT, &jheight);
-  if (jheight_exists) {
-    res.SetHeight(json_object_get_int(jheight));
+  json_object* jsize = nullptr;
+  json_bool jsize_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_SIZE, &jsize);
+  if (jsize_exists) {
+    common::draw::Size size;
+    if (common::ConvertFromString(json_object_get_string(jsize), &size)) {
+      res.SetSize(size);
+    }
   }
 
   json_object* jvbitrate = nullptr;
