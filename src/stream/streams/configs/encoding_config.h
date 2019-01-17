@@ -104,17 +104,7 @@ class EncodingConfig : public AudioVideoConfig {
   common::media::Rational aspect_ratio_;
 };
 
-class PlaylistEncodingConfig : public EncodingConfig {
- public:
-  typedef EncodingConfig base_class;
-  explicit PlaylistEncodingConfig(const base_class& config);
-
-  bool GetLoop() const;  // enc_playlist relay_playlist
-  void SetLoop(bool loop);
-
- private:
-  bool loop_;
-};
+typedef EncodingConfig PlaylistEncodingConfig;
 
 }  // namespace streams
 }  // namespace stream

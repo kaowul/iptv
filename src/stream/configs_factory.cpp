@@ -179,30 +179,28 @@ Config* make_config(const utils::ArgsMap& config) {
     aconf.SetAudioSelect(audio_select);
   }
 
+  bool loop;
+  if (utils::ArgsGetValue(config, LOOP_FIELD, &loop)) {
+    aconf.SetLoop(loop);
+  }
+
   if (stream_type == SCREEN) {
     return new streams::AudioVideoConfig(aconf);
   } else if (stream_type == RELAY || stream_type == TIMESHIFT_PLAYER) {
-    streams::RelayConfig rel(aconf);
-    streams::PlaylistRelayConfig* rconfig = new streams::PlaylistRelayConfig(rel);
+    streams::RelayConfig* rconfig = new streams::RelayConfig(aconf);
 
     std::string video_parser;
     if (utils::ArgsGetValue(config, VIDEO_PARSER_FIELD, &video_parser)) {
-      rel.SetVideoParser(video_parser);
+      rconfig->SetVideoParser(video_parser);
     }
     std::string audio_parser;
     if (utils::ArgsGetValue(config, AUDIO_PARSER_FIELD, &audio_parser)) {
-      rel.SetAudioParser(audio_parser);
+      rconfig->SetAudioParser(audio_parser);
     }
 
-    // playlist
-    bool loop = false;
-    if (utils::ArgsGetValue(config, LOOP_FIELD, &loop)) {
-      rconfig->SetLoop(loop);
-    }
     return rconfig;
   } else if (stream_type == ENCODE) {
-    streams::EncodingConfig econf(aconf);
-    streams::PlaylistEncodingConfig* econfig = new streams::PlaylistEncodingConfig(econf);
+    streams::EncodingConfig* econfig = new streams::EncodingConfig(aconf);
     bool deinterlace;
     if (utils::ArgsGetValue(config, DEINTERLACE_FIELD, &deinterlace)) {
       econfig->SetDeinterlace(deinterlace);
@@ -260,11 +258,6 @@ Config* make_config(const utils::ArgsMap& config) {
       econfig->SetDecklinkMode(decl_vm);
     }
 
-    // playlist
-    bool loop = false;
-    if (utils::ArgsGetValue(config, LOOP_FIELD, &loop)) {
-      econfig->SetLoop(loop);
-    }
     video_encoders_args_t video_encoder_args;
     video_encoders_str_args_t video_encoder_str_args;
     if (InitVideoEncodersWithArgs(config, &video_encoder_args, &video_encoder_str_args)) {

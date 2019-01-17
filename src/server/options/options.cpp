@@ -161,20 +161,12 @@ Validity validate_auto_exit_time(const std::string& value) {
 
 Validity validate_size(const std::string& value) {
   common::draw::Size size;
-  if (!common::ConvertFromString(value, &size)) {
-    return Validity::INVALID;
-  }
-
-  return size.IsValid() ? Validity::VALID : Validity::INVALID;
+  return common::ConvertFromString(value, &size) ? Validity::VALID : Validity::INVALID;
 }
 
 Validity validate_logo(const std::string& value) {
   Logo logo;
-  if (!common::ConvertFromString(value, &logo)) {
-    return Validity::INVALID;
-  }
-
-  return logo.IsValid() ? Validity::VALID : Validity::INVALID;
+  return common::ConvertFromString(value, &logo) ? Validity::VALID : Validity::INVALID;
 }
 
 Validity validate_framerate(const std::string& value) {

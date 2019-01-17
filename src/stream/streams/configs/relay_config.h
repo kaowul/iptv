@@ -48,17 +48,7 @@ class TimeshiftConfig : public RelayConfig {
   time_t timeshift_chunk_duration_;
 };
 
-class PlaylistRelayConfig : public RelayConfig {
- public:
-  typedef RelayConfig base_class;
-  explicit PlaylistRelayConfig(const base_class& config);
-
-  bool GetLoop() const;  // enc_playlist relay_playlist
-  void SetLoop(bool loop);
-
- private:
-  bool loop_;
-};
+typedef RelayConfig PlaylistRelayConfig;
 
 }  // namespace streams
 }  // namespace stream

@@ -28,7 +28,7 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-const common::media::Rational kDefaultAspectRatio = {DEFAULT_ASPECT_RATIO_NUM, DEFAULT_ASPECT_RATIO_DEN};
+const common::media::Rational kDefaultAspectRatio = {INVALID_ASPECT_RATIO_NUM, INVALID_ASPECT_RATIO_DEN};
 
 EncodingConfig::EncodingConfig(const base_class& config)
     : base_class(config),
@@ -177,16 +177,6 @@ decklink_video_mode_t EncodingConfig::GetDecklinkMode() const {
 
 void EncodingConfig::SetDecklinkMode(decklink_video_mode_t decl) {
   decklink_video_mode_ = decl;
-}
-
-PlaylistEncodingConfig::PlaylistEncodingConfig(const base_class& config) : base_class(config), loop_(false) {}
-
-void PlaylistEncodingConfig::SetLoop(bool loop) {
-  loop_ = loop;
-}
-
-bool PlaylistEncodingConfig::GetLoop() const {
-  return loop_;
 }
 
 }  // namespace streams

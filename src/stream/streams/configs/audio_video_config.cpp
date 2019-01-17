@@ -24,7 +24,8 @@ AudioVideoConfig::AudioVideoConfig(const base_class& config)
     : base_class(config),
       have_video_(DEFAULT_HAVE_VIDEO),
       have_audio_(DEFAULT_HAVE_AUDIO),
-      audio_select_(INVALID_AUDIO_SELECT) {}
+      audio_select_(INVALID_AUDIO_SELECT),
+      loop_(DEFAULT_LOOP) {}
 
 bool AudioVideoConfig::HaveVideo() const {
   return have_video_;
@@ -48,6 +49,14 @@ int AudioVideoConfig::GetAudioSelect() const {
 
 void AudioVideoConfig::SetAudioSelect(int sel) {
   audio_select_ = sel;
+}
+
+bool AudioVideoConfig::GetLoop() const {
+  return loop_;
+}
+
+void AudioVideoConfig::SetLoop(bool loop) {
+  loop_ = loop;
 }
 
 }  // namespace streams

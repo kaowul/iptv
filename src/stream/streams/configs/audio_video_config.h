@@ -34,10 +34,14 @@ class AudioVideoConfig : public Config {
   int GetAudioSelect() const;
   void SetAudioSelect(int sel);
 
+  bool GetLoop() const;
+  void SetLoop(bool loop);
+
  private:
   bool have_video_;
   bool have_audio_;
   int audio_select_;
+  bool loop_;
 };
 
 }  // namespace streams

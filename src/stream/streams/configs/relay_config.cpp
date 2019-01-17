@@ -56,16 +56,6 @@ void TimeshiftConfig::SetTimeShiftChunkDuration(time_t t) {
   timeshift_chunk_duration_ = t;
 }
 
-PlaylistRelayConfig::PlaylistRelayConfig(const base_class& config) : base_class(config), loop_(false) {}
-
-void PlaylistRelayConfig::SetLoop(bool loop) {
-  loop_ = loop;
-}
-
-bool PlaylistRelayConfig::GetLoop() const {
-  return loop_;
-}
-
 }  // namespace streams
 }  // namespace stream
 }  // namespace iptv_cloud
