@@ -37,10 +37,10 @@ OutputUri::OutputUri(stream_id_t id, const common::uri::Url& output)
     : id_(id),
       output_(output),
       http_root_(),
-      width_(DEFAULT_VIDEO_WIDTH),
-      height_(DEFAULT_VIDEO_HEIGHT),
-      audio_bitrate_(DEFAULT_AUDIO_BITRATE),
-      video_bitrate_(DEFAULT_VIDEO_BITRATE) {}
+      width_(INVALID_VIDEO_WIDTH),
+      height_(INVALID_VIDEO_HEIGHT),
+      audio_bit_rate_(INVALID_AUDIO_BIT_RATE),
+      video_bit_rate_(INVALID_VIDEO_BIT_RATE) {}
 
 stream_id_t OutputUri::GetID() const {
   return id_;
@@ -83,24 +83,24 @@ void OutputUri::SetHeight(int height) {
 }
 
 int OutputUri::GetAudioBitrate() const {
-  return audio_bitrate_;
+  return audio_bit_rate_;
 }
 
 void OutputUri::SetAudioBitrate(int rate) {
-  audio_bitrate_ = rate;
+  audio_bit_rate_ = rate;
 }
 
 int OutputUri::GetVideoBitrate() const {
-  return video_bitrate_;
+  return video_bit_rate_;
 }
 
 void OutputUri::SetVideoBitrate(int rate) {
-  video_bitrate_ = rate;
+  video_bit_rate_ = rate;
 }
 
 bool OutputUri::Equals(const OutputUri& inf) const {
   return id_ == inf.id_ && output_ == inf.output_ && http_root_ == inf.http_root_ && width_ == inf.width_ &&
-         height_ == inf.height_ && audio_bitrate_ == inf.audio_bitrate_ && video_bitrate_ == inf.video_bitrate_;
+         height_ == inf.height_ && audio_bit_rate_ == inf.audio_bit_rate_ && video_bit_rate_ == inf.video_bit_rate_;
 }
 
 }  // namespace iptv_cloud

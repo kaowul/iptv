@@ -242,16 +242,16 @@ Config* make_config(const utils::ArgsMap& config) {
     }
 
     int v_bitrate;
-    if (utils::ArgsGetValue(config, VIDEO_BITRATE_FIELD, &v_bitrate)) {
+    if (utils::ArgsGetValue(config, VIDEO_BIT_RATE_FIELD, &v_bitrate)) {
       econfig->SetVideoBitrate(v_bitrate);
     }
 
     int a_bitrate;
-    if (utils::ArgsGetValue(config, AUDIO_BITRATE_FIELD, &a_bitrate)) {
+    if (utils::ArgsGetValue(config, AUDIO_BIT_RATE_FIELD, &a_bitrate)) {
       econfig->SetAudioBitrate(a_bitrate);
     }
 
-    std::string logo_path;
+    common::uri::Url logo_path;
     if (utils::ArgsGetValue(config, LOGO_PATH_FIELD, &logo_path)) {
       econfig->SetLogoPath(logo_path);
     }

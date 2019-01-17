@@ -146,7 +146,7 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
     if (conf->IsMfxGpu()) {
       elements::ElementMFXVpp* post = new elements::ElementMFXVpp(common::MemSPrintf(POST_PROC_NAME_1U, video_id));
       post->SetForceAspectRatio(false);
-      if (width != DEFAULT_VIDEO_WIDTH && height != DEFAULT_VIDEO_HEIGHT) {
+      if (width != INVALID_VIDEO_WIDTH && height != INVALID_VIDEO_HEIGHT) {
         post->SetWidth(width);
         post->SetHeight(height);
       }
@@ -174,7 +174,7 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
     first = first_last.front();
     last = first_last.back();
 
-    if (width != DEFAULT_VIDEO_WIDTH && height != DEFAULT_VIDEO_HEIGHT) {
+    if (width != INVALID_VIDEO_WIDTH && height != INVALID_VIDEO_HEIGHT) {
       last = elements::encoders::build_video_scale(width, height, this, last, video_id);
     }
 

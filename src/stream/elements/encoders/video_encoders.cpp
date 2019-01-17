@@ -234,7 +234,7 @@ elements_line_t build_video_encoder(const std::string& codec,
   Element* const first = codec_element;
   linker->ElementAdd(codec_element);
 
-  if (video_bitrate != DEFAULT_VIDEO_BITRATE) {
+  if (video_bitrate != INVALID_VIDEO_BIT_RATE) {
     if (codec_element->GetPluginName() == ElementEAVCEnc::GetPluginName()) {
       codec_element->SetProperty("bitrate-avg", video_bitrate * 1024);
     } else {

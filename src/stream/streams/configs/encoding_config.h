@@ -73,7 +73,7 @@ class EncodingConfig : public AudioVideoConfig {
   void SetAudioBitrate(int bitr);
 
   common::uri::Url GetLogoPath() const;  // encoding
-  void SetLogoPath(const std::string& path);
+  void SetLogoPath(const common::uri::Url& url);
 
   common::draw::Point GetLogoPos() const;  // encoding
   void SetLogoPos(const common::draw::Point& point);
@@ -103,8 +103,8 @@ class EncodingConfig : public AudioVideoConfig {
 
   int width_;
   int height_;
-  int video_bitrate_;
-  int audio_bitrate_;
+  int video_bit_rate_;
+  int audio_bit_rate_;
 
   common::uri::Url logo_path_;
   common::draw::Point logo_pos_point_;

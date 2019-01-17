@@ -40,10 +40,10 @@ EncodingConfig::EncodingConfig(const base_class& config)
       audio_channels_count_(INVALID_AUDIO_CHANNELS_COUNT),
       video_encoder_args_(),
       video_encoder_str_args_(),
-      width_(DEFAULT_VIDEO_WIDTH),
-      height_(DEFAULT_VIDEO_HEIGHT),
-      video_bitrate_(DEFAULT_VIDEO_BITRATE),
-      audio_bitrate_(DEFAULT_AUDIO_BITRATE),
+      width_(INVALID_VIDEO_WIDTH),
+      height_(INVALID_VIDEO_HEIGHT),
+      video_bit_rate_(INVALID_VIDEO_BIT_RATE),
+      audio_bit_rate_(INVALID_AUDIO_BIT_RATE),
       logo_path_(),
       logo_pos_point_(),
       logo_alpha_(DEFAULT_LOGO_ALPHA),
@@ -135,19 +135,19 @@ void EncodingConfig::SetHeight(int h) {
 }
 
 int EncodingConfig::GetVideoBitrate() const {
-  return video_bitrate_;
+  return video_bit_rate_;
 }
 
 void EncodingConfig::SetVideoBitrate(int bitr) {
-  video_bitrate_ = bitr;
+  video_bit_rate_ = bitr;
 }
 
 int EncodingConfig::GetAudioBitrate() const {
-  return audio_bitrate_;
+  return audio_bit_rate_;
 }
 
 void EncodingConfig::SetAudioBitrate(int bitr) {
-  audio_bitrate_ = bitr;
+  audio_bit_rate_ = bitr;
 }
 
 video_encoders_args_t EncodingConfig::GetVideoEncoderArgs() const {
@@ -166,8 +166,8 @@ void EncodingConfig::SetVideoEncoderStrArgs(const video_encoders_str_args_t& arg
   video_encoder_str_args_ = args;
 }
 
-void EncodingConfig::SetLogoPath(const std::string& path) {
-  logo_path_ = common::uri::Url(path);
+void EncodingConfig::SetLogoPath(const common::uri::Url& url) {
+  logo_path_ = url;
 }
 
 common::uri::Url EncodingConfig::GetLogoPath() const {

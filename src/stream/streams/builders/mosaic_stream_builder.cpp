@@ -295,7 +295,7 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       int height = output.GetHeight();
       int video_bitrate = output.GetVideoBitrate();
       elements::Element* last = next;
-      if (width != DEFAULT_VIDEO_WIDTH && height != DEFAULT_VIDEO_HEIGHT && !config->IsMfxGpu()) {
+      if (width != INVALID_VIDEO_WIDTH && height != INVALID_VIDEO_HEIGHT && !config->IsMfxGpu()) {
         last = elements::encoders::build_video_scale(width, height, this, last, i);
       }
 

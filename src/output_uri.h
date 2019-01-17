@@ -59,8 +59,8 @@ class OutputUri {
   int width_;
   int height_;
 
-  int audio_bitrate_;
-  int video_bitrate_;
+  int audio_bit_rate_;
+  int video_bit_rate_;
 };
 
 inline bool operator==(const OutputUri& left, const OutputUri& right) {

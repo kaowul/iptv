@@ -53,7 +53,7 @@ ElementFAAC* make_mp3_encoder(element_id_t encoder_id) {
 Element* make_audio_encoder(const std::string& codec, const std::string& name, gint audiorate) {
   if (codec == ElementFAAC::GetPluginName()) {
     ElementFAAC* aac = new ElementFAAC(name);
-    if (audiorate != DEFAULT_AUDIO_BITRATE) {
+    if (audiorate != INVALID_AUDIO_BIT_RATE) {
       aac->SetRateControl(2);
       audiorate *= 1024;
       aac->SetBitRate(audiorate);
@@ -61,14 +61,14 @@ Element* make_audio_encoder(const std::string& codec, const std::string& name, g
     return aac;
   } else if (codec == ElementVoaacEnc::GetPluginName()) {
     ElementVoaacEnc* aac = new ElementVoaacEnc(name);
-    if (audiorate != DEFAULT_AUDIO_BITRATE) {
+    if (audiorate != INVALID_AUDIO_BIT_RATE) {
       audiorate *= 1024;
       aac->SetBitRate(audiorate);
     }
     return aac;
   } else if (codec == ElementMP3Enc::GetPluginName()) {
     ElementMP3Enc* mp3 = new ElementMP3Enc(name);
-    if (audiorate != DEFAULT_AUDIO_BITRATE) {
+    if (audiorate != INVALID_AUDIO_BIT_RATE) {
       mp3->SetTarget(1);
       mp3->SetBitRate(audiorate);
     }
