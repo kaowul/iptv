@@ -17,7 +17,7 @@
 #include "stream/elements/element.h"  // for Element
 #include "stream/elements/sources/sources.h"
 
-#include "stream/pad/pad.h"  //for Pad
+#include "stream/pad/pad.h"  // for Pad
 
 namespace iptv_cloud {
 namespace stream {
@@ -29,7 +29,7 @@ TestStreamBuilder::TestStreamBuilder(const EncodingConfig* api, SrcDecodeBinStre
 
 Connector TestStreamBuilder::BuildInput() {
   elements::Element* video = nullptr;
-  const EncodingConfig* config = static_cast<const EncodingConfig*>(api_);
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(GetConfig());
   if (config->HaveVideo()) {
     video = new elements::sources::ElementVideoTestSrc("video_sdrc");
     ElementAdd(video);

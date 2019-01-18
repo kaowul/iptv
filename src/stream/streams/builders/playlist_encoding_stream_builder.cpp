@@ -44,9 +44,9 @@ elements::Element* PlaylistEncodingStreamBuilder::BuildInputSrc() {
 }
 
 void PlaylistEncodingStreamBuilder::HandleAppSrcCreated(elements::sources::ElementAppSrc* src) {
-  if (observer_) {
-    PlaylistEncodingStream* pobs = static_cast<PlaylistEncodingStream*>(observer_);
-    pobs->OnAppSrcCreatedCreated(src);
+  PlaylistEncodingStream* stream = static_cast<PlaylistEncodingStream*>(GetObserver());
+  if (stream) {
+    stream->OnAppSrcCreatedCreated(src);
   }
 }
 

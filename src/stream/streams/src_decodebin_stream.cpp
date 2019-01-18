@@ -50,7 +50,7 @@ const char* SrcDecodeBinStream::ClassName() const {
 }
 
 void SrcDecodeBinStream::PreLoop() {
-  const Config* conf = GetApi();
+  const Config* conf = GetConfig();
   input_t input = conf->GetInput();
   if (client_) {
     client_->OnInputChanged(input[0]);

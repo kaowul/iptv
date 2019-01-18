@@ -33,7 +33,7 @@ DeviceStreamBuilder::DeviceStreamBuilder(const EncodingConfig* api, SrcDecodeBin
     : EncodingStreamBuilder(api, observer) {}
 
 Connector DeviceStreamBuilder::BuildInput() {
-  const EncodingConfig* config = static_cast<const EncodingConfig*>(api_);
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(GetConfig());
   input_t input = config->GetInput();
   InputUri diuri = input[0];
   common::uri::Url duri = diuri.GetInput();

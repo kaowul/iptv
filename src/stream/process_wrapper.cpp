@@ -148,7 +148,7 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
       process_name_(process_name),
       feedback_dir_(feedback_dir),
       config_(make_config(config_args)),
-      tinfo_(make_timeshift_info(config_args)),
+      timeshift_info_(),
       restart_attempts_(0),
       stop_mutex_(),
       stop_cond_(),
@@ -162,6 +162,11 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
       origin_(nullptr),
       id_() {
   CHECK(mem);
+
+  StreamType stream_type = config_->GetType();
+  if (stream_type == TIMESHIFT_RECORDER || stream_type == TIMESHIFT_PLAYER || stream_type == CATCHUP) {
+    timeshift_info_ = make_timeshift_info(config_args);
+  }
 
   EncoderType enc = CPU;
   std::string video_codec;
@@ -196,7 +201,7 @@ int ProcessWrapper::Exec() {
     if (config_->GetType() == TIMESHIFT_PLAYER) {  // if timeshift player or cathcup player
       const streams::TimeshiftConfig* tconfig = static_cast<const streams::TimeshiftConfig*>(config_);
       time_t timeshift_chunk_duration = tconfig->GetTimeShiftChunkDuration();
-      while (!tinfo_.FindChunkToPlay(timeshift_chunk_duration, &start_chunk_index)) {
+      while (!timeshift_info_.FindChunkToPlay(timeshift_chunk_duration, &start_chunk_index)) {
         DumpStreamStatus(mem_, WAITING);
 
         {
@@ -218,7 +223,7 @@ int ProcessWrapper::Exec() {
     int stabled_status = EXIT_SUCCESS;
     int signal_number = 0;
     time_t start_utc_now = common::time::current_mstime() / 1000;
-    origin_ = StreamsFactory::GetInstance().CreateStream(config_, this, mem_, tinfo_, start_chunk_index);
+    origin_ = StreamsFactory::GetInstance().CreateStream(config_, this, mem_, timeshift_info_, start_chunk_index);
     ExitStatus res = origin_->Exec();
     destroy(&origin_);
     if (res == EXIT_INNER) {

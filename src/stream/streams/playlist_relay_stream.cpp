@@ -50,7 +50,7 @@ void PlaylistRelayStream::OnAppSrcCreatedCreated(elements::sources::ElementAppSr
 }
 
 IBaseBuilder* PlaylistRelayStream::CreateBuilder() {
-  const PlaylistRelayConfig* rconf = static_cast<const PlaylistRelayConfig*>(GetApi());
+  const PlaylistRelayConfig* rconf = static_cast<const PlaylistRelayConfig*>(GetConfig());
   return new builders::PlaylistRelayStreamBuilder(rconf, this);
 }
 
@@ -99,7 +99,7 @@ void PlaylistRelayStream::need_data_callback(GstElement* pipeline, guint size, g
 }
 
 FILE* PlaylistRelayStream::OpenNextFile() {
-  const PlaylistRelayConfig* rconf = static_cast<const PlaylistRelayConfig*>(GetApi());
+  const PlaylistRelayConfig* rconf = static_cast<const PlaylistRelayConfig*>(GetConfig());
   const auto loop = rconf->GetLoop();
   if (loop) {
     if (!*loop) {

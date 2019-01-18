@@ -165,7 +165,7 @@ IBaseStream::IStreamClient::~IStreamClient() {}
 IBaseStream::IBaseStream(const Config* config, IStreamClient* client, StreamStruct* stats)
     : common::IMetaClassInfo(),
       client_(client),
-      api_(config),
+      config_(config),
       probe_in_(),
       probe_out_(),
       loop_(g_main_loop_new(ctx_holder::instance()->ctx, FALSE)),
@@ -200,7 +200,7 @@ void IBaseStream::LinkOutputPad(GstPad* pad, element_id_t id) {
 
 void IBaseStream::RuntimeCleanUp() {
   const time_t max_life_time = common::time::current_mstime() / 1000 - 24 * 60 * 60;
-  for (const OutputUri& output : api_->GetOutput()) {
+  for (const OutputUri& output : config_->GetOutput()) {
     common::uri::Url uri = output.GetOutput();
     common::uri::Url::scheme scheme = uri.GetScheme();
 
@@ -641,7 +641,7 @@ gboolean IBaseStream::HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* mes
     gst_message_parse_clock_lost(message, &clock);
     INFO_LOG() << GetID() << " ASYNC GST_MESSAGE_CLOCK_LOST: " << GST_OBJECT_NAME(clock);
   } else if (type == GST_MESSAGE_DURATION_CHANGED) {
-    input_t input = api_->GetInput();
+    input_t input = config_->GetInput();
     for (size_t i = 0; i < input.size(); ++i) {
       common::uri::Url input_url = input[i].GetInput();
       if (input_url.GetScheme() == common::uri::Url::http) {
@@ -773,8 +773,8 @@ void IBaseStream::UpdateStats(const Probe* probe, gsize size) {
   }
 }
 
-const Config* IBaseStream::GetApi() const {
-  return api_;
+const Config* IBaseStream::GetConfig() const {
+  return config_;
 }
 
 GstBusSyncReply IBaseStream::sync_bus_callback(GstBus* bus, GstMessage* message, gpointer user_data) {

@@ -54,7 +54,7 @@ chunk_index_t CatchupStream::GetNextChunkStrategy(chunk_index_t last_index, time
 }
 
 IBaseBuilder* CatchupStream::CreateBuilder() {
-  const TimeshiftConfig* tconf = static_cast<const TimeshiftConfig*>(GetApi());
+  const TimeshiftConfig* tconf = static_cast<const TimeshiftConfig*>(GetConfig());
   return new builders::CatchupStreamBuilder(tconf, this);
 }
 
@@ -72,7 +72,7 @@ void CatchupStream::WriteM3u8List() {
     return;
   }
 
-  const TimeshiftConfig* tconf = static_cast<const TimeshiftConfig*>(GetApi());
+  const TimeshiftConfig* tconf = static_cast<const TimeshiftConfig*>(GetConfig());
   time_t duration = tconf->GetTimeShiftChunkDuration();
   chunk_index_t first_index = 0;
   if (!chunks_.empty()) {

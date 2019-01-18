@@ -68,7 +68,7 @@ MosaicStreamBuilder::MosaicStreamBuilder(const EncodingConfig* config, MosaicStr
     : IBaseBuilder(config, observer) {}
 
 bool MosaicStreamBuilder::InitPipeline() {
-  const EncodingConfig* config = static_cast<const EncodingConfig*>(api_);
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(GetConfig());
   input_t prepared = config->GetInput();
   size_t sz = prepared.size();
   MosaicImageOptions options;
@@ -222,7 +222,7 @@ bool MosaicStreamBuilder::InitPipeline() {
 }
 
 void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Element* audio) {
-  const EncodingConfig* config = static_cast<const EncodingConfig*>(api_);
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(GetConfig());
   output_t out = config->GetOutput();
 
   for (size_t i = 0; i < out.size(); ++i) {
@@ -394,17 +394,17 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
 }
 
 void MosaicStreamBuilder::HandleDecodebinCreated(elements::ElementDecodebin* decodebin) {
-  if (observer_) {
-    MosaicStream* srcdec_observer = static_cast<MosaicStream*>(observer_);
-    srcdec_observer->OnDecodebinCreated(decodebin);
+  MosaicStream* stream = static_cast<MosaicStream*>(GetObserver());
+  if (stream) {
+    stream->OnDecodebinCreated(decodebin);
   }
 }
 
 void MosaicStreamBuilder::HandleCairoCreated(elements::video::ElementCairoOverlay* cairo,
                                              const MosaicImageOptions& options) {
-  if (observer_) {
-    MosaicStream* srcdec_observer = static_cast<MosaicStream*>(observer_);
-    srcdec_observer->OnCairoCreated(cairo, options);
+  MosaicStream* stream = static_cast<MosaicStream*>(GetObserver());
+  if (stream) {
+    stream->OnCairoCreated(cairo, options);
   }
 }
 

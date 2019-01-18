@@ -29,10 +29,14 @@
 namespace iptv_cloud {
 namespace stream {
 
-IBaseBuilder::IBaseBuilder(const Config* api, IBaseBuilderObserver* observer)
-    : api_(api), observer_(observer), pipeline_(gst_pipeline_new("pipeline")), pipeline_elements_() {}
+IBaseBuilder::IBaseBuilder(const Config* config, IBaseBuilderObserver* observer)
+    : config_(config), observer_(observer), pipeline_(gst_pipeline_new("pipeline")), pipeline_elements_() {}
 
 IBaseBuilder::~IBaseBuilder() {}
+
+const Config* IBaseBuilder::GetConfig() const {
+  return config_;
+}
 
 elements::Element* IBaseBuilder::GetElementByName(const std::string& name) const {
   for (elements::Element* el : pipeline_elements_) {
@@ -72,6 +76,10 @@ bool IBaseBuilder::ElementRemove(elements::Element* elem) {
 bool IBaseBuilder::ElementLinkRemove(elements::Element* src, elements::Element* dest) {
   gst_element_unlink(src->GetGstElement(), dest->GetGstElement());
   return true;
+}
+
+IBaseBuilderObserver* IBaseBuilder::GetObserver() const {
+  return observer_;
 }
 
 elements::Element* IBaseBuilder::BuildGenericOutput(const OutputUri& output, element_id_t sink_id) {

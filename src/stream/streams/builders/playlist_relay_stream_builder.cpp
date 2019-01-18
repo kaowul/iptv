@@ -29,9 +29,9 @@ PlaylistRelayStreamBuilder::PlaylistRelayStreamBuilder(const PlaylistRelayConfig
     : RelayStreamBuilder(api, observer) {}
 
 void PlaylistRelayStreamBuilder::HandleAppSrcCreated(elements::sources::ElementAppSrc* src) {
-  if (observer_) {
-    PlaylistRelayStream* pobs = static_cast<PlaylistRelayStream*>(observer_);
-    pobs->OnAppSrcCreatedCreated(src);
+  PlaylistRelayStream* stream = static_cast<PlaylistRelayStream*>(GetObserver());
+  if (stream) {
+    stream->OnAppSrcCreatedCreated(src);
   }
 }
 

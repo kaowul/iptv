@@ -23,11 +23,12 @@ class ElementDecodebin;
 }
 namespace streams {
 class SrcDecodeBinStream;
+class AudioVideoConfig;
 namespace builders {
 
 class SrcDecodeStreamBuilder : public GstBaseBuilder {
  public:
-  SrcDecodeStreamBuilder(const Config* api, SrcDecodeBinStream* observer);
+  SrcDecodeStreamBuilder(const AudioVideoConfig* config, SrcDecodeBinStream* observer);
 
   Connector BuildInput() override;
   virtual elements::Element* BuildInputSrc();

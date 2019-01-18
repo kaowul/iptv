@@ -62,8 +62,8 @@ elements::Element* make_audio_pay(SupportedAudioCodec acodec, element_id_t pay_i
 namespace streams {
 namespace builders {
 
-SrcDecodeStreamBuilder::SrcDecodeStreamBuilder(const Config* api, SrcDecodeBinStream* observer)
-    : GstBaseBuilder(api, observer) {}
+SrcDecodeStreamBuilder::SrcDecodeStreamBuilder(const AudioVideoConfig* config, SrcDecodeBinStream* observer)
+    : GstBaseBuilder(config, observer) {}
 
 Connector SrcDecodeStreamBuilder::BuildInput() {
   elements::Element* src = BuildInputSrc();
@@ -76,14 +76,15 @@ Connector SrcDecodeStreamBuilder::BuildInput() {
 }
 
 void SrcDecodeStreamBuilder::HandleDecodebinCreated(elements::ElementDecodebin* decodebin) {
-  if (observer_) {
-    SrcDecodeBinStream* srcdec_observer = static_cast<SrcDecodeBinStream*>(observer_);
-    srcdec_observer->OnDecodebinCreated(decodebin);
+  SrcDecodeBinStream* stream = static_cast<SrcDecodeBinStream*>(GetObserver());
+  if (stream) {
+    stream->OnDecodebinCreated(decodebin);
   }
 }
 
 elements::Element* SrcDecodeStreamBuilder::BuildInputSrc() {
-  input_t prepared = api_->GetInput();
+  const Config* config = GetConfig();
+  input_t prepared = config->GetInput();
   const common::uri::Url uri = prepared[0].GetInput();
   elements::Element* src = elements::sources::make_src(uri, 0, IBaseStream::src_timeout_sec);
   pad::Pad* src_pad = src->StaticPad("src");
@@ -108,7 +109,7 @@ elements::Element* SrcDecodeStreamBuilder::BuildAudioUdbConnection() {
 Connector SrcDecodeStreamBuilder::BuildUdbConnections(Connector conn) {
   CHECK(conn.video == nullptr);
   CHECK(conn.audio == nullptr);
-  const AudioVideoConfig* config = static_cast<const AudioVideoConfig*>(api_);
+  const AudioVideoConfig* config = static_cast<const AudioVideoConfig*>(GetConfig());
   if (config->HaveVideo()) {
     elements::Element* vudb = BuildVideoUdbConnection();
     CHECK(vudb);
@@ -125,7 +126,7 @@ Connector SrcDecodeStreamBuilder::BuildUdbConnections(Connector conn) {
 }
 
 Connector SrcDecodeStreamBuilder::BuildOutput(Connector conn) {
-  const AudioVideoConfig* config = static_cast<const AudioVideoConfig*>(api_);
+  const AudioVideoConfig* config = static_cast<const AudioVideoConfig*>(GetConfig());
   output_t out = config->GetOutput();
   for (size_t i = 0; i < out.size(); ++i) {
     const OutputUri output = out[i];

@@ -84,7 +84,7 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
 
   void UpdateStats(const Probe* probe, gsize size);
 
-  const Config* GetApi() const;
+  const Config* GetConfig() const;
 
   void LinkInputPad(GstPad* pad, element_id_t id);
   void LinkOutputPad(GstPad* pad, element_id_t id);
@@ -138,7 +138,7 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
   void Play();
 
  private:
-  const Config* const api_;
+  const Config* const config_;
 
   std::vector<Probe*> probe_in_;
   std::vector<Probe*> probe_out_;

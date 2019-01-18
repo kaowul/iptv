@@ -36,7 +36,7 @@ TimeShiftInfo TimeShiftPlayerStream::GetTimeshiftInfo() const {
 }
 
 IBaseBuilder* TimeShiftPlayerStream::CreateBuilder() {
-  const RelayConfig* rconf = static_cast<const RelayConfig*>(GetApi());
+  const RelayConfig* rconf = static_cast<const RelayConfig*>(GetConfig());
   return new builders::TimeShiftPlayerBuilder(GetTimeshiftInfo(), start_chunk_index_, rconf, this);
 }
 

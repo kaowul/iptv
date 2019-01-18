@@ -41,7 +41,7 @@ const char* RelayStream::ClassName() const {
 }
 
 IBaseBuilder* RelayStream::CreateBuilder() {
-  const RelayConfig* rconf = static_cast<const RelayConfig*>(GetApi());
+  const RelayConfig* rconf = static_cast<const RelayConfig*>(GetConfig());
   return new builders::RelayStreamBuilder(rconf, this);
 }
 
@@ -119,7 +119,7 @@ void RelayStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
     return;
   }
 
-  const RelayConfig* config = static_cast<const RelayConfig*>(GetApi());
+  const RelayConfig* config = static_cast<const RelayConfig*>(GetConfig());
   bool is_video = strncmp(new_pad_type, "video", 5) == 0;
   bool is_audio = strncmp(new_pad_type, "audio", 5) == 0;
   INFO_LOG() << GetID() << " pad added: " << new_pad_type;

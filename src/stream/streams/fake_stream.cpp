@@ -43,7 +43,7 @@ void FakeStream::PostLoop(ExitStatus status) {
 }
 
 IBaseBuilder* FakeStream::CreateBuilder() {
-  const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetApi());
+  const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetConfig());
   return new builders::FakeStreamBuilder(econf, this);
 }
 

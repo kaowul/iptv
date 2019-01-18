@@ -98,7 +98,7 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
   const std::string process_name_;
   const std::string feedback_dir_;
   const Config* config_;
-  const TimeShiftInfo tinfo_;
+  TimeShiftInfo timeshift_info_;
   size_t restart_attempts_;
 
   std::mutex stop_mutex_;

@@ -34,7 +34,7 @@ Connector RelayStreamBuilder::BuildPostProc(Connector conn) {
 }
 
 elements::Element* RelayStreamBuilder::BuildVideoUdbConnection() {
-  const RelayConfig* rconfig = static_cast<const RelayConfig*>(api_);
+  const RelayConfig* rconfig = static_cast<const RelayConfig*>(GetConfig());
   const std::string video_parser = rconfig->GetVideoParser();
   elements::Element* video = elements::parser::make_video_parser(
       video_parser, common::MemSPrintf(UDB_VIDEO_NAME_1U, 0));  // tsparse, h264parse
@@ -42,7 +42,7 @@ elements::Element* RelayStreamBuilder::BuildVideoUdbConnection() {
 }
 
 elements::Element* RelayStreamBuilder::BuildAudioUdbConnection() {
-  const RelayConfig* rconfig = static_cast<const RelayConfig*>(api_);
+  const RelayConfig* rconfig = static_cast<const RelayConfig*>(GetConfig());
   const std::string audio_parser = rconfig->GetAudioParser();
   elements::Element* audio =
       elements::parser::make_audio_parser(audio_parser, common::MemSPrintf(UDB_AUDIO_NAME_1U, 0));
@@ -50,7 +50,7 @@ elements::Element* RelayStreamBuilder::BuildAudioUdbConnection() {
 }
 
 SupportedVideoCodec RelayStreamBuilder::GetVideoCodecType() const {
-  const RelayConfig* conf = static_cast<const RelayConfig*>(api_);
+  const RelayConfig* conf = static_cast<const RelayConfig*>(GetConfig());
   const std::string vparser = conf->GetVideoParser();
   if (vparser == elements::parser::ElementH264Parse::GetPluginName()) {
     return VIDEO_H264_CODEC;
@@ -65,7 +65,7 @@ SupportedVideoCodec RelayStreamBuilder::GetVideoCodecType() const {
 }
 
 SupportedAudioCodec RelayStreamBuilder::GetAudioCodecType() const {
-  const RelayConfig* conf = static_cast<const RelayConfig*>(api_);
+  const RelayConfig* conf = static_cast<const RelayConfig*>(GetConfig());
   const std::string aparser = conf->GetAudioParser();
   if (aparser == elements::parser::ElementAACParse::GetPluginName()) {
     return AUDIO_AAC_CODEC;
@@ -80,7 +80,7 @@ SupportedAudioCodec RelayStreamBuilder::GetAudioCodecType() const {
 }
 
 Connector RelayStreamBuilder::BuildConverter(Connector conn) {
-  const RelayConfig* config = static_cast<const RelayConfig*>(api_);
+  const RelayConfig* config = static_cast<const RelayConfig*>(GetConfig());
   if (config->HaveVideo()) {
     elements::ElementTee* tee = new elements::ElementTee(common::MemSPrintf(VIDEO_TEE_NAME_1U, 0));
     ElementAdd(tee);

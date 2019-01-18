@@ -36,8 +36,10 @@ class Pad;
 
 class IBaseBuilder : public ILinker {
  public:
-  IBaseBuilder(const Config* api, IBaseBuilderObserver* observer);
+  IBaseBuilder(const Config* config, IBaseBuilderObserver* observer);
   ~IBaseBuilder() override;
+
+  const Config* GetConfig() const;
 
   bool CreatePipeLine(GstElement** pipeline, elements_line_t* elements) WARN_UNUSED_RESULT;
 
@@ -49,6 +51,8 @@ class IBaseBuilder : public ILinker {
   bool ElementLinkRemove(elements::Element* src, elements::Element* dest) override;
 
  protected:
+  IBaseBuilderObserver* GetObserver() const;
+
   elements::Element* BuildGenericOutput(const OutputUri& output, element_id_t sink_id);
   virtual elements::Element* CreateSink(const OutputUri& output, element_id_t sink_id);
 
@@ -57,10 +61,9 @@ class IBaseBuilder : public ILinker {
   void HandleInputSrcPadCreated(common::uri::Url::scheme scheme, pad::Pad* pad, element_id_t id);
   void HandleOutputSinkPadCreated(common::uri::Url::scheme scheme, pad::Pad* pad, element_id_t id);
 
-  const Config* const api_;
-  IBaseBuilderObserver* const observer_;
-
  private:
+  const Config* const config_;
+  IBaseBuilderObserver* const observer_;
   GstElement* const pipeline_;
   elements_line_t pipeline_elements_;
 };

@@ -28,7 +28,7 @@ const char* DeviceStream::ClassName() const {
 }
 
 IBaseBuilder* DeviceStream::CreateBuilder() {
-  const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetApi());
+  const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetConfig());
   return new builders::DeviceStreamBuilder(econf, this);
 }
 

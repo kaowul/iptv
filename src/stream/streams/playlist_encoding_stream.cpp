@@ -49,7 +49,7 @@ void PlaylistEncodingStream::OnAppSrcCreatedCreated(elements::sources::ElementAp
 }
 
 IBaseBuilder* PlaylistEncodingStream::CreateBuilder() {
-  const PlaylistEncodingConfig* econf = static_cast<const PlaylistEncodingConfig*>(GetApi());
+  const PlaylistEncodingConfig* econf = static_cast<const PlaylistEncodingConfig*>(GetConfig());
   return new builders::PlaylistEncodingStreamBuilder(econf, this);
 }
 
@@ -94,7 +94,7 @@ void PlaylistEncodingStream::need_data_callback(GstElement* pipeline, guint size
 }
 
 FILE* PlaylistEncodingStream::OpenNextFile() {
-  const PlaylistEncodingConfig* econf = static_cast<const PlaylistEncodingConfig*>(GetApi());
+  const PlaylistEncodingConfig* econf = static_cast<const PlaylistEncodingConfig*>(GetConfig());
   const auto loop = econf->GetLoop();
   if (loop) {
     if (!*loop) {
