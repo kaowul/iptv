@@ -31,8 +31,8 @@ Connector FakeStreamBuilder::BuildOutput(Connector conn) {
 }
 
 Connector FakeStreamBuilder::BuildFakeOutput(Connector conn) {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
-  if (conf->HaveVideo()) {
+  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
+  if (config->HaveVideo()) {
     elements::sink::ElementFakeSink* video = elements::sink::make_fake_sink(0);
     ElementAdd(video);
     pad::Pad* sink_pad = video->StaticPad("sink");
@@ -45,7 +45,7 @@ Connector FakeStreamBuilder::BuildFakeOutput(Connector conn) {
     }
   }
 
-  if (conf->HaveAudio()) {
+  if (config->HaveAudio()) {
     elements::sink::ElementFakeSink* audio = elements::sink::make_fake_sink(1);
     ElementAdd(audio);
     pad::Pad* sink_pad = audio->StaticPad("sink");

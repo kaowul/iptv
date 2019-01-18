@@ -8,8 +8,8 @@ log_level_filter
 id = (encoding|relay|timeshift|catchup)_%d
 restart_attempts (10)
 type=(relay), "encoding", "timeshift", "catchup", "m3u8log"
-input = { "urls" : [ { "id":36, "uri" : "rtmp://4.31.30.153:1935/devapp/tesasdtnsadews24","akamai":{"time":0,"key":""} } ] }
-output = { "urls" : [ { "id":16,"uri":"rtmp://4.31.30.169:1935/devapp/CaptureTestRemote1771" } ] }
+input = { "urls" : [ { "id":36, "uri" : "rtmp://1.33.30.253:1935/devapp/tesasdtnsadews24","akamai":{"time":0,"key":""} } ] }
+output = { "urls" : [ { "id":16,"uri":"rtmp://1.33.30.269:1935/devapp/CaptureTestRemote1771" } ] }
 timeshift_dir
 timeshift_delay
 chunk_max_life_time

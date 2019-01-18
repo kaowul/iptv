@@ -17,8 +17,8 @@
 namespace iptv_cloud {
 namespace stream {
 
-Config::Config(StreamType type, const input_t& input, const output_t& output)
-    : type_(type), input_(input), output_(output) {}
+Config::Config(StreamType type, size_t max_restart_attempts, const input_t& input, const output_t& output)
+    : type_(type), max_restart_attempts_(max_restart_attempts), ttl_sec_(), input_(input), output_(output) {}
 
 StreamType Config::GetType() const {
   return type_;
@@ -42,6 +42,22 @@ output_t Config::GetOutput() const {
 
 void Config::SetOutput(const output_t& output) {
   output_ = output;
+}
+
+size_t Config::GetMaxRestartAttempts() const {
+  return max_restart_attempts_;
+}
+
+void Config::SetMaxRestartAttempts(size_t attempts) {
+  max_restart_attempts_ = attempts;
+}
+
+Config::ttl_t Config::GetTimeToLifeStream() const {
+  return ttl_sec_;
+}
+
+void Config::SetTimeToLigeStream(ttl_t ttl) {
+  ttl_sec_ = ttl;
 }
 
 }  // namespace stream

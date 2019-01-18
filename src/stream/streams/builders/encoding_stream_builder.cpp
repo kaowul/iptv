@@ -39,9 +39,9 @@ EncodingStreamBuilder::EncodingStreamBuilder(EncodingConfig* api, SrcDecodeBinSt
     : SrcDecodeStreamBuilder(api, observer) {}
 
 Connector EncodingStreamBuilder::BuildPostProc(Connector conn) {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
+  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
 
-  if (conf->HaveVideo()) {
+  if (config->HaveVideo()) {
     elements_line_t video_post_line = BuildVideoPostProc(0);
     if (!video_post_line.empty()) {
       ElementLink(conn.video, video_post_line.front());
@@ -49,7 +49,7 @@ Connector EncodingStreamBuilder::BuildPostProc(Connector conn) {
     }
   }
 
-  if (conf->HaveAudio()) {
+  if (config->HaveAudio()) {
     elements_line_t audio_post_line = BuildAudioPostProc(0);
     if (!audio_post_line.empty()) {
       ElementLink(conn.audio, audio_post_line.front());
@@ -89,15 +89,15 @@ SupportedAudioCodec EncodingStreamBuilder::GetAudioCodecType() const {
 }
 
 Connector EncodingStreamBuilder::BuildConverter(Connector conn) {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
-  if (conf->HaveVideo()) {
+  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
+  if (config->HaveVideo()) {
     elements_line_t video_encoder = BuildVideoConverter(0);
     if (!video_encoder.empty()) {
       ElementLink(conn.video, video_encoder.front());
       conn.video = video_encoder.back();
     }
 
-    const std::string vcodec = conf->GetVideoEncoder();
+    const std::string vcodec = config->GetVideoEncoder();
     if (elements::encoders::IsH264Encoder(vcodec)) {
       elements::parser::ElementH264Parse* premux_parser = elements::parser::make_h264_parser(0);
       ElementAdd(premux_parser);
@@ -111,14 +111,14 @@ Connector EncodingStreamBuilder::BuildConverter(Connector conn) {
     conn.video = tee;
   }
 
-  if (conf->HaveAudio()) {
+  if (config->HaveAudio()) {
     elements_line_t audio_encoder_line = BuildAudioConverter(0);
     if (!audio_encoder_line.empty()) {
       ElementLink(conn.audio, audio_encoder_line.front());
       conn.audio = audio_encoder_line.back();
     }
 
-    const std::string acodec = conf->GetAudioEncoder();
+    const std::string acodec = config->GetAudioEncoder();
     if (elements::encoders::IsAACEncoder(acodec)) {
       elements::parser::ElementAACParse* premux_parser = elements::parser::make_aac_parser(0);
       ElementAdd(premux_parser);

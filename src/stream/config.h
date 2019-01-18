@@ -22,7 +22,8 @@ namespace stream {
 class Config {
  public:
   enum { report_delay_sec = 10 };
-  Config(StreamType type, const input_t& input, const output_t& output);
+  typedef common::Optional<time_t> ttl_t;
+  Config(StreamType type, size_t max_restart_attempts, const input_t& input, const output_t& output);
   StreamType GetType() const;
 
   bool Equals(const Config& api) const;
@@ -33,8 +34,16 @@ class Config {
   output_t GetOutput() const;  // all except timeshift_rec
   void SetOutput(const output_t& output);
 
+  size_t GetMaxRestartAttempts() const;
+  void SetMaxRestartAttempts(size_t attempts);
+
+  ttl_t GetTimeToLifeStream() const;
+  void SetTimeToLigeStream(ttl_t ttl);
+
  private:
   StreamType type_;
+  size_t max_restart_attempts_;
+  ttl_t ttl_sec_;
 
   //! input uri
   input_t input_;

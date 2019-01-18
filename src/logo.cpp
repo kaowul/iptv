@@ -29,7 +29,7 @@
 
 namespace iptv_cloud {
 
-Logo::Logo() : Logo(common::uri::Url(), common::draw::Point(), DEFAULT_LOGO_ALPHA) {}
+Logo::Logo() : Logo(common::uri::Url(), common::draw::Point(), alpha_t()) {}
 
 Logo::Logo(const common::uri::Url& path, const common::draw::Point& position, alpha_t alpha)
     : path_(path), position_(position), alpha_(alpha) {}

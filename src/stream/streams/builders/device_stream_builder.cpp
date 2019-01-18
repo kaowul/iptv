@@ -33,13 +33,13 @@ DeviceStreamBuilder::DeviceStreamBuilder(EncodingConfig* api, SrcDecodeBinStream
     : EncodingStreamBuilder(api, observer) {}
 
 Connector DeviceStreamBuilder::BuildInput() {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
-  input_t input = conf->GetInput();
+  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
+  input_t input = config->GetInput();
   InputUri diuri = input[0];
   common::uri::Url duri = diuri.GetInput();
   common::uri::Upath dpath = duri.GetPath();
   elements::Element* video = nullptr;
-  if (conf->HaveVideo()) {
+  if (config->HaveVideo()) {
     video = elements::sources::make_v4l2_src(dpath.GetPath(), 0);
     ElementAdd(video);
     pad::Pad* src_pad = video->StaticPad("src");
@@ -62,16 +62,14 @@ Connector DeviceStreamBuilder::BuildInput() {
   }
 
   elements::Element* audio = nullptr;
-  if (conf->HaveAudio()) {
+  if (config->HaveAudio()) {
     audio = elements::sources::make_alsa_src(dpath.GetQuery(), 1);
     ElementAdd(audio);
-    if (!conf->HaveAudio()) {
-      pad::Pad* src_pad = audio->StaticPad("src");
-      if (src_pad->IsValid()) {
-        HandleInputSrcPadCreated(duri.GetScheme(), src_pad, 1);
-      }
-      delete src_pad;
+    pad::Pad* src_pad = audio->StaticPad("src");
+    if (src_pad->IsValid()) {
+      HandleInputSrcPadCreated(duri.GetScheme(), src_pad, 1);
     }
+    delete src_pad;
   }
   return {video, audio};
 }

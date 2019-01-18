@@ -108,14 +108,14 @@ elements::Element* SrcDecodeStreamBuilder::BuildAudioUdbConnection() {
 Connector SrcDecodeStreamBuilder::BuildUdbConnections(Connector conn) {
   CHECK(conn.video == nullptr);
   CHECK(conn.audio == nullptr);
-  AudioVideoConfig* cfg = static_cast<AudioVideoConfig*>(api_);
-  if (cfg->HaveVideo()) {
+  AudioVideoConfig* config = static_cast<AudioVideoConfig*>(api_);
+  if (config->HaveVideo()) {
     elements::Element* vudb = BuildVideoUdbConnection();
     CHECK(vudb);
     ElementAdd(vudb);
     conn.video = vudb;
   }
-  if (cfg->HaveAudio()) {
+  if (config->HaveAudio()) {
     elements::Element* audb = BuildAudioUdbConnection();
     CHECK(audb);
     ElementAdd(audb);
@@ -125,8 +125,8 @@ Connector SrcDecodeStreamBuilder::BuildUdbConnections(Connector conn) {
 }
 
 Connector SrcDecodeStreamBuilder::BuildOutput(Connector conn) {
-  AudioVideoConfig* conf = static_cast<AudioVideoConfig*>(api_);
-  output_t out = conf->GetOutput();
+  AudioVideoConfig* config = static_cast<AudioVideoConfig*>(api_);
+  output_t out = config->GetOutput();
   for (size_t i = 0; i < out.size(); ++i) {
     const OutputUri output = out[i];
     SinkDeviceType dt;
@@ -141,7 +141,7 @@ Connector SrcDecodeStreamBuilder::BuildOutput(Connector conn) {
     elements::Element* mux = elements::muxer::make_muxer(scheme, i);
     ElementAdd(mux);
 
-    if (conf->HaveVideo()) {
+    if (config->HaveVideo()) {
       elements::ElementQueue* video_tee_queue =
           new elements::ElementQueue(common::MemSPrintf(VIDEO_TEE_QUEUE_NAME_1U, i));
       ElementAdd(video_tee_queue);
@@ -158,7 +158,7 @@ Connector SrcDecodeStreamBuilder::BuildOutput(Connector conn) {
       ElementLink(next, mux);
     }
 
-    if (conf->HaveAudio()) {
+    if (config->HaveAudio()) {
       elements::ElementQueue* audio_tee_queue =
           new elements::ElementQueue(common::MemSPrintf(AUDIO_TEE_QUEUE_NAME_1U, i));
       ElementAdd(audio_tee_queue);

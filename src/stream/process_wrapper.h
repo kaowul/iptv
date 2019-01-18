@@ -32,7 +32,7 @@ namespace stream {
 
 class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream::IStreamClient {
  public:
-  enum constants : uint32_t { restart_attempts = 10, restart_after_frozen_sec = 60 };
+  enum constants : uint32_t { restart_after_frozen_sec = 60 };
 
   ProcessWrapper(const std::string& process_name,
                  const std::string& feedback_dir,
@@ -95,7 +95,6 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
 
   void DumpStreamStatus(StreamStruct* stat, StreamStatus st);
 
-  size_t max_restart_attempts_;
   const std::string process_name_;
   const std::string feedback_dir_;
   const utils::ArgsMap config_args_;
@@ -104,7 +103,6 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
   std::mutex stop_mutex_;
   std::condition_variable stop_cond_;
   bool stop_;
-  std::string channel_id_;
 
   std::thread ev_thread_;
   common::libev::IoLoop* loop_;

@@ -95,11 +95,14 @@ void PlaylistEncodingStream::need_data_callback(GstElement* pipeline, guint size
 
 FILE* PlaylistEncodingStream::OpenNextFile() {
   PlaylistEncodingConfig* econf = static_cast<PlaylistEncodingConfig*>(GetApi());
-  if (!econf->GetLoop()) {
-    input_t input = econf->GetInput();
-    if (curent_pos_ >= input.size()) {
-      INFO_LOG() << GetID() << " No more files for playing";
-      return nullptr;  // EOS
+  const auto loop = econf->GetLoop();
+  if (loop) {
+    if (!*loop) {
+      input_t input = econf->GetInput();
+      if (curent_pos_ >= input.size()) {
+        INFO_LOG() << GetID() << " No more files for playing";
+        return nullptr;  // EOS
+      }
     }
   }
 

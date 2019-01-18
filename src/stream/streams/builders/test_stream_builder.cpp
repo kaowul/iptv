@@ -29,8 +29,8 @@ TestStreamBuilder::TestStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* ob
 
 Connector TestStreamBuilder::BuildInput() {
   elements::Element* video = nullptr;
-  EncodingConfig* econf = static_cast<EncodingConfig*>(api_);
-  if (econf->HaveVideo()) {
+  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
+  if (config->HaveVideo()) {
     video = new elements::sources::ElementVideoTestSrc("video_sdrc");
     ElementAdd(video);
     pad::Pad* src_pad = video->StaticPad("src");
@@ -41,7 +41,7 @@ Connector TestStreamBuilder::BuildInput() {
   }
 
   elements::Element* audio = nullptr;
-  if (econf->HaveAudio()) {
+  if (config->HaveAudio()) {
     audio = new elements::sources::ElementAudioTestSrc("audio_src");
     ElementAdd(audio);
     pad::Pad* src_pad = audio->StaticPad("src");

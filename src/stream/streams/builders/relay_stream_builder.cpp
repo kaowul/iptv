@@ -80,14 +80,14 @@ SupportedAudioCodec RelayStreamBuilder::GetAudioCodecType() const {
 }
 
 Connector RelayStreamBuilder::BuildConverter(Connector conn) {
-  RelayConfig* rconfig = static_cast<RelayConfig*>(api_);
-  if (rconfig->HaveVideo()) {
+  RelayConfig* config = static_cast<RelayConfig*>(api_);
+  if (config->HaveVideo()) {
     elements::ElementTee* tee = new elements::ElementTee(common::MemSPrintf(VIDEO_TEE_NAME_1U, 0));
     ElementAdd(tee);
     ElementLink(conn.video, tee);
     conn.video = tee;
   }
-  if (rconfig->HaveAudio()) {
+  if (config->HaveAudio()) {
     elements::ElementTee* tee = new elements::ElementTee(common::MemSPrintf(AUDIO_TEE_NAME_1U, 0));
     ElementAdd(tee);
     ElementLink(conn.audio, tee);

@@ -100,11 +100,14 @@ void PlaylistRelayStream::need_data_callback(GstElement* pipeline, guint size, g
 
 FILE* PlaylistRelayStream::OpenNextFile() {
   PlaylistRelayConfig* rconf = static_cast<PlaylistRelayConfig*>(GetApi());
-  if (!rconf->GetLoop()) {
-    input_t input = rconf->GetInput();
-    if (curent_pos_ >= input.size()) {
-      INFO_LOG() << GetID() << " No more files for playing";
-      return nullptr;  // EOS
+  const auto loop = rconf->GetLoop();
+  if (loop) {
+    if (!*loop) {
+      input_t input = rconf->GetInput();
+      if (curent_pos_ >= input.size()) {
+        INFO_LOG() << GetID() << " No more files for playing";
+        return nullptr;  // EOS
+      }
     }
   }
 

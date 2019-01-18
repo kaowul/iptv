@@ -29,6 +29,9 @@ namespace iptv_cloud {
 namespace stream {
 
 namespace {
+
+const static size_t kDefaultRestartAttempts = 10;
+
 template <typename T>
 void CheckAndSetValue(const utils::ArgsMap& args, const std::string& name, std::map<std::string, T>* map) {
   if (!map) {
@@ -161,7 +164,18 @@ Config* make_config(const utils::ArgsMap& config) {
     }
   }
 
-  Config conf(static_cast<StreamType>(stream_type), input_urls, output_urls);
+  size_t max_restart_attempts;
+  if (!utils::ArgsGetValue(config, RESTART_ATTEMPTS_FIELD, &max_restart_attempts)) {
+    max_restart_attempts = kDefaultRestartAttempts;
+  }
+  CHECK(max_restart_attempts > 0) << "restart attempts must be grether than 0!";
+
+  Config conf(static_cast<StreamType>(stream_type), max_restart_attempts, input_urls, output_urls);
+
+  time_t ttl_sec;
+  if (utils::ArgsGetValue(config, AUTO_EXIT_TIME_FIELD, &ttl_sec)) {
+    conf.SetTimeToLigeStream(ttl_sec);
+  }
 
   streams::AudioVideoConfig aconf(conf);
   bool have_video;

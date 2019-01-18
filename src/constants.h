@@ -14,17 +14,8 @@
 
 #pragma once
 
-#define TS_EXTENSION "ts"
-#define M3U8_EXTENSION "m3u8"
-
-#define M3U8_CHUNK_MARKER "#EXTINF"
-
 #define DEFAULT_VOLUME 1.0
-#define DEFAULT_LOGO_ALPHA 1
-#define DEFAULT_HAVE_VIDEO true
-#define DEFAULT_HAVE_AUDIO true
 #define DEFAULT_DEINTERLACE false
 #define DEFAULT_DECKLINK_VIDEO_MODE 1
-#define DEFAULT_LOOP false
 
 #define DEFAULT_TIMESHIFT_CHUNK_DURATION 120

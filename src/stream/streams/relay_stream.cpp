@@ -119,19 +119,19 @@ void RelayStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
     return;
   }
 
-  RelayConfig* rconf = static_cast<RelayConfig*>(GetApi());
+  RelayConfig* config = static_cast<RelayConfig*>(GetApi());
   bool is_video = strncmp(new_pad_type, "video", 5) == 0;
   bool is_audio = strncmp(new_pad_type, "audio", 5) == 0;
   INFO_LOG() << GetID() << " pad added: " << new_pad_type;
   elements::Element* dest = nullptr;
   if (is_video) {
-    if (rconf->HaveVideo() && !IsVideoInited()) {
+    if (config->HaveVideo() && !IsVideoInited()) {
       dest = GetElementByName(common::MemSPrintf(UDB_VIDEO_NAME_1U, 0));
     }
   } else if (is_audio) {
-    if (rconf->HaveAudio() && !IsAudioInited()) {
+    if (config->HaveAudio() && !IsAudioInited()) {
       const char* gst_pad_name = GST_PAD_NAME(new_pad);
-      const auto audio_select = rconf->GetAudioSelect();
+      const auto audio_select = config->GetAudioSelect();
       int current_audio_track = 0;
       if (!audio_select || (GetPadId(gst_pad_name, &current_audio_track) && *audio_select == current_audio_track)) {
         dest = GetElementByName(common::MemSPrintf(UDB_AUDIO_NAME_1U, 0));

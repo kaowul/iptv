@@ -32,9 +32,9 @@ ScreenStreamBuilder::ScreenStreamBuilder(AudioVideoConfig* api, IBaseBuilderObse
     : GstBaseBuilder(api, observer) {}
 
 Connector ScreenStreamBuilder::BuildInput() {
-  AudioVideoConfig* aconf = static_cast<AudioVideoConfig*>(api_);
+  AudioVideoConfig* config = static_cast<AudioVideoConfig*>(api_);
   elements::Element* video = nullptr;
-  if (aconf->HaveVideo()) {
+  if (config->HaveVideo()) {
     video = new elements::sources::ElementVideoTestSrc(common::MemSPrintf(VIDEO_SRC_NAME_1U, 0));
     ElementAdd(video);
     pad::Pad* src_pad = video->StaticPad("src");
@@ -45,7 +45,7 @@ Connector ScreenStreamBuilder::BuildInput() {
   }
 
   elements::Element* audio = nullptr;
-  if (aconf->HaveAudio()) {
+  if (config->HaveAudio()) {
     audio = new elements::sources::ElementAudioTestSrc(common::MemSPrintf(AUDIO_SRC_NAME_1U, 0));
     ElementAdd(audio);
     pad::Pad* src_pad = audio->StaticPad("src");

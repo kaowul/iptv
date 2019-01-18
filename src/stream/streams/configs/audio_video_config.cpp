@@ -21,25 +21,21 @@ namespace stream {
 namespace streams {
 
 AudioVideoConfig::AudioVideoConfig(const base_class& config)
-    : base_class(config),
-      have_video_(DEFAULT_HAVE_VIDEO),
-      have_audio_(DEFAULT_HAVE_AUDIO),
-      audio_select_(),
-      loop_(DEFAULT_LOOP) {}
+    : base_class(config), have_video_(), have_audio_(), audio_select_(), loop_() {}
 
-bool AudioVideoConfig::HaveVideo() const {
+AudioVideoConfig::have_stream_t AudioVideoConfig::HaveVideo() const {
   return have_video_;
 }
 
-void AudioVideoConfig::SetHaveVideo(bool have_video) {
+void AudioVideoConfig::SetHaveVideo(have_stream_t have_video) {
   have_video_ = have_video;
 }
 
-bool AudioVideoConfig::HaveAudio() const {
+AudioVideoConfig::have_stream_t AudioVideoConfig::HaveAudio() const {
   return have_audio_;
 }
 
-void AudioVideoConfig::SetHaveAudio(bool have_audio) {
+void AudioVideoConfig::SetHaveAudio(have_stream_t have_audio) {
   have_audio_ = have_audio;
 }
 
@@ -51,11 +47,11 @@ void AudioVideoConfig::SetAudioSelect(audio_select_t sel) {
   audio_select_ = sel;
 }
 
-bool AudioVideoConfig::GetLoop() const {
+AudioVideoConfig::loop_t AudioVideoConfig::GetLoop() const {
   return loop_;
 }
 
-void AudioVideoConfig::SetLoop(bool loop) {
+void AudioVideoConfig::SetLoop(loop_t loop) {
   loop_ = loop;
 }
 

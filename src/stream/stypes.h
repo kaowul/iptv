@@ -21,6 +21,11 @@
 #include <common/optional.h>
 #include <common/uri/url.h>
 
+#define TS_EXTENSION "ts"
+#define M3U8_EXTENSION "m3u8"
+
+#define M3U8_CHUNK_MARKER "#EXTINF"
+
 #define TS_DURATION 10
 
 #define VIDEO_TEE_NAME_1U "video_tee_%lu"
@@ -85,7 +90,7 @@
 
 #define AUDIO_LEVEL_NAME_1U "level_%lu"
 
-#define CHUNK_EXT ".ts"
+#define CHUNK_EXT "." TS_EXTENSION
 
 #define TS_TEMPLATE "%05d" CHUNK_EXT
 

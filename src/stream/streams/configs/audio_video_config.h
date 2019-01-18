@@ -24,25 +24,27 @@ class AudioVideoConfig : public Config {
  public:
   typedef Config base_class;
   typedef common::Optional<int> audio_select_t;
+  typedef common::Optional<bool> loop_t;
+  typedef bool have_stream_t;
   explicit AudioVideoConfig(const base_class& config);
 
-  bool HaveVideo() const;  // relay, encoding
-  void SetHaveVideo(bool have_video);
+  have_stream_t HaveVideo() const;  // relay, encoding
+  void SetHaveVideo(have_stream_t have_video);
 
-  bool HaveAudio() const;  // relay, encoding
-  void SetHaveAudio(bool have_audio);
+  have_stream_t HaveAudio() const;  // relay, encoding
+  void SetHaveAudio(have_stream_t have_audio);
 
   audio_select_t GetAudioSelect() const;
   void SetAudioSelect(audio_select_t sel);
 
-  bool GetLoop() const;
-  void SetLoop(bool loop);
+  loop_t GetLoop() const;
+  void SetLoop(loop_t loop);
 
  private:
-  bool have_video_;
-  bool have_audio_;
+  have_stream_t have_video_;
+  have_stream_t have_audio_;
   audio_select_t audio_select_;
-  bool loop_;
+  loop_t loop_;
 };
 
 }  // namespace streams

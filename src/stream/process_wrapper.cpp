@@ -122,7 +122,6 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
                                common::libev::IoClient* command_client,
                                StreamStruct* mem)
     : IBaseStream::IStreamClient(),
-      max_restart_attempts_(restart_attempts),
       process_name_(process_name),
       feedback_dir_(feedback_dir),
       config_args_(config_args),
@@ -130,7 +129,6 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
       stop_mutex_(),
       stop_cond_(),
       stop_(false),
-      channel_id_(),
       ev_thread_(),
       loop_(new StreamServer(command_client, this)),
       ttl_master_timer_(0),
@@ -142,24 +140,14 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
       id_() {
   CHECK(mem);
 
-  size_t attemps = 0;
-  if (utils::ArgsGetValue(config_args_, RESTART_ATTEMPTS_FIELD, &attemps)) {
-    max_restart_attempts_ = attemps;
-  }
-
-  CHECK(max_restart_attempts_ > 0) << "restart attempts must be grether than 0!";
-  if (!utils::ArgsGetValue(config_args_, ID_FIELD, &channel_id_)) {
-    CRITICAL_LOG() << "Define " ID_FIELD " variable and make it valid.";
-  }
-
   time_t ttl_sec;
-  if (utils::ArgsGetValue(config_args_, AUTO_EXIT_TIME_FIELD, &ttl_sec)) {
+  if (utils::ArgsGetValue(config_args_, AUTO_EXIT_TIME_FIELD, &ttl_sec)) {  // #FIXME move to config
     ttl_sec_ = ttl_sec;
   }
 
   EncoderType enc = CPU;
   std::string video_codec;
-  if (utils::ArgsGetValue(config_args, VIDEO_CODEC_FIELD, &video_codec)) {
+  if (utils::ArgsGetValue(config_args_, VIDEO_CODEC_FIELD, &video_codec)) {
     EncoderType lenc;
     if (GetEncoderType(video_codec, &lenc)) {
       enc = lenc;
@@ -238,13 +226,14 @@ int ProcessWrapper::Exec() {
       continue;
     }
 
+    Config* config = origin_->GetApi();
     size_t wait_time = 0;
-    if (++restart_attempts_ == max_restart_attempts_) {
+    if (++restart_attempts_ == config->GetMaxRestartAttempts()) {
       restart_attempts_ = 0;
       DumpStreamStatus(mem_, FROZEN);
       wait_time = restart_after_frozen_sec;
     } else {
-      wait_time = restart_attempts_ * (restart_after_frozen_sec / max_restart_attempts_);
+      wait_time = restart_attempts_ * (restart_after_frozen_sec / config->GetMaxRestartAttempts());
     }
 
     INFO_LOG() << process_name_ << " automatically restarted after " << wait_time

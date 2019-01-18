@@ -145,13 +145,13 @@ void MosaicStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
     return;
   }
 
-  AudioVideoConfig* aconf = static_cast<AudioVideoConfig*>(GetApi());
+  AudioVideoConfig* config = static_cast<AudioVideoConfig*>(GetApi());
   if (is_video) {
-    if (aconf->HaveVideo() && !IsVideoInited()) {
+    if (config->HaveVideo() && !IsVideoInited()) {
       dest = GetElementByName(common::MemSPrintf(UDB_VIDEO_NAME_1U, elem_id));
     }
   } else if (is_audio) {
-    if (aconf->HaveAudio() && !IsAudioInited()) {
+    if (config->HaveAudio() && !IsAudioInited()) {
       dest = GetElementByName(common::MemSPrintf(UDB_AUDIO_NAME_1U, elem_id));
       GstCaps* caps = gst_pad_get_current_caps(new_pad);
       GstStructure* pad_struct = gst_caps_get_structure(caps, 0);
