@@ -113,7 +113,7 @@ ElementMsdkH264Enc* make_msdk_h264_encoder(element_id_t encoder_id);
 
 Element* make_video_encoder(const std::string& codec, const std::string& name);
 
-elements_line_t build_video_convert(bool is_deinterlace, ILinker* linker, element_id_t video_convert_id);
+elements_line_t build_video_convert(deinterlace_t deinterlace, ILinker* linker, element_id_t video_convert_id);
 
 elements_line_t build_video_encoder(const std::string& codec,
                                     bit_rate_t video_bitrate,

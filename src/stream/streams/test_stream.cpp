@@ -20,7 +20,7 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-TestStream::TestStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
+TestStream::TestStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
     : EncodingStream(config, client, stats) {}
 
 const char* TestStream::ClassName() const {
@@ -28,7 +28,7 @@ const char* TestStream::ClassName() const {
 }
 
 IBaseBuilder* TestStream::CreateBuilder() {
-  EncodingConfig* econf = static_cast<EncodingConfig*>(GetApi());
+  const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetApi());
   return new builders::TestStreamBuilder(econf, this);
 }
 

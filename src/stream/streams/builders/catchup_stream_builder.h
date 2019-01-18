@@ -24,7 +24,7 @@ namespace builders {
 class CatchupStreamBuilder : public TimeShiftRecorderStreamBuilder {
  public:
   typedef TimeShiftRecorderStreamBuilder base_class;
-  CatchupStreamBuilder(TimeshiftConfig* api, TimeShiftRecorderStream* observer);
+  CatchupStreamBuilder(const TimeshiftConfig* api, TimeShiftRecorderStream* observer);
 };
 
 }  // namespace builders

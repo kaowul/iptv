@@ -29,7 +29,7 @@ class PlaylistEncodingStream;
 namespace builders {
 class PlaylistEncodingStreamBuilder : public EncodingStreamBuilder {
  public:
-  PlaylistEncodingStreamBuilder(PlaylistEncodingConfig* api, PlaylistEncodingStream* observer);
+  PlaylistEncodingStreamBuilder(const PlaylistEncodingConfig* api, PlaylistEncodingStream* observer);
   elements::Element* BuildInputSrc() override;
 
  protected:

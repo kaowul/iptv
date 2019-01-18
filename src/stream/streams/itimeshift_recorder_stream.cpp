@@ -18,7 +18,7 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-ITimeShiftRecorderStream::ITimeShiftRecorderStream(RelayConfig* config,
+ITimeShiftRecorderStream::ITimeShiftRecorderStream(const RelayConfig* config,
                                                    const TimeShiftInfo& info,
                                                    IStreamClient* client,
                                                    StreamStruct* stats)

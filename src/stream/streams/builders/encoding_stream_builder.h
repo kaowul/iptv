@@ -28,7 +28,7 @@ namespace builders {
 
 class EncodingStreamBuilder : public SrcDecodeStreamBuilder {
  public:
-  EncodingStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer);
+  EncodingStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
   Connector BuildPostProc(Connector conn) override;
   Connector BuildConverter(Connector conn) override;
 

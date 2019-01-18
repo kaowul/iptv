@@ -23,7 +23,7 @@ namespace builders {
 
 class FakeStreamBuilder : public EncodingStreamBuilder {
  public:
-  FakeStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer);
+  FakeStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
 
   Connector BuildOutput(Connector conn) override;
 

@@ -25,7 +25,7 @@ namespace builders {
 
 class ScreenStreamBuilder : public GstBaseBuilder {
  public:
-  ScreenStreamBuilder(AudioVideoConfig* api, IBaseBuilderObserver* observer);
+  ScreenStreamBuilder(const AudioVideoConfig* api, IBaseBuilderObserver* observer);
 
   Connector BuildInput() override;
   Connector BuildUdbConnections(Connector conn) override;

@@ -26,7 +26,8 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-TimeShiftRecorderStreamBuilder::TimeShiftRecorderStreamBuilder(TimeshiftConfig* api, TimeShiftRecorderStream* observer)
+TimeShiftRecorderStreamBuilder::TimeShiftRecorderStreamBuilder(const TimeshiftConfig* api,
+                                                               TimeShiftRecorderStream* observer)
     : base_class(api, observer) {}
 
 Connector TimeShiftRecorderStreamBuilder::BuildOutput(Connector conn) {
@@ -34,7 +35,7 @@ Connector TimeShiftRecorderStreamBuilder::BuildOutput(Connector conn) {
       new elements::sink::ElementSplitMuxSink(common::MemSPrintf(SPLIT_SINK_NAME_1U, 0));
   ElementAdd(splitmuxsink);
 
-  TimeshiftConfig* tconf = static_cast<TimeshiftConfig*>(api_);
+  const TimeshiftConfig* tconf = static_cast<const TimeshiftConfig*>(api_);
   elements::muxer::ElementMPEGTSMux* mpegtsmux = elements::muxer::make_mpegtsmux(0);
   guint64 mst_nsec = tconf->GetTimeShiftChunkDuration() * GST_SECOND;
   splitmuxsink->SetMuxer(mpegtsmux);

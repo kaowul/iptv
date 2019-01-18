@@ -29,7 +29,7 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-PlaylistRelayStream::PlaylistRelayStream(PlaylistRelayConfig* config, IStreamClient* client, StreamStruct* stats)
+PlaylistRelayStream::PlaylistRelayStream(const PlaylistRelayConfig* config, IStreamClient* client, StreamStruct* stats)
     : RelayStream(config, client, stats), app_src_(nullptr), current_file_(nullptr), curent_pos_(0) {}
 
 PlaylistRelayStream::~PlaylistRelayStream() {
@@ -50,7 +50,7 @@ void PlaylistRelayStream::OnAppSrcCreatedCreated(elements::sources::ElementAppSr
 }
 
 IBaseBuilder* PlaylistRelayStream::CreateBuilder() {
-  PlaylistRelayConfig* rconf = static_cast<PlaylistRelayConfig*>(GetApi());
+  const PlaylistRelayConfig* rconf = static_cast<const PlaylistRelayConfig*>(GetApi());
   return new builders::PlaylistRelayStreamBuilder(rconf, this);
 }
 
@@ -99,7 +99,7 @@ void PlaylistRelayStream::need_data_callback(GstElement* pipeline, guint size, g
 }
 
 FILE* PlaylistRelayStream::OpenNextFile() {
-  PlaylistRelayConfig* rconf = static_cast<PlaylistRelayConfig*>(GetApi());
+  const PlaylistRelayConfig* rconf = static_cast<const PlaylistRelayConfig*>(GetApi());
   const auto loop = rconf->GetLoop();
   if (loop) {
     if (!*loop) {

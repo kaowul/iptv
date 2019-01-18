@@ -25,7 +25,7 @@ namespace builders {
 
 class RelayStreamBuilder : public SrcDecodeStreamBuilder {
  public:
-  RelayStreamBuilder(RelayConfig* config, SrcDecodeBinStream* observer);
+  RelayStreamBuilder(const RelayConfig* config, SrcDecodeBinStream* observer);
 
   elements::Element* BuildVideoUdbConnection() override;
   elements::Element* BuildAudioUdbConnection() override;

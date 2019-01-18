@@ -34,7 +34,7 @@ class PlaylistRelayStream : public RelayStream {
   friend class builders::PlaylistRelayStreamBuilder;
 
  public:
-  PlaylistRelayStream(PlaylistRelayConfig* config, IStreamClient* client, StreamStruct* stats);
+  PlaylistRelayStream(const PlaylistRelayConfig* config, IStreamClient* client, StreamStruct* stats);
   ~PlaylistRelayStream() override;
 
   const char* ClassName() const override;

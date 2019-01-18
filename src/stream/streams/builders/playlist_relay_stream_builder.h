@@ -30,7 +30,7 @@ namespace builders {
 
 class PlaylistRelayStreamBuilder : public RelayStreamBuilder {
  public:
-  PlaylistRelayStreamBuilder(PlaylistRelayConfig* api, PlaylistRelayStream* observer);
+  PlaylistRelayStreamBuilder(const PlaylistRelayConfig* api, PlaylistRelayStream* observer);
 
   elements::Element* BuildInputSrc() override;
 

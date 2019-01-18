@@ -205,20 +205,20 @@ Element* make_video_encoder(const std::string& codec, const std::string& name) {
   return nullptr;
 }
 
-elements_line_t build_video_convert(bool is_deinterlace, ILinker* linker, element_id_t video_convert_id) {
+elements_line_t build_video_convert(deinterlace_t deinterlace, ILinker* linker, element_id_t video_convert_id) {
   video::ElementVideoConvert* video_convert =
       new video::ElementVideoConvert(common::MemSPrintf(VIDEO_CONVERT_NAME_1U, video_convert_id));
   linker->ElementAdd(video_convert);
   Element* first = video_convert;
   Element* last = video_convert;
 
-  if (is_deinterlace) {
+  if (deinterlace && *deinterlace) {
     std::string deinterlace_str = AV_DEINTERLACE;
-    Element* deinterlace =
+    Element* deinter =
         video::make_video_deinterlace(deinterlace_str, common::MemSPrintf(DEINTERLACE_NAME_1U, video_convert_id));
-    linker->ElementAdd(deinterlace);
-    linker->ElementLink(last, deinterlace);
-    last = deinterlace;
+    linker->ElementAdd(deinter);
+    linker->ElementLink(last, deinter);
+    last = deinter;
   }
 
   return {first, last};

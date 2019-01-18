@@ -23,7 +23,7 @@ namespace builders {
 
 class TestStreamBuilder : public EncodingStreamBuilder {
  public:
-  TestStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer);
+  TestStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
   Connector BuildInput() override;
 };
 

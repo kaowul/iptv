@@ -145,7 +145,7 @@ void MosaicStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
     return;
   }
 
-  AudioVideoConfig* config = static_cast<AudioVideoConfig*>(GetApi());
+  const AudioVideoConfig* config = static_cast<const AudioVideoConfig*>(GetApi());
   if (is_video) {
     if (config->HaveVideo() && !IsVideoInited()) {
       dest = GetElementByName(common::MemSPrintf(UDB_VIDEO_NAME_1U, elem_id));
@@ -217,7 +217,7 @@ GValueArray* MosaicStream::HandleAutoplugSort(GstElement* bin, GstPad* pad, GstC
     return nullptr;
   }
 
-  EncodingConfig* econfig = static_cast<EncodingConfig*>(GetApi());
+  const EncodingConfig* econfig = static_cast<const EncodingConfig*>(GetApi());
   // SupportedAudioCodecs saudio;
   SupportedVideoCodec svideo;
   // bool is_audio = IsAudioCodecFromType(type, &saudio);
@@ -307,7 +307,7 @@ void MosaicStream::HandleCairoDraw(GstElement* overlay, cairo_t* cr, guint64 tim
   }
 }
 
-MosaicStream::MosaicStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
+MosaicStream::MosaicStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
     : IBaseStream(config, client, stats), options_() {}
 
 const char* MosaicStream::ClassName() const {
@@ -333,7 +333,7 @@ void MosaicStream::OnCairoCreated(elements::video::ElementCairoOverlay* cairo, c
 }
 
 IBaseBuilder* MosaicStream::CreateBuilder() {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(GetApi());
+  const EncodingConfig* conf = static_cast<const EncodingConfig*>(GetApi());
   return new builders::MosaicStreamBuilder(conf, this);
 }
 
@@ -382,7 +382,7 @@ gboolean MosaicStream::HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* me
 }
 
 void MosaicStream::PreLoop() {
-  AudioVideoConfig* conf = static_cast<AudioVideoConfig*>(GetApi());
+  const AudioVideoConfig* conf = static_cast<const AudioVideoConfig*>(GetApi());
   input_t input = conf->GetInput();
   if (client_) {
     client_->OnInputChanged(input[0]);

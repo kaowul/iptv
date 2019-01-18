@@ -109,6 +109,7 @@ typedef common::Optional<int> audio_channels_count_t;
 typedef uint8_t decklink_video_mode_t;
 typedef common::Optional<common::media::Rational> rational_t;
 typedef common::Optional<int> frame_rate_t;
+typedef common::Optional<bool> deinterlace_t;
 
 typedef std::map<std::string, uint32_t> video_encoders_args_t;
 typedef std::map<std::string, std::string> video_encoders_str_args_t;

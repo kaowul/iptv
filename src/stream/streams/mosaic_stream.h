@@ -50,7 +50,7 @@ class MosaicStream : public IBaseStream {
   friend class builders::MosaicStreamBuilder;
 
  public:
-  MosaicStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
+  MosaicStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
   const char* ClassName() const override;
 
  protected:

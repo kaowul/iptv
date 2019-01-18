@@ -24,12 +24,12 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-TestStreamBuilder::TestStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer)
+TestStreamBuilder::TestStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer)
     : EncodingStreamBuilder(api, observer) {}
 
 Connector TestStreamBuilder::BuildInput() {
   elements::Element* video = nullptr;
-  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(api_);
   if (config->HaveVideo()) {
     video = new elements::sources::ElementVideoTestSrc("video_sdrc");
     ElementAdd(video);

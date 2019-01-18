@@ -35,11 +35,11 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-EncodingStreamBuilder::EncodingStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer)
+EncodingStreamBuilder::EncodingStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer)
     : SrcDecodeStreamBuilder(api, observer) {}
 
 Connector EncodingStreamBuilder::BuildPostProc(Connector conn) {
-  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(api_);
 
   if (config->HaveVideo()) {
     elements_line_t video_post_line = BuildVideoPostProc(0);
@@ -61,7 +61,7 @@ Connector EncodingStreamBuilder::BuildPostProc(Connector conn) {
 }
 
 SupportedVideoCodec EncodingStreamBuilder::GetVideoCodecType() const {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* conf = static_cast<const EncodingConfig*>(api_);
   const std::string vcodec = conf->GetVideoEncoder();
   if (elements::encoders::IsH264Encoder(vcodec)) {
     return VIDEO_H264_CODEC;
@@ -76,7 +76,7 @@ SupportedVideoCodec EncodingStreamBuilder::GetVideoCodecType() const {
 }
 
 SupportedAudioCodec EncodingStreamBuilder::GetAudioCodecType() const {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* conf = static_cast<const EncodingConfig*>(api_);
   const std::string acodec = conf->GetAudioEncoder();
   if (elements::encoders::IsAACEncoder(acodec)) {
     return AUDIO_AAC_CODEC;
@@ -89,7 +89,7 @@ SupportedAudioCodec EncodingStreamBuilder::GetAudioCodecType() const {
 }
 
 Connector EncodingStreamBuilder::BuildConverter(Connector conn) {
-  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(api_);
   if (config->HaveVideo()) {
     elements_line_t video_encoder = BuildVideoConverter(0);
     if (!video_encoder.empty()) {
@@ -135,7 +135,7 @@ Connector EncodingStreamBuilder::BuildConverter(Connector conn) {
 }
 
 elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id) {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* conf = static_cast<const EncodingConfig*>(api_);
   elements::Element* first = nullptr;
   elements::Element* last = nullptr;
 
@@ -219,7 +219,7 @@ elements_line_t EncodingStreamBuilder::BuildVideoPostProc(element_id_t video_id)
 }
 
 elements_line_t EncodingStreamBuilder::BuildAudioPostProc(element_id_t audio_id) {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* conf = static_cast<const EncodingConfig*>(api_);
 
   const auto volume = conf->GetVolume();
   const auto achannels = conf->GetAudioChannelsCount();
@@ -228,7 +228,7 @@ elements_line_t EncodingStreamBuilder::BuildAudioPostProc(element_id_t audio_id)
 }
 
 elements_line_t EncodingStreamBuilder::BuildVideoConverter(element_id_t video_id) {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* conf = static_cast<const EncodingConfig*>(api_);
 
   const auto video_bitrate = conf->GetVideoBitrate();
   elements_line_t video_encoder =
@@ -238,7 +238,7 @@ elements_line_t EncodingStreamBuilder::BuildVideoConverter(element_id_t video_id
 }
 
 elements_line_t EncodingStreamBuilder::BuildAudioConverter(element_id_t audio_id) {
-  EncodingConfig* conf = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* conf = static_cast<const EncodingConfig*>(api_);
 
   const std::string audio_encoder_str = conf->GetAudioEncoder();
   const auto audiorate = conf->GetAudioBitrate();

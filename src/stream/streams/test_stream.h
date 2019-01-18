@@ -22,7 +22,7 @@ namespace streams {
 
 class TestStream : public EncodingStream {
  public:
-  TestStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
+  TestStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
   const char* ClassName() const override;
 
  protected:

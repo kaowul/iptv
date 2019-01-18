@@ -25,7 +25,7 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-PlaylistRelayStreamBuilder::PlaylistRelayStreamBuilder(PlaylistRelayConfig* api, PlaylistRelayStream* observer)
+PlaylistRelayStreamBuilder::PlaylistRelayStreamBuilder(const PlaylistRelayConfig* api, PlaylistRelayStream* observer)
     : RelayStreamBuilder(api, observer) {}
 
 void PlaylistRelayStreamBuilder::HandleAppSrcCreated(elements::sources::ElementAppSrc* src) {

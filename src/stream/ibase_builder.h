@@ -36,7 +36,7 @@ class Pad;
 
 class IBaseBuilder : public ILinker {
  public:
-  IBaseBuilder(Config* api, IBaseBuilderObserver* observer);
+  IBaseBuilder(const Config* api, IBaseBuilderObserver* observer);
   ~IBaseBuilder() override;
 
   bool CreatePipeLine(GstElement** pipeline, elements_line_t* elements) WARN_UNUSED_RESULT;
@@ -57,7 +57,7 @@ class IBaseBuilder : public ILinker {
   void HandleInputSrcPadCreated(common::uri::Url::scheme scheme, pad::Pad* pad, element_id_t id);
   void HandleOutputSinkPadCreated(common::uri::Url::scheme scheme, pad::Pad* pad, element_id_t id);
 
-  Config* const api_;
+  const Config* const api_;
   IBaseBuilderObserver* const observer_;
 
  private:

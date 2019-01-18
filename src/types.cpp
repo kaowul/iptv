@@ -14,10 +14,4 @@
 
 #include "types.h"
 
-#include <limits>
-
-namespace iptv_cloud {
-
-const stream_id_t kInvalidStreamID = std::numeric_limits<stream_id_t>::max();
-
-}  // namespace iptv_cloud
+namespace iptv_cloud {}  // namespace iptv_cloud

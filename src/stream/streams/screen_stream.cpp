@@ -42,7 +42,7 @@ void ScreenStream::OnOutputSinkPadCreated(common::uri::Url::scheme scheme, pad::
 }
 
 IBaseBuilder* ScreenStream::CreateBuilder() {
-  AudioVideoConfig* aconf = static_cast<AudioVideoConfig*>(GetApi());
+  const AudioVideoConfig* aconf = static_cast<const AudioVideoConfig*>(GetApi());
   return new builders::ScreenStreamBuilder(aconf, this);
 }
 

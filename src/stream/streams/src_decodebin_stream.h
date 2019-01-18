@@ -30,7 +30,7 @@ class SrcDecodeBinStream : public IBaseStream {
   friend class builders::SrcDecodeStreamBuilder;
 
  public:
-  SrcDecodeBinStream(Config* config, IStreamClient* client, StreamStruct* stats);
+  SrcDecodeBinStream(const Config* config, IStreamClient* client, StreamStruct* stats);
   ~SrcDecodeBinStream() override;
 
   const char* ClassName() const override;

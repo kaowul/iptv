@@ -32,7 +32,7 @@ namespace builders {
 class TimeShiftRecorderStreamBuilder : public RelayStreamBuilder {
  public:
   typedef RelayStreamBuilder base_class;
-  TimeShiftRecorderStreamBuilder(TimeshiftConfig* api, TimeShiftRecorderStream* observer);
+  TimeShiftRecorderStreamBuilder(const TimeshiftConfig* api, TimeShiftRecorderStream* observer);
 
   Connector BuildOutput(Connector conn) override;
   Connector BuildConverter(Connector conn) override;

@@ -25,7 +25,7 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-PlaylistEncodingStreamBuilder::PlaylistEncodingStreamBuilder(PlaylistEncodingConfig* api,
+PlaylistEncodingStreamBuilder::PlaylistEncodingStreamBuilder(const PlaylistEncodingConfig* api,
                                                              PlaylistEncodingStream* observer)
     : EncodingStreamBuilder(api, observer) {}
 

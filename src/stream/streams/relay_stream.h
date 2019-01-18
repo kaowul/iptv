@@ -24,7 +24,7 @@ namespace streams {
 
 class RelayStream : public SrcDecodeBinStream {
  public:
-  RelayStream(RelayConfig* config, IStreamClient* client, StreamStruct* stats);
+  RelayStream(const RelayConfig* config, IStreamClient* client, StreamStruct* stats);
 
   const char* ClassName() const override;
 

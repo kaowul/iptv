@@ -35,7 +35,7 @@ class PlaylistEncodingStream : public EncodingStream {
   friend class builders::PlaylistEncodingStreamBuilder;
 
  public:
-  PlaylistEncodingStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
+  PlaylistEncodingStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
   ~PlaylistEncodingStream() override;
 
   const char* ClassName() const override;

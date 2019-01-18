@@ -64,11 +64,11 @@ Element* build_mux_video_scale(common::draw::Size sz, ILinker* linker, Element* 
 namespace streams {
 namespace builders {
 
-MosaicStreamBuilder::MosaicStreamBuilder(EncodingConfig* config, MosaicStream* observer)
+MosaicStreamBuilder::MosaicStreamBuilder(const EncodingConfig* config, MosaicStream* observer)
     : IBaseBuilder(config, observer) {}
 
 bool MosaicStreamBuilder::InitPipeline() {
-  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(api_);
   input_t prepared = config->GetInput();
   size_t sz = prepared.size();
   MosaicImageOptions options;
@@ -222,7 +222,7 @@ bool MosaicStreamBuilder::InitPipeline() {
 }
 
 void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Element* audio) {
-  EncodingConfig* config = static_cast<EncodingConfig*>(api_);
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(api_);
   output_t out = config->GetOutput();
 
   for (size_t i = 0; i < out.size(); ++i) {

@@ -36,7 +36,7 @@ class TimeShiftRecorderStream : public ITimeShiftRecorderStream {
 
  public:
   typedef ITimeShiftRecorderStream base_class;
-  TimeShiftRecorderStream(TimeshiftConfig* config,
+  TimeShiftRecorderStream(const TimeshiftConfig* config,
                           const TimeShiftInfo& info,
                           IStreamClient* client,
                           StreamStruct* stats);

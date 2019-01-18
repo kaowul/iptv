@@ -25,7 +25,7 @@ namespace streams {
 class TimeShiftPlayerStream : public RelayStream {
  public:
   typedef RelayStream base_class;
-  TimeShiftPlayerStream(RelayConfig* config,
+  TimeShiftPlayerStream(const RelayConfig* config,
                         const TimeShiftInfo& info,
                         IStreamClient* client,
                         StreamStruct* stats,

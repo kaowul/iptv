@@ -29,7 +29,7 @@
 namespace iptv_cloud {
 namespace stream {
 
-IBaseBuilder::IBaseBuilder(Config* api, IBaseBuilderObserver* observer)
+IBaseBuilder::IBaseBuilder(const Config* api, IBaseBuilderObserver* observer)
     : api_(api), observer_(observer), pipeline_(gst_pipeline_new("pipeline")), pipeline_elements_() {}
 
 IBaseBuilder::~IBaseBuilder() {}

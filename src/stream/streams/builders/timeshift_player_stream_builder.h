@@ -28,7 +28,7 @@ class TimeShiftPlayerBuilder : public RelayStreamBuilder {
   typedef RelayStreamBuilder base_class;
   TimeShiftPlayerBuilder(TimeShiftInfo tinfo,
                          chunk_index_t start_chunk_index,
-                         RelayConfig* api,
+                         const RelayConfig* api,
                          SrcDecodeBinStream* observer);
 
   elements::Element* BuildInputSrc() override;

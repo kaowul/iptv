@@ -25,7 +25,10 @@ namespace streams {
 class ITimeShiftRecorderStream : public RelayStream {
  public:
   typedef RelayStream base_class;
-  ITimeShiftRecorderStream(RelayConfig* config, const TimeShiftInfo& info, IStreamClient* client, StreamStruct* stats);
+  ITimeShiftRecorderStream(const RelayConfig* config,
+                           const TimeShiftInfo& info,
+                           IStreamClient* client,
+                           StreamStruct* stats);
   const char* ClassName() const override;
 
   TimeShiftInfo GetTimeshiftInfo() const;

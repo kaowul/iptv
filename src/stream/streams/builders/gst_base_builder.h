@@ -27,7 +27,7 @@ namespace builders {
 
 class GstBaseBuilder : public IBaseBuilder {
  public:
-  GstBaseBuilder(Config* api, IBaseBuilderObserver* observer);
+  GstBaseBuilder(const Config* api, IBaseBuilderObserver* observer);
   ~GstBaseBuilder() override;
 
   virtual Connector BuildInput() = 0;

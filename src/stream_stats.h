@@ -25,8 +25,6 @@ class StreamStats {  // only compile time size fields
   StreamStats();
   explicit StreamStats(stream_id_t sid);
 
-  bool IsValid() const;
-
   stream_id_t GetID() const;
 
   time_t GetLastUpdateTime() const;

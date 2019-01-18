@@ -20,7 +20,7 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-TimeShiftPlayerStream::TimeShiftPlayerStream(RelayConfig* config,
+TimeShiftPlayerStream::TimeShiftPlayerStream(const RelayConfig* config,
                                              const TimeShiftInfo& info,
                                              IStreamClient* client,
                                              StreamStruct* stats,
@@ -36,7 +36,7 @@ TimeShiftInfo TimeShiftPlayerStream::GetTimeshiftInfo() const {
 }
 
 IBaseBuilder* TimeShiftPlayerStream::CreateBuilder() {
-  RelayConfig* rconf = static_cast<RelayConfig*>(GetApi());
+  const RelayConfig* rconf = static_cast<const RelayConfig*>(GetApi());
   return new builders::TimeShiftPlayerBuilder(GetTimeshiftInfo(), start_chunk_index_, rconf, this);
 }
 

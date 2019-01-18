@@ -30,7 +30,7 @@ namespace streams {
 
 EncodingConfig::EncodingConfig(const base_class& config)
     : base_class(config),
-      deinterlace_(DEFAULT_DEINTERLACE),
+      deinterlace_(),
       frame_rate_(),
       volume_(),
       video_encoder_(DEFAULT_VIDEO_ENCODER),
@@ -61,11 +61,11 @@ void EncodingConfig::SetFrameRate(frame_rate_t rate) {
   frame_rate_ = rate;
 }
 
-bool EncodingConfig::GetDeinterlace() const {
+deinterlace_t EncodingConfig::GetDeinterlace() const {
   return deinterlace_;
 }
 
-void EncodingConfig::SetDeinterlace(bool deinterlace) {
+void EncodingConfig::SetDeinterlace(deinterlace_t deinterlace) {
   deinterlace_ = deinterlace;
 }
 

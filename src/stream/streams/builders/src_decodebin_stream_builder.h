@@ -27,7 +27,7 @@ namespace builders {
 
 class SrcDecodeStreamBuilder : public GstBaseBuilder {
  public:
-  SrcDecodeStreamBuilder(Config* api, SrcDecodeBinStream* observer);
+  SrcDecodeStreamBuilder(const Config* api, SrcDecodeBinStream* observer);
 
   Connector BuildInput() override;
   virtual elements::Element* BuildInputSrc();

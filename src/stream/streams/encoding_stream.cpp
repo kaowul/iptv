@@ -32,11 +32,11 @@ namespace stream {
 namespace streams {
 
 IBaseBuilder* EncodingStream::CreateBuilder() {
-  EncodingConfig* econf = static_cast<EncodingConfig*>(GetApi());
+  const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetApi());
   return new builders::EncodingStreamBuilder(econf, this);
 }
 
-EncodingStream::EncodingStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
+EncodingStream::EncodingStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
     : base_class(config, client, stats) {}
 
 EncodingStream::~EncodingStream() {}
@@ -70,7 +70,7 @@ GValueArray* EncodingStream::HandleAutoplugSort(GstElement* bin, GstPad* pad, Gs
     return nullptr;
   }
 
-  EncodingConfig* econf = static_cast<EncodingConfig*>(GetApi());
+  const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetApi());
   // SupportedAudioCodecs saudio;
   SupportedVideoCodec svideo;
   // bool is_audio = IsAudioCodecFromType(type, &saudio);
@@ -198,7 +198,7 @@ void EncodingStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
     return;
   }
 
-  EncodingConfig* config = static_cast<EncodingConfig*>(GetApi());
+  const EncodingConfig* config = static_cast<const EncodingConfig*>(GetApi());
   INFO_LOG() << GetID() << " pad added: " << new_pad_type;
   elements::Element* dest = nullptr;
   bool is_video = strncmp(new_pad_type, "video", 5) == 0;

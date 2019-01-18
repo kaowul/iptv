@@ -28,11 +28,11 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-ScreenStreamBuilder::ScreenStreamBuilder(AudioVideoConfig* api, IBaseBuilderObserver* observer)
+ScreenStreamBuilder::ScreenStreamBuilder(const AudioVideoConfig* api, IBaseBuilderObserver* observer)
     : GstBaseBuilder(api, observer) {}
 
 Connector ScreenStreamBuilder::BuildInput() {
-  AudioVideoConfig* config = static_cast<AudioVideoConfig*>(api_);
+  const AudioVideoConfig* config = static_cast<const AudioVideoConfig*>(api_);
   elements::Element* video = nullptr;
   if (config->HaveVideo()) {
     video = new elements::sources::ElementVideoTestSrc(common::MemSPrintf(VIDEO_SRC_NAME_1U, 0));
@@ -70,7 +70,7 @@ Connector ScreenStreamBuilder::BuildConverter(Connector conn) {
 }
 
 Connector ScreenStreamBuilder::BuildOutput(Connector conn) {
-  AudioVideoConfig* aconf = static_cast<AudioVideoConfig*>(api_);
+  const AudioVideoConfig* aconf = static_cast<const AudioVideoConfig*>(api_);
   output_t out = aconf->GetOutput();
   for (size_t i = 0; i < out.size(); ++i) {
     if (aconf->HaveVideo()) {

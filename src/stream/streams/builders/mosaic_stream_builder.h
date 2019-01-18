@@ -37,7 +37,7 @@ class MosaicStream;
 namespace builders {
 class MosaicStreamBuilder : public IBaseBuilder {
  public:
-  MosaicStreamBuilder(EncodingConfig* config, MosaicStream* observer);
+  MosaicStreamBuilder(const EncodingConfig* config, MosaicStream* observer);
 
  protected:
   void HandleDecodebinCreated(elements::ElementDecodebin* decodebin);

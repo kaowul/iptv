@@ -19,7 +19,7 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-GstBaseBuilder::GstBaseBuilder(Config* api, IBaseBuilderObserver* observer) : IBaseBuilder(api, observer) {}
+GstBaseBuilder::GstBaseBuilder(const Config* api, IBaseBuilderObserver* observer) : IBaseBuilder(api, observer) {}
 
 GstBaseBuilder::~GstBaseBuilder() {}
 

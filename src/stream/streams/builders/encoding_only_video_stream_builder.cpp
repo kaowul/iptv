@@ -19,7 +19,7 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-EncodingOnlyVideoStreamBuilder::EncodingOnlyVideoStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer)
+EncodingOnlyVideoStreamBuilder::EncodingOnlyVideoStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer)
     : EncodingStreamBuilder(api, observer) {}
 
 elements_line_t EncodingOnlyVideoStreamBuilder::BuildAudioPostProc(element_id_t audio_id) {

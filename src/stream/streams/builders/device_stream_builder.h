@@ -24,7 +24,7 @@ namespace builders {
 class DeviceStreamBuilder : public EncodingStreamBuilder {
  public:
   enum { VIDEO_WIDTH = 1920, VIDEO_HEIGHT = 1080 };
-  DeviceStreamBuilder(EncodingConfig* api, SrcDecodeBinStream* observer);
+  DeviceStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
   Connector BuildInput() override;
 };
 

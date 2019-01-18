@@ -40,7 +40,7 @@ void SrcDecodeBinStream::ConnectDecodebinSignals(elements::ElementDecodebin* dec
   DCHECK(element_removed);
 }
 
-SrcDecodeBinStream::SrcDecodeBinStream(Config* config, IStreamClient* client, StreamStruct* stats)
+SrcDecodeBinStream::SrcDecodeBinStream(const Config* config, IStreamClient* client, StreamStruct* stats)
     : IBaseStream(config, client, stats) {}
 
 SrcDecodeBinStream::~SrcDecodeBinStream() {}
@@ -50,7 +50,7 @@ const char* SrcDecodeBinStream::ClassName() const {
 }
 
 void SrcDecodeBinStream::PreLoop() {
-  Config* conf = GetApi();
+  const Config* conf = GetApi();
   input_t input = conf->GetInput();
   if (client_) {
     client_->OnInputChanged(input[0]);

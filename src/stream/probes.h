@@ -51,8 +51,6 @@ class Probe {
   ~Probe();
 
   const std::string& GetName() const;
-  bool IsBroken() const;
-  void SetBroken(bool broked);
 
   void LinkPads(GstPad* pad);
   element_id_t GetID() const;
@@ -77,7 +75,6 @@ class Probe {
   gulong id_buffer_;
   GstPad* pad_;
   Consistency consistency_;
-  bool is_broken_;
 
   DISALLOW_COPY_AND_ASSIGN(Probe);
 };

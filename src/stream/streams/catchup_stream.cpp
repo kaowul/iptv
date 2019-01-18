@@ -29,7 +29,7 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-CatchupStream::CatchupStream(TimeshiftConfig* config,
+CatchupStream::CatchupStream(const TimeshiftConfig* config,
                              const TimeShiftInfo& info,
                              IStreamClient* client,
                              StreamStruct* stats)
@@ -54,7 +54,7 @@ chunk_index_t CatchupStream::GetNextChunkStrategy(chunk_index_t last_index, time
 }
 
 IBaseBuilder* CatchupStream::CreateBuilder() {
-  TimeshiftConfig* tconf = static_cast<TimeshiftConfig*>(GetApi());
+  const TimeshiftConfig* tconf = static_cast<const TimeshiftConfig*>(GetApi());
   return new builders::CatchupStreamBuilder(tconf, this);
 }
 
@@ -72,7 +72,7 @@ void CatchupStream::WriteM3u8List() {
     return;
   }
 
-  TimeshiftConfig* tconf = static_cast<TimeshiftConfig*>(GetApi());
+  const TimeshiftConfig* tconf = static_cast<const TimeshiftConfig*>(GetApi());
   time_t duration = tconf->GetTimeShiftChunkDuration();
   chunk_index_t first_index = 0;
   if (!chunks_.empty()) {

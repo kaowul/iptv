@@ -25,7 +25,7 @@ namespace streams {
 class CatchupStream : public TimeShiftRecorderStream {
  public:
   typedef TimeShiftRecorderStream base_class;
-  CatchupStream(TimeshiftConfig* config, const TimeShiftInfo& info, IStreamClient* client, StreamStruct* stats);
+  CatchupStream(const TimeshiftConfig* config, const TimeShiftInfo& info, IStreamClient* client, StreamStruct* stats);
 
   const char* ClassName() const override;
 

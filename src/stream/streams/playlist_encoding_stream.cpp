@@ -28,7 +28,7 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-PlaylistEncodingStream::PlaylistEncodingStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
+PlaylistEncodingStream::PlaylistEncodingStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
     : EncodingStream(config, client, stats), app_src_(nullptr), current_file_(nullptr), curent_pos_(0) {}
 
 PlaylistEncodingStream::~PlaylistEncodingStream() {
@@ -49,7 +49,7 @@ void PlaylistEncodingStream::OnAppSrcCreatedCreated(elements::sources::ElementAp
 }
 
 IBaseBuilder* PlaylistEncodingStream::CreateBuilder() {
-  PlaylistEncodingConfig* econf = static_cast<PlaylistEncodingConfig*>(GetApi());
+  const PlaylistEncodingConfig* econf = static_cast<const PlaylistEncodingConfig*>(GetApi());
   return new builders::PlaylistEncodingStreamBuilder(econf, this);
 }
 
@@ -94,7 +94,7 @@ void PlaylistEncodingStream::need_data_callback(GstElement* pipeline, guint size
 }
 
 FILE* PlaylistEncodingStream::OpenNextFile() {
-  PlaylistEncodingConfig* econf = static_cast<PlaylistEncodingConfig*>(GetApi());
+  const PlaylistEncodingConfig* econf = static_cast<const PlaylistEncodingConfig*>(GetApi());
   const auto loop = econf->GetLoop();
   if (loop) {
     if (!*loop) {

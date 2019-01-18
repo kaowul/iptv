@@ -25,7 +25,7 @@ namespace streams {
 class EncodingStream : public SrcDecodeBinStream {
  public:
   typedef SrcDecodeBinStream base_class;
-  EncodingStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
+  EncodingStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
   ~EncodingStream() override;
 
   const char* ClassName() const override;

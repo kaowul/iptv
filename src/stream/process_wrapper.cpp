@@ -36,8 +36,10 @@
 
 #include "stream/streams_factory.h"  // for isTimeshiftP...
 
+#include "configs_factory.h"
 #include "probes.h"
 #include "protocol/protocol.h"
+#include "stream/streams/configs/relay_config.h"
 
 #include "stream/configs_factory.h"
 
@@ -49,6 +51,27 @@ namespace iptv_cloud {
 namespace stream {
 
 namespace {
+
+TimeShiftInfo make_timeshift_info(const utils::ArgsMap& args) {
+  TimeShiftInfo tinfo;
+
+  std::string timeshift_dir;
+  if (!utils::ArgsGetValue(args, TIMESHIFT_DIR_FIELD, &timeshift_dir)) {
+    CRITICAL_LOG() << "Define " TIMESHIFT_DIR_FIELD " variable and make it valid.";
+  }
+  tinfo.timshift_dir = common::file_system::ascii_directory_string_path(timeshift_dir);
+
+  tinfo.chunk_max_life_time_hours = 0;
+  if (!utils::ArgsGetValue(args, TIMESHIFT_CHUNK_MAX_LIFE_TIME_FIELD, &tinfo.chunk_max_life_time_hours)) {
+    tinfo.chunk_max_life_time_hours = 12;
+  }
+
+  time_shift_delay_t timeshift_delay = 0;
+  if (utils::ArgsGetValue(args, TIMESHIFT_DELAY_FIELD, &timeshift_delay)) {
+    tinfo.timeshift_delay = timeshift_delay;
+  }
+  return tinfo;
+}
 
 bool PrepareStatus(StreamStruct* stats, StreamStatus st, double cpu_load, std::string* status_out) {
   if (!stats || !status_out) {
@@ -124,7 +147,8 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
     : IBaseStream::IStreamClient(),
       process_name_(process_name),
       feedback_dir_(feedback_dir),
-      config_args_(config_args),
+      config_(make_config(config_args)),
+      tinfo_(make_timeshift_info(config_args)),
       restart_attempts_(0),
       stop_mutex_(),
       stop_cond_(),
@@ -132,7 +156,6 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
       ev_thread_(),
       loop_(new StreamServer(command_client, this)),
       ttl_master_timer_(0),
-      ttl_sec_(0),
       libev_started_(2),
       mem_(mem),
       //
@@ -140,14 +163,9 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
       id_() {
   CHECK(mem);
 
-  time_t ttl_sec;
-  if (utils::ArgsGetValue(config_args_, AUTO_EXIT_TIME_FIELD, &ttl_sec)) {  // #FIXME move to config
-    ttl_sec_ = ttl_sec;
-  }
-
   EncoderType enc = CPU;
   std::string video_codec;
-  if (utils::ArgsGetValue(config_args_, VIDEO_CODEC_FIELD, &video_codec)) {
+  if (utils::ArgsGetValue(config_args, VIDEO_CODEC_FIELD, &video_codec)) {
     EncoderType lenc;
     if (GetEncoderType(video_codec, &lenc)) {
       enc = lenc;
@@ -163,6 +181,7 @@ ProcessWrapper::~ProcessWrapper() {
 
   destroy(&loop_);
   streams_deinit();
+  destroy(&config_);
 }
 
 int ProcessWrapper::Exec() {
@@ -171,19 +190,13 @@ int ProcessWrapper::Exec() {
     UNUSED(res);
   });
   libev_started_.Wait();
-  TimeShiftInfo tinfo;
-  bool is_timeshift_player = IsTimeshiftPlayer(config_args_, &tinfo);
-  time_t timeshift_chunk_duration;
-  if (is_timeshift_player) {
-    if (!utils::ArgsGetValue(config_args_, TIMESHIFT_CHUNK_DURATION_FIELD, &timeshift_chunk_duration)) {
-      timeshift_chunk_duration = DEFAULT_TIMESHIFT_CHUNK_DURATION;
-    }
-  }
 
   while (!stop_) {
     chunk_index_t start_chunk_index = invalid_chunk_index;
-    if (is_timeshift_player) {  // if timeshift player or cathcup player
-      while (!tinfo.FindChunkToPlay(timeshift_chunk_duration, &start_chunk_index)) {
+    if (config_->GetType() == TIMESHIFT_PLAYER) {  // if timeshift player or cathcup player
+      const streams::TimeshiftConfig* tconfig = static_cast<const streams::TimeshiftConfig*>(config_);
+      time_t timeshift_chunk_duration = tconfig->GetTimeShiftChunkDuration();
+      while (!tinfo_.FindChunkToPlay(timeshift_chunk_duration, &start_chunk_index)) {
         DumpStreamStatus(mem_, WAITING);
 
         {
@@ -205,7 +218,7 @@ int ProcessWrapper::Exec() {
     int stabled_status = EXIT_SUCCESS;
     int signal_number = 0;
     time_t start_utc_now = common::time::current_mstime() / 1000;
-    origin_ = StreamsFactory::GetInstance().CreateStream(config_args_, this, mem_, start_chunk_index);
+    origin_ = StreamsFactory::GetInstance().CreateStream(config_, this, mem_, tinfo_, start_chunk_index);
     ExitStatus res = origin_->Exec();
     destroy(&origin_);
     if (res == EXIT_INNER) {
@@ -226,14 +239,13 @@ int ProcessWrapper::Exec() {
       continue;
     }
 
-    Config* config = origin_->GetApi();
     size_t wait_time = 0;
-    if (++restart_attempts_ == config->GetMaxRestartAttempts()) {
+    if (++restart_attempts_ == config_->GetMaxRestartAttempts()) {
       restart_attempts_ = 0;
       DumpStreamStatus(mem_, FROZEN);
       wait_time = restart_after_frozen_sec;
     } else {
-      wait_time = restart_attempts_ * (restart_after_frozen_sec / config->GetMaxRestartAttempts());
+      wait_time = restart_attempts_ * (restart_after_frozen_sec / config_->GetMaxRestartAttempts());
     }
 
     INFO_LOG() << process_name_ << " automatically restarted after " << wait_time
@@ -268,9 +280,10 @@ void ProcessWrapper::Restart() {
 
 void ProcessWrapper::PreLooped(common::libev::IoLoop* loop) {
   UNUSED(loop);
-  if (ttl_sec_) {
-    ttl_master_timer_ = loop_->CreateTimer(ttl_sec_, false);
-    NOTICE_LOG() << "Set stream ttl: " << ttl_sec_;
+  const auto ttl_sec = config_->GetTimeToLifeStream();
+  if (ttl_sec) {
+    ttl_master_timer_ = loop_->CreateTimer(*ttl_sec, false);
+    NOTICE_LOG() << "Set stream ttl: " << *ttl_sec;
   }
 
   libev_started_.Wait();
@@ -354,7 +367,10 @@ void ProcessWrapper::DataReadyToWrite(common::libev::IoClient* client) {
 void ProcessWrapper::TimerEmited(common::libev::IoLoop* loop, common::libev::timer_id_t id) {
   UNUSED(loop);
   if (id == ttl_master_timer_) {
-    NOTICE_LOG() << "Timeout notified ttl was: " << ttl_sec_;
+    const auto ttl_sec = config_->GetTimeToLifeStream();
+    if (ttl_sec) {
+      NOTICE_LOG() << "Timeout notified ttl was: " << *ttl_sec;
+    }
     Stop();
   }
 }

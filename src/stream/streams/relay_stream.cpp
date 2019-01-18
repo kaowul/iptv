@@ -33,7 +33,7 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-RelayStream::RelayStream(RelayConfig* config, IStreamClient* client, StreamStruct* stats)
+RelayStream::RelayStream(const RelayConfig* config, IStreamClient* client, StreamStruct* stats)
     : SrcDecodeBinStream(config, client, stats) {}
 
 const char* RelayStream::ClassName() const {
@@ -41,7 +41,7 @@ const char* RelayStream::ClassName() const {
 }
 
 IBaseBuilder* RelayStream::CreateBuilder() {
-  RelayConfig* rconf = static_cast<RelayConfig*>(GetApi());
+  const RelayConfig* rconf = static_cast<const RelayConfig*>(GetApi());
   return new builders::RelayStreamBuilder(rconf, this);
 }
 
@@ -119,7 +119,7 @@ void RelayStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
     return;
   }
 
-  RelayConfig* config = static_cast<RelayConfig*>(GetApi());
+  const RelayConfig* config = static_cast<const RelayConfig*>(GetApi());
   bool is_video = strncmp(new_pad_type, "video", 5) == 0;
   bool is_audio = strncmp(new_pad_type, "audio", 5) == 0;
   INFO_LOG() << GetID() << " pad added: " << new_pad_type;

@@ -19,7 +19,7 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-CatchupStreamBuilder::CatchupStreamBuilder(TimeshiftConfig* api, TimeShiftRecorderStream* observer)
+CatchupStreamBuilder::CatchupStreamBuilder(const TimeshiftConfig* api, TimeShiftRecorderStream* observer)
     : base_class(api, observer) {}
 
 }  // namespace builders

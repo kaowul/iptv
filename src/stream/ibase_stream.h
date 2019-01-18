@@ -56,7 +56,7 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
   enum { main_timer_msecs = 1000, no_data_panic_sec = 60, src_timeout_sec = no_data_panic_sec * 2 };
 
   // channel_id_t not empty
-  IBaseStream(Config* config, IStreamClient* client, StreamStruct* stats);
+  IBaseStream(const Config* config, IStreamClient* client, StreamStruct* stats);
   const char* ClassName() const override;
   ~IBaseStream() override;
 
@@ -84,7 +84,7 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
 
   void UpdateStats(const Probe* probe, gsize size);
 
-  Config* GetApi() const;
+  const Config* GetApi() const;
 
   void LinkInputPad(GstPad* pad, element_id_t id);
   void LinkOutputPad(GstPad* pad, element_id_t id);
@@ -138,7 +138,7 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
   void Play();
 
  private:
-  Config* api_;
+  const Config* const api_;
 
   std::vector<Probe*> probe_in_;
   std::vector<Probe*> probe_out_;

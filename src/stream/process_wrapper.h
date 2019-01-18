@@ -22,7 +22,7 @@
 #include <common/threads/barrier.h>
 
 #include "protocol/types.h"
-
+#include "timeshift.h"
 #include "utils/utils.h"
 
 #include "stream/ibase_stream.h"
@@ -97,7 +97,8 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
 
   const std::string process_name_;
   const std::string feedback_dir_;
-  const utils::ArgsMap config_args_;
+  const Config* config_;
+  const TimeShiftInfo tinfo_;
   size_t restart_attempts_;
 
   std::mutex stop_mutex_;
@@ -107,7 +108,6 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
   std::thread ev_thread_;
   common::libev::IoLoop* loop_;
   common::libev::timer_id_t ttl_master_timer_;
-  time_t ttl_sec_;
   common::threads::barrier libev_started_;
 
   StreamStruct* mem_;

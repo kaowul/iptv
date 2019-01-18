@@ -162,7 +162,7 @@ void streams_deinit() {
 
 IBaseStream::IStreamClient::~IStreamClient() {}
 
-IBaseStream::IBaseStream(Config* config, IStreamClient* client, StreamStruct* stats)
+IBaseStream::IBaseStream(const Config* config, IStreamClient* client, StreamStruct* stats)
     : common::IMetaClassInfo(),
       client_(client),
       api_(config),
@@ -305,7 +305,6 @@ IBaseStream::~IBaseStream() {
     g_object_unref(pipeline_);
     pipeline_ = nullptr;
   }
-  destroy(&api_);
 }
 
 ExitStatus IBaseStream::Exec() {
@@ -757,27 +756,24 @@ gboolean IBaseStream::main_timer_callback(gpointer user_data) {
 }
 
 void IBaseStream::UpdateStats(const Probe* probe, gsize size) {
-  bool is_broken = probe->IsBroken();
-  if (probe->GetName() == PROBE_IN && !is_broken) {
+  if (probe->GetName() == PROBE_IN) {
     input_stream_info_t ins = stats_->input;
     if (probe->GetID() < ins.size()) {
       StreamStats* stream_info = ins[probe->GetID()];
       const size_t prev_total = stream_info->GetTotalBytes();
       stream_info->SetTotalBytes(prev_total + size);
-      stream_info->SetIsBroken(is_broken);
     }
-  } else if (probe->GetName() == PROBE_OUT && !is_broken) {
+  } else if (probe->GetName() == PROBE_OUT) {
     output_stream_info_t outs = stats_->output;
     if (probe->GetID() < outs.size()) {
       StreamStats* stream_info = outs[probe->GetID()];
       const size_t prev_total = stream_info->GetTotalBytes();
       stream_info->SetTotalBytes(prev_total + size);
-      stream_info->SetIsBroken(is_broken);
     }
   }
 }
 
-Config* IBaseStream::GetApi() const {
+const Config* IBaseStream::GetApi() const {
   return api_;
 }
 

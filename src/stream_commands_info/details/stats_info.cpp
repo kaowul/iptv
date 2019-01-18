@@ -36,10 +36,6 @@ StreamStats StatsInfo::GetStats() const {
 }
 
 common::Error StatsInfo::SerializeFields(json_object* out) const {
-  if (!stats_.IsValid()) {
-    return common::make_error_inval();
-  }
-
   stream_id_t sid = stats_.GetID();
   json_object_object_add(out, FIELD_STATS_ID, json_object_new_int64(sid));
 

@@ -28,7 +28,7 @@ Consistency::Consistency()
       saw_serialized_event(FALSE) {}
 
 Probe::Probe(const std::string& name, element_id_t id, IBaseStream* stream)
-    : stream_(stream), name_(name), id_(id), id_buffer_(0), pad_(nullptr), consistency_(), is_broken_(false) {
+    : stream_(stream), name_(name), id_(id), id_buffer_(0), pad_(nullptr), consistency_() {
   CHECK(stream);
 }
 
@@ -38,14 +38,6 @@ Probe::~Probe() {
 
 const std::string& Probe::GetName() const {
   return name_;
-}
-
-bool Probe::IsBroken() const {
-  return is_broken_;
-}
-
-void Probe::SetBroken(bool broked) {
-  is_broken_ = broked;
 }
 
 void Probe::Link(GstPad* pad) {

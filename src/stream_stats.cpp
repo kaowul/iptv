@@ -18,7 +18,7 @@
 
 namespace iptv_cloud {
 
-StreamStats::StreamStats() : StreamStats(kInvalidStreamID) {}
+StreamStats::StreamStats() : StreamStats(0) {}
 
 StreamStats::StreamStats(stream_id_t sid)
     : id_(sid),
@@ -28,10 +28,6 @@ StreamStats::StreamStats(stream_id_t sid)
       bytes_per_second_(0),
       desire_bytes_per_second_(),
       is_broken_(true) {}
-
-bool StreamStats::IsValid() const {
-  return id_ != kInvalidStreamID;
-}
 
 stream_id_t StreamStats::GetID() const {
   return id_;

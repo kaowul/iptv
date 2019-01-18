@@ -51,7 +51,7 @@ pad::Pad* link_to_multiplexer(elements::Element* src, elements::Element* sink, c
 }  // namespace
 namespace streams {
 
-TimeShiftRecorderStream::TimeShiftRecorderStream(TimeshiftConfig* config,
+TimeShiftRecorderStream::TimeShiftRecorderStream(const TimeshiftConfig* config,
                                                  const TimeShiftInfo& info,
                                                  IStreamClient* client,
                                                  StreamStruct* stats)
@@ -90,7 +90,7 @@ void TimeShiftRecorderStream::OnSplitmuxsinkCreated(Connector conn, elements::si
 
 chunk_index_t TimeShiftRecorderStream::GetNextChunkStrategy(chunk_index_t last_index,
                                                             time_t last_index_created_time) const {
-  TimeshiftConfig* tconf = static_cast<TimeshiftConfig*>(GetApi());
+  const TimeshiftConfig* tconf = static_cast<const TimeshiftConfig*>(GetApi());
   time_t cur_time = common::time::current_mstime() / 1000;
   time_t diff = cur_time - last_index_created_time;
   if (diff > 0) {
@@ -101,7 +101,7 @@ chunk_index_t TimeShiftRecorderStream::GetNextChunkStrategy(chunk_index_t last_i
 }
 
 IBaseBuilder* TimeShiftRecorderStream::CreateBuilder() {
-  TimeshiftConfig* tconf = static_cast<TimeshiftConfig*>(GetApi());
+  const TimeshiftConfig* tconf = static_cast<const TimeshiftConfig*>(GetApi());
   return new builders::TimeShiftRecorderStreamBuilder(tconf, this);
 }
 

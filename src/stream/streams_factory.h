@@ -27,13 +27,12 @@ class StreamsFactory : public common::patterns::LazySingleton<StreamsFactory> {
  public:
   friend class common::patterns::LazySingleton<StreamsFactory>;
 
-  IBaseStream* CreateStream(const utils::ArgsMap& args,
+  IBaseStream* CreateStream(const Config* config,
                             IBaseStream::IStreamClient* client,
                             StreamStruct* stats,
+                            const TimeShiftInfo& tinfo,
                             chunk_index_t start_chunk_index);
 };
-
-bool IsTimeshiftPlayer(const utils::ArgsMap& args, TimeShiftInfo* tinfo);
 
 }  // namespace stream
 }  // namespace iptv_cloud

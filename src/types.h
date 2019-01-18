@@ -28,8 +28,6 @@ typedef common::Optional<double> volume_t;
 typedef double alpha_t;
 typedef common::Optional<int> bit_rate_t;
 
-extern const stream_id_t kInvalidStreamID;
-
 enum StreamType : uint8_t {
   RELAY = 0,
   ENCODE = 1,

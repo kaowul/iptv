@@ -39,8 +39,8 @@ class EncodingConfig : public AudioVideoConfig {
   frame_rate_t GetFramerate() const;  // encoding
   void SetFrameRate(frame_rate_t rate);
 
-  bool GetDeinterlace() const;  // encoding
-  void SetDeinterlace(bool deinterlace);
+  deinterlace_t GetDeinterlace() const;  // encoding
+  void SetDeinterlace(deinterlace_t deinterlace);
 
   std::string GetVideoEncoder() const;  // encoding
   void SetVideoEncoder(const std::string& enc);
@@ -79,7 +79,7 @@ class EncodingConfig : public AudioVideoConfig {
   void SetDecklinkMode(decklink_video_mode_t decl);
 
  private:
-  bool deinterlace_;
+  deinterlace_t deinterlace_;
 
   frame_rate_t frame_rate_;
   volume_t volume_;

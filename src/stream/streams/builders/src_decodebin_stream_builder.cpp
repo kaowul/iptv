@@ -62,7 +62,7 @@ elements::Element* make_audio_pay(SupportedAudioCodec acodec, element_id_t pay_i
 namespace streams {
 namespace builders {
 
-SrcDecodeStreamBuilder::SrcDecodeStreamBuilder(Config* api, SrcDecodeBinStream* observer)
+SrcDecodeStreamBuilder::SrcDecodeStreamBuilder(const Config* api, SrcDecodeBinStream* observer)
     : GstBaseBuilder(api, observer) {}
 
 Connector SrcDecodeStreamBuilder::BuildInput() {
@@ -108,7 +108,7 @@ elements::Element* SrcDecodeStreamBuilder::BuildAudioUdbConnection() {
 Connector SrcDecodeStreamBuilder::BuildUdbConnections(Connector conn) {
   CHECK(conn.video == nullptr);
   CHECK(conn.audio == nullptr);
-  AudioVideoConfig* config = static_cast<AudioVideoConfig*>(api_);
+  const AudioVideoConfig* config = static_cast<const AudioVideoConfig*>(api_);
   if (config->HaveVideo()) {
     elements::Element* vudb = BuildVideoUdbConnection();
     CHECK(vudb);
@@ -125,7 +125,7 @@ Connector SrcDecodeStreamBuilder::BuildUdbConnections(Connector conn) {
 }
 
 Connector SrcDecodeStreamBuilder::BuildOutput(Connector conn) {
-  AudioVideoConfig* config = static_cast<AudioVideoConfig*>(api_);
+  const AudioVideoConfig* config = static_cast<const AudioVideoConfig*>(api_);
   output_t out = config->GetOutput();
   for (size_t i = 0; i < out.size(); ++i) {
     const OutputUri output = out[i];

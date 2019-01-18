@@ -22,7 +22,7 @@ namespace streams {
 
 class DeviceStream : public EncodingStream {  // only videotestsrc and audiotestsrc
  public:
-  DeviceStream(EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
+  DeviceStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
   const char* ClassName() const override;
 
  protected:
