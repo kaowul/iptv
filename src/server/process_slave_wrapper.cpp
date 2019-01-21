@@ -64,13 +64,9 @@
 
 #define DUMMY_LOG_FILE_PATH "/dev/null"
 
-#define DAEMON_STATS_1S "%s:stats"
-#define SLAVE_STATS_1S "%s:slave"
-
 #define CLIENT_PORT 6317
 
 #define SERVICE_ID_FIELD "id"
-#define SERVICE_STATS_CREDENTIALS_FIELD "stats_credentials"
 #define SERVICE_LOG_FILE_FIELD "log_file"
 
 namespace {
@@ -91,10 +87,6 @@ common::ErrnoError create_pipe(int* read_client_fd, int* write_client_fd) {
   return common::ErrnoError();
 }
 
-std::string make_daemon_stats_id(std::string sid) {
-  return common::MemSPrintf(DAEMON_STATS_1S, sid);
-}
-
 iptv_cloud::utils::ArgsMap read_slave_config(const std::string& path) {
   if (path.empty()) {
     CRITICAL_LOG() << "Invalid config path!";
@@ -111,8 +103,6 @@ iptv_cloud::utils::ArgsMap read_slave_config(const std::string& path) {
     const std::pair<std::string, std::string> pair = iptv_cloud::utils::GetKeyValue(line, '=');
     if (pair.first == SERVICE_ID_FIELD) {
       options.push_back(pair);
-    } else if (pair.first == SERVICE_STATS_CREDENTIALS_FIELD) {
-      options.push_back(pair);
     } else if (pair.first == SERVICE_LOG_FILE_FIELD) {
       options.push_back(pair);
     } else {
@@ -127,10 +117,6 @@ iptv_cloud::utils::ArgsMap read_slave_config(const std::string& path) {
 
 namespace iptv_cloud {
 namespace {
-std::string make_slave_stats_id(channel_id_t id) {
-  return common::MemSPrintf(SLAVE_STATS_1S, id);
-}
-
 common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInfo* sha) {
   if (!sha) {
     return common::make_errno_error_inval();
@@ -225,8 +211,7 @@ struct ProcessSlaveWrapper::NodeStats {
 };
 
 ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key)
-    : stats_(nullptr),
-      node_id_(),
+    : node_id_(),
       start_time_(common::time::current_mstime() / 1000),
       loop_(),
       license_key_(license_key),
@@ -272,7 +257,6 @@ int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
 }
 
 ProcessSlaveWrapper::~ProcessSlaveWrapper() {
-  ClearStat();
   destroy(&loop_);
   destroy(&node_stats_);
 }
@@ -315,14 +299,6 @@ finished:
   }
   delete perf_monitor;
   return res;
-}
-
-void ProcessSlaveWrapper::ClearStat() {
-  if (!stats_) {
-    return;
-  }
-
-  destroy(&stats_);
 }
 
 void ProcessSlaveWrapper::PreLooped(common::libev::IoLoop* server) {
@@ -371,37 +347,8 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
       }
     }
   } else if (node_stats_timer_ == id) {
-    if (stats_) {
-      utils::CpuShot next = utils::GetMachineCpuShot();
-      long double cpu_load = utils::GetCpuMachineLoad(node_stats_->prev, next);
-      node_stats_->prev = next;
-
-      utils::NetShot next_nshot = utils::GetMachineNetShot();
-      uint64_t bytes_recv = (next_nshot.bytes_recv + node_stats_->prev_nshot.bytes_recv) / 2;
-      uint64_t bytes_send = (next_nshot.bytes_send + node_stats_->prev_nshot.bytes_send) / 2;
-      node_stats_->prev_nshot = next_nshot;
-
-      utils::MemoryShot mem_shot = utils::GetMachineMemoryShot();
-      utils::HddShot hdd_shot = utils::GetMachineHddShot();
-      utils::SysinfoShot sshot = utils::GetMachineSysinfoShot();
-      std::string uptime_str = common::MemSPrintf("%lu %lu %lu", sshot.loads[0], sshot.loads[1], sshot.loads[2]);
-
-      service::StatisticInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
-                                  bytes_recv, bytes_send, sshot);
-      std::string node_stats;
-      common::Error err_ser = stat.SerializeToString(&node_stats);
-      if (err_ser) {
-        const std::string err_str = err_ser->GetDescription();
-        WARNING_LOG() << "Failed to generate node statistic: " << err_str;
-      }
-
-      bool res = stats_->SetKey(make_daemon_stats_id(node_id_), node_stats);
-      if (!res) {
-        WARNING_LOG() << "Failed to save node statistic: " << node_stats;
-      }
-
-      BroadcastClients(StatisitcServiceBroadcast(node_stats));
-    }
+    const std::string node_stats = MakeServiceStats();
+    BroadcastClients(StatisitcServiceBroadcast(node_stats));
   } else if (cleanup_timer_ == id) {
     loop_->Stop();
   }
@@ -856,12 +803,6 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestStatisticStream(pipe::Proto
       return common::make_errno_error(err_str, EAGAIN);
     }
 
-    auto struc = stat.GetStreamStruct();
-    bool res = stats_->SetKey(make_slave_stats_id(struc->id), stream_stats);
-    if (!res) {
-      WARNING_LOG() << "Failed to save stream statistic: " << stream_stats;
-    }
-
     BroadcastClients(StatisitcStreamBroadcast(stream_stats));
     return common::ErrnoError();
   }
@@ -1047,7 +988,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(ProtocoledDa
       return common::make_errno_error_inval();
     }
 
-    protocol::response_t resp = ActivateResponceSuccess(req->id);
+    const std::string node_stats = MakeServiceStats();
+    protocol::response_t resp = ActivateResponce(req->id, node_stats);
     dclient->WriteResponce(resp);
     dclient->SetVerified(true);
     return common::ErrnoError();
@@ -1166,20 +1108,37 @@ void ProcessSlaveWrapper::ReadConfig() {  // CONFIG_SLAVE_FILE_PATH
     CRITICAL_LOG() << "Define " SERVICE_ID_FIELD " variable and make it valid.";
   }
 
-  std::string stats_data;
-  if (!utils::ArgsGetValue(slave_config_args, SERVICE_STATS_CREDENTIALS_FIELD, &stats_data)) {
-    CRITICAL_LOG() << "Define " SERVICE_STATS_CREDENTIALS_FIELD " variable and make it valid.";
-  }
-
   if (!utils::ArgsGetValue(slave_config_args, SERVICE_LOG_FILE_FIELD, &log_path_)) {
     WARNING_LOG() << "Define " SERVICE_LOG_FILE_FIELD " variable and make it valid, now used: " DUMMY_LOG_FILE_PATH ".";
     log_path_ = DUMMY_LOG_FILE_PATH;
   }
+}
 
-  stats::StatCredentialsBase* screds = stats::StatCredentialsBase::CreateCreadentialsFromString(stats_data);
-  CHECK(screds);
-  ClearStat();
-  stats_ = stats::IStat::CreateStat(screds);
+std::string ProcessSlaveWrapper::MakeServiceStats() const {
+  utils::CpuShot next = utils::GetMachineCpuShot();
+  long double cpu_load = utils::GetCpuMachineLoad(node_stats_->prev, next);
+  node_stats_->prev = next;
+
+  utils::NetShot next_nshot = utils::GetMachineNetShot();
+  uint64_t bytes_recv = (next_nshot.bytes_recv + node_stats_->prev_nshot.bytes_recv) / 2;
+  uint64_t bytes_send = (next_nshot.bytes_send + node_stats_->prev_nshot.bytes_send) / 2;
+  node_stats_->prev_nshot = next_nshot;
+
+  utils::MemoryShot mem_shot = utils::GetMachineMemoryShot();
+  utils::HddShot hdd_shot = utils::GetMachineHddShot();
+  utils::SysinfoShot sshot = utils::GetMachineSysinfoShot();
+  std::string uptime_str = common::MemSPrintf("%lu %lu %lu", sshot.loads[0], sshot.loads[1], sshot.loads[2]);
+
+  service::StatisticServiceInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
+                                     bytes_recv, bytes_send, sshot);
+
+  std::string node_stats;
+  common::Error err_ser = stat.SerializeToString(&node_stats);
+  if (err_ser) {
+    const std::string err_str = err_ser->GetDescription();
+    WARNING_LOG() << "Failed to generate node statistic: " << err_str;
+  }
+  return node_stats;
 }
 
 common::net::HostAndPort ProcessSlaveWrapper::GetServerHostAndPort() {

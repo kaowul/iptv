@@ -33,8 +33,8 @@ protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::ser
   return req;
 }
 
-protocol::response_t ActivateResponceSuccess(protocol::sequance_id_t id) {
-  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage());
+protocol::response_t ActivateResponce(protocol::sequance_id_t id, const std::string& result) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage(result));
 }
 
 protocol::response_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text) {

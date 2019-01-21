@@ -24,19 +24,19 @@ namespace iptv_cloud {
 namespace server {
 namespace service {
 
-class StatisticInfo : public common::serializer::JsonSerializer<StatisticInfo> {
+class StatisticServiceInfo : public common::serializer::JsonSerializer<StatisticServiceInfo> {
  public:
-  typedef JsonSerializer<StatisticInfo> base_class;
-  StatisticInfo();
-  explicit StatisticInfo(const std::string& node_id,
-                         int cpu_load,
-                         int gpu_load,
-                         const std::string& uptime,
-                         const utils::MemoryShot& mem_shot,
-                         const utils::HddShot& hdd_shot,
-                         uint64_t net_bytes_recv,
-                         uint64_t net_bytes_send,
-                         const utils::SysinfoShot& sys);
+  typedef JsonSerializer<StatisticServiceInfo> base_class;
+  StatisticServiceInfo();
+  explicit StatisticServiceInfo(const std::string& node_id,
+                                int cpu_load,
+                                int gpu_load,
+                                const std::string& uptime,
+                                const utils::MemoryShot& mem_shot,
+                                const utils::HddShot& hdd_shot,
+                                uint64_t net_bytes_recv,
+                                uint64_t net_bytes_send,
+                                const utils::SysinfoShot& sys);
 
   std::string GetNodeID() const;
   int GetCpuLoad() const;

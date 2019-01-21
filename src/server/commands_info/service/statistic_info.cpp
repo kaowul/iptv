@@ -33,13 +33,13 @@
 #define STATISTIC_SERVICE_INFO_BANDWIDTH_IN_FIELD "bandwidth_in"
 #define STATISTIC_SERVICE_INFO_BANDWIDTH_OUT_FIELD "bandwidth_out"
 
-#define STATISTIC_SERVICE_INFO_PROJECT_VERSION_FIELD PROJECT_NAME "_version"
+#define STATISTIC_SERVICE_INFO_VERSION_FIELD "version"
 
 namespace iptv_cloud {
 namespace server {
 namespace service {
 
-StatisticInfo::StatisticInfo()
+StatisticServiceInfo::StatisticServiceInfo()
     : base_class(),
       node_id_(),
       cpu_load_(),
@@ -53,15 +53,15 @@ StatisticInfo::StatisticInfo()
       sys_shot_(),
       proj_ver_() {}
 
-StatisticInfo::StatisticInfo(const std::string& node_id,
-                             int cpu_load,
-                             int gpu_load,
-                             const std::string& uptime,
-                             const utils::MemoryShot& mem_shot,
-                             const utils::HddShot& hdd_shot,
-                             uint64_t net_bytes_recv,
-                             uint64_t net_bytes_send,
-                             const utils::SysinfoShot& sys)
+StatisticServiceInfo::StatisticServiceInfo(const std::string& node_id,
+                                           int cpu_load,
+                                           int gpu_load,
+                                           const std::string& uptime,
+                                           const utils::MemoryShot& mem_shot,
+                                           const utils::HddShot& hdd_shot,
+                                           uint64_t net_bytes_recv,
+                                           uint64_t net_bytes_send,
+                                           const utils::SysinfoShot& sys)
     : base_class(),
       node_id_(node_id),
       cpu_load_(cpu_load),
@@ -75,7 +75,7 @@ StatisticInfo::StatisticInfo(const std::string& node_id,
       sys_shot_(sys),
       proj_ver_(PROJECT_VERSION_HUMAN) {}
 
-common::Error StatisticInfo::SerializeFields(json_object* out) const {
+common::Error StatisticServiceInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, STATISTIC_SERVICE_INFO_ID_FIELD, json_object_new_string(node_id_.c_str()));
   json_object_object_add(out, STATISTIC_SERVICE_INFO_CPU_FIELD, json_object_new_int(cpu_load_));
   json_object_object_add(out, STATISTIC_SERVICE_INFO_GPU_FIELD, json_object_new_int(gpu_load_));
@@ -90,12 +90,12 @@ common::Error StatisticInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, STATISTIC_SERVICE_INFO_BANDWIDTH_OUT_FIELD, json_object_new_int64(net_bytes_send_));
   json_object_object_add(out, STATISTIC_SERVICE_INFO_UPTIME_FIELD, json_object_new_int64(sys_shot_.uptime));
   json_object_object_add(out, STATISTIC_SERVICE_INFO_TIMESTAMP_FIELD, json_object_new_int64(current_ts_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_PROJECT_VERSION_FIELD, json_object_new_string(proj_ver_.c_str()));
+  json_object_object_add(out, STATISTIC_SERVICE_INFO_VERSION_FIELD, json_object_new_string(proj_ver_.c_str()));
   return common::Error();
 }
 
-common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
-  StatisticInfo inf;
+common::Error StatisticServiceInfo::DoDeSerialize(json_object* serialized) {
+  StatisticServiceInfo inf;
   json_object* jnode_id = nullptr;
   json_bool jnode_id_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_ID_FIELD, &jnode_id);
   if (!jnode_id_exists) {
@@ -182,8 +182,7 @@ common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
   }
 
   json_object* jproj_ver = nullptr;
-  json_bool jproj_ver_exists =
-      json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_PROJECT_VERSION_FIELD, &jproj_ver);
+  json_bool jproj_ver_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_VERSION_FIELD, &jproj_ver);
   if (jproj_ver_exists) {
     inf.proj_ver_ = json_object_get_string(jproj_ver);
   }
@@ -192,43 +191,43 @@ common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
   return common::Error();
 }
 
-std::string StatisticInfo::GetNodeID() const {
+std::string StatisticServiceInfo::GetNodeID() const {
   return node_id_;
 }
 
-int StatisticInfo::GetCpuLoad() const {
+int StatisticServiceInfo::GetCpuLoad() const {
   return cpu_load_;
 }
 
-int StatisticInfo::GetGpuLoad() const {
+int StatisticServiceInfo::GetGpuLoad() const {
   return gpu_load_;
 }
 
-std::string StatisticInfo::GetUptime() const {
+std::string StatisticServiceInfo::GetUptime() const {
   return uptime_;
 }
 
-utils::MemoryShot StatisticInfo::GetMemShot() const {
+utils::MemoryShot StatisticServiceInfo::GetMemShot() const {
   return mem_shot_;
 }
 
-utils::HddShot StatisticInfo::GetHddShot() const {
+utils::HddShot StatisticServiceInfo::GetHddShot() const {
   return hdd_shot_;
 }
 
-uint64_t StatisticInfo::GetNetBytesRecv() const {
+uint64_t StatisticServiceInfo::GetNetBytesRecv() const {
   return net_bytes_recv_;
 }
 
-uint64_t StatisticInfo::GetNetBytesSend() const {
+uint64_t StatisticServiceInfo::GetNetBytesSend() const {
   return net_bytes_send_;
 }
 
-time_t StatisticInfo::GetTimestamp() const {
+time_t StatisticServiceInfo::GetTimestamp() const {
   return current_ts_;
 }
 
-std::string StatisticInfo::GetProjectVersion() const {
+std::string StatisticServiceInfo::GetProjectVersion() const {
   return proj_ver_;
 }
 

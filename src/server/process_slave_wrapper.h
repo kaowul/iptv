@@ -21,7 +21,6 @@
 
 #include "protocol/types.h"
 #include "server/commands_info/stream/start_info.h"
-#include "stats/istat.h"
 #include "types.h"
 
 namespace iptv_cloud {
@@ -110,11 +109,9 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
                                                protocol::response_t* resp) WARN_UNUSED_RESULT;
 
   void ReadConfig();
-  void ClearStat();
+  std::string MakeServiceStats() const;
 
   static common::net::HostAndPort GetServerHostAndPort();
-
-  stats::IStat* stats_;  // all calls should be in loop thread
 
   std::string node_id_;
   const time_t start_time_;

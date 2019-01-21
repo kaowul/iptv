@@ -71,30 +71,6 @@ SET(DAEMONS_SOURCES
   ${DAEMONS_SOURCES_COMANDS_INFO}
 )
 
-SET(STATS_HEADERS
-  ${CMAKE_SOURCE_DIR}/src/server/stats/istat.h
-  ${CMAKE_SOURCE_DIR}/src/server/stats/stat_credentials.h
-  ${CMAKE_SOURCE_DIR}/src/server/stats/fake/stat.h
-)
-SET(STATS_SOURCES
-  ${CMAKE_SOURCE_DIR}/src/server/stats/istat.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/stats/stat_credentials.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/stats/fake/stat.cpp
-)
-
-IF(USE_REDIS)
-  ADD_SUBDIRECTORY(redis)
-  SET(STATS_HEADERS ${STATS_HEADERS}
-    ${CMAKE_SOURCE_DIR}/src/server/stats/redis/stat.h
-    ${CMAKE_SOURCE_DIR}/src/server/stats/redis/redis_info.h
-  )
-  SET(STATS_SOURCES ${STATS_SOURCES}
-    ${CMAKE_SOURCE_DIR}/src/server/stats/redis/stat.cpp
-    ${CMAKE_SOURCE_DIR}/src/server/stats/redis/redis_info.cpp
-  )
-  SET(DAEMON_LIBRARIES ${DAEMON_LIBRARIES} redis)
-ENDIF(USE_REDIS)
-
 SET(PERF_OBSERVER_HEADERS
   ${CMAKE_SOURCE_DIR}/src/server/gpu_stats/perf_monitor.h
 )
@@ -154,7 +130,6 @@ SET(DAEMON_SOURCES
   ${PERF_OBSERVER_HEADERS} ${PERF_OBSERVER_SOURCES}
   ${PIPE_HEADERS} ${PIPE_SOURCES}
   ${OPTIONS_HEADERS} ${OPTIONS_SOURCES}
-  ${STATS_HEADERS} ${STATS_SOURCES}
 )
 SET(DAEMON_LIBRARIES
   ${DAEMON_LIBRARIES}
@@ -277,7 +252,7 @@ IF(DEVELOPER_ENABLE_TESTS)
       ${PLATFORM_LIBRARIES})
   SET(UNIT_TESTS unit_tests_server)
   ADD_EXECUTABLE(${UNIT_TESTS}
-    ${CMAKE_SOURCE_DIR}/tests/server/unit_test_server.cpp ${OPTIONS_SOURCES} ${STATS_SOURCES}
+    ${CMAKE_SOURCE_DIR}/tests/server/unit_test_server.cpp ${OPTIONS_SOURCES}
   )
   TARGET_INCLUDE_DIRECTORIES(${UNIT_TESTS} PRIVATE ${PRIVATE_INCLUDE_DIRECTORIES_UNIT_TESTS} ${JSONC_INCLUDE_DIRS})
   TARGET_LINK_LIBRARIES(${UNIT_TESTS} ${UNIT_TESTS_LIBS} ${DAEMON_LIBRARIES})

@@ -53,7 +53,7 @@ protocol::request_t PingDaemonRequest(protocol::sequance_id_t id,
 protocol::response_t StopServiceResponceSuccess(protocol::sequance_id_t id);
 protocol::response_t StopServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
-protocol::response_t ActivateResponceSuccess(protocol::sequance_id_t id);
+protocol::response_t ActivateResponce(protocol::sequance_id_t id, const std::string& result);  // StatisticServiceInfo
 protocol::response_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
 protocol::response_t StateServiceResponce(protocol::sequance_id_t id, const std::string& result);  // Directories
@@ -75,7 +75,7 @@ protocol::response_t RestartStreamResponceFail(protocol::sequance_id_t id, const
 // Broadcast
 protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params);  // ChangedSouresInfo
 protocol::request_t StatisitcStreamBroadcast(protocol::serializet_params_t params);       // StatisticInfo
-protocol::request_t StatisitcServiceBroadcast(protocol::serializet_params_t params);      // StatisticInfo
+protocol::request_t StatisitcServiceBroadcast(protocol::serializet_params_t params);      // StatisticServiceInfo
 protocol::request_t QuitStatusStreamBroadcast(protocol::serializet_params_t params);      // StatusInfo
 
 }  // namespace server

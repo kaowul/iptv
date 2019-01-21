@@ -126,16 +126,6 @@ class BuildRequest(object):
         os.chdir(pwd)
         #shutil.rmtree(cloned_dir)
 
-    def build_hiredis(self):
-        pwd = os.getcwd()
-        cloned_dir = utils.git_clone('https://github.com/fastogt/hiredis.git', pwd)
-        os.chdir(cloned_dir)
-
-        make_hiredis = ['make', 'PREFIX={0}'.format(self.prefix_path_), 'install']
-        subprocess.call(make_hiredis)
-        os.chdir(pwd)
-        #shutil.rmtree(cloned_dir)
-
     def build_libev(self):
         libev_compiler_flags = utils.CompileInfo([], ['--with-pic', '--disable-shared', '--enable-static'])
 
@@ -239,14 +229,6 @@ if __name__ == "__main__":
                             action='store_true', default=True)
     system_grp.add_argument('--without-system', help='build without system dependencies', dest='with_system',
                             action='store_false', default=False)
-
-    # hiredis
-    hiredis_grp = parser.add_mutually_exclusive_group()
-    hiredis_grp.add_argument('--with-hiredis', help='build hiredis (default, version: git master)', dest='with_hiredis',
-                             action='store_true', default=True)
-    hiredis_grp.add_argument('--without-hiredis', help='build without hiredis', dest='with_hiredis',
-                             action='store_false',
-                             default=False)
 
     # json-c
     jsonc_grp = parser.add_mutually_exclusive_group()
@@ -378,8 +360,6 @@ if __name__ == "__main__":
     if argv.with_system:
         request.install_system()
 
-    if argv.with_hiredis:
-        request.build_hiredis()
     if argv.with_jsonc:
         request.build_jsonc()
     if argv.with_libev:
