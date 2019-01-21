@@ -59,8 +59,6 @@ class StreamStats {  // only compile time size fields
   size_t bytes_per_second_;  // bps
 
   common::media::DesireBytesPerSec desire_bytes_per_second_;
-
-  bool is_broken_;
 };
 
 }  // namespace iptv_cloud

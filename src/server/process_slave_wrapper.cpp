@@ -29,6 +29,7 @@
 #include <common/file_system/string_path_utils.h>
 #include <common/net/net.h>
 #include <common/string_util.h>
+#include <common/system_info/system_info.h>
 
 #include "child_stream.h"
 #include "config_fields.h"
@@ -1152,6 +1153,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponceStreamsCommand(pipe::Proto
   if (pclient->PopRequestByID(resp->id, &req)) {
     if (req.method == STOP_STREAM) {
     } else if (req.method == RESTART_STREAM) {
+    } else {
+      WARNING_LOG() << "HandleResponceStreamsCommand not handled command: " << req.method;
     }
   }
   return common::ErrnoError();

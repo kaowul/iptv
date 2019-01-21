@@ -22,7 +22,6 @@
 #define FIELD_STATS_TOTAL_BYTES "total_bytes"
 #define FIELD_STATS_BYTES_PER_SECOND "bps"
 #define FIELD_STATS_DESIRE_BYTES_PER_SECOND "dbps"
-#define FIELD_STATS_IS_BROKEN "is_broken"
 
 namespace iptv_cloud {
 namespace details {
@@ -54,9 +53,6 @@ common::Error StatsInfo::SerializeFields(json_object* out) const {
   common::media::DesireBytesPerSec dbps = stats_.GetDesireBytesPerSecond();
   std::string dbps_str = common::ConvertToString(dbps);
   json_object_object_add(out, FIELD_STATS_DESIRE_BYTES_PER_SECOND, json_object_new_string(dbps_str.c_str()));
-
-  bool is_broken = stats_.IsBroken();
-  json_object_object_add(out, FIELD_STATS_IS_BROKEN, json_object_new_boolean(is_broken));
 
   return common::Error();
 }
@@ -100,11 +96,6 @@ common::Error StatsInfo::DoDeSerialize(json_object* serialized) {
     stats.SetDesireBytesPerSecond(dbps);
   }
 
-  json_object* jbroken = nullptr;
-  json_bool jbroken_exists = json_object_object_get_ex(serialized, FIELD_STATS_IS_BROKEN, &jbroken);
-  if (jbroken_exists) {
-    stats.SetIsBroken(jbroken);
-  }
   *this = StatsInfo(stats);
   return common::Error();
 }

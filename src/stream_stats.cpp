@@ -26,8 +26,7 @@ StreamStats::StreamStats(stream_id_t sid)
       total_bytes_(0),
       prev_total_bytes_(0),
       bytes_per_second_(0),
-      desire_bytes_per_second_(),
-      is_broken_(true) {}
+      desire_bytes_per_second_() {}
 
 stream_id_t StreamStats::GetID() const {
   return id_;
@@ -88,14 +87,6 @@ void StreamStats::SetDesireBytesPerSecond(const common::media::DesireBytesPerSec
 
 common::media::DesireBytesPerSec StreamStats::GetDesireBytesPerSecond() const {
   return desire_bytes_per_second_;
-}
-
-void StreamStats::SetIsBroken(bool broken) {
-  is_broken_ = broken;
-}
-
-bool StreamStats::IsBroken() const {
-  return is_broken_;
 }
 
 }  // namespace iptv_cloud
