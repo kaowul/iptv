@@ -107,8 +107,8 @@ elements::Element* SrcDecodeStreamBuilder::BuildAudioUdbConnection() {
 }
 
 Connector SrcDecodeStreamBuilder::BuildUdbConnections(Connector conn) {
-  CHECK(conn.video == nullptr);
-  CHECK(conn.audio == nullptr);
+  CHECK(conn.video == nullptr) << "Must be video empty channel.";
+  CHECK(conn.audio == nullptr) << "Must be audio empty channel.";
   const AudioVideoConfig* config = static_cast<const AudioVideoConfig*>(GetConfig());
   if (config->HaveVideo()) {
     elements::Element* vudb = BuildVideoUdbConnection();

@@ -25,13 +25,13 @@ namespace streams {
 namespace builders {
 
 TestStreamBuilder::TestStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer)
-    : EncodingStreamBuilder(api, observer) {}
+    : base_class(api, observer) {}
 
 Connector TestStreamBuilder::BuildInput() {
   elements::Element* video = nullptr;
   const EncodingConfig* config = static_cast<const EncodingConfig*>(GetConfig());
   if (config->HaveVideo()) {
-    video = new elements::sources::ElementVideoTestSrc("video_sdrc");
+    video = new elements::sources::ElementVideoTestSrc("video_src");
     ElementAdd(video);
     pad::Pad* src_pad = video->StaticPad("src");
     if (src_pad->IsValid()) {
@@ -51,6 +51,10 @@ Connector TestStreamBuilder::BuildInput() {
     delete src_pad;
   }
   return {video, audio};
+}
+
+Connector TestStreamBuilder::BuildUdbConnections(Connector conn) {
+  return conn;
 }
 
 }  // namespace builders

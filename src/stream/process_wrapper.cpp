@@ -22,26 +22,23 @@
 #include <common/system_info/system_info.h>
 #include <common/time.h>
 
-#include "stream/ibase_stream.h"
-
 #include "config_fields.h"  // for ID_FIELD
 #include "constants.h"
 #include "gst_constants.h"
 #include "stream_commands.h"
 
+#include "protocol/protocol.h"
+
+#include "stream/configs_factory.h"
+#include "stream/ibase_stream.h"
+#include "stream/probes.h"
+#include "stream/streams/configs/relay_config.h"
+#include "stream/streams_factory.h"  // for isTimeshiftP...
+
 #include "stream_commands_info/changed_sources_info.h"
 #include "stream_commands_info/restart_info.h"
 #include "stream_commands_info/statistic_info.h"
 #include "stream_commands_info/stop_info.h"
-
-#include "stream/streams_factory.h"  // for isTimeshiftP...
-
-#include "configs_factory.h"
-#include "probes.h"
-#include "protocol/protocol.h"
-#include "stream/streams/configs/relay_config.h"
-
-#include "stream/configs_factory.h"
 
 #include "utils/arg_converter.h"
 
@@ -162,6 +159,7 @@ ProcessWrapper::ProcessWrapper(const std::string& process_name,
       origin_(nullptr),
       id_() {
   CHECK(mem);
+  loop_->SetName("main");
 
   StreamType stream_type = config_->GetType();
   if (stream_type == TIMESHIFT_RECORDER || stream_type == TIMESHIFT_PLAYER || stream_type == CATCHUP) {
@@ -286,7 +284,7 @@ void ProcessWrapper::Restart() {
 void ProcessWrapper::PreLooped(common::libev::IoLoop* loop) {
   UNUSED(loop);
   const auto ttl_sec = config_->GetTimeToLifeStream();
-  if (ttl_sec) {
+  if (ttl_sec && *ttl_sec) {
     ttl_master_timer_ = loop_->CreateTimer(*ttl_sec, false);
     NOTICE_LOG() << "Set stream ttl: " << *ttl_sec;
   }
@@ -411,6 +409,11 @@ common::ErrnoError ProcessWrapper::HandleResponceCommand(common::libev::IoClient
   protocol::protocol_client_t* pclient = static_cast<protocol::protocol_client_t*>(client);
   protocol::request_t req;
   if (pclient->PopRequestByID(resp->id, &req)) {
+    if (req.method == STATISTIC_STREAM) {
+    } else if (req.method == CHANGED_SOURCES_STREAM) {
+    } else {
+      WARNING_LOG() << "HandleResponceStreamsCommand not handled command: " << req.method;
+    }
   }
   return common::ErrnoError();
 }

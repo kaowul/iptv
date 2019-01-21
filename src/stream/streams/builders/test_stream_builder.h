@@ -23,8 +23,10 @@ namespace builders {
 
 class TestStreamBuilder : public EncodingStreamBuilder {
  public:
+  typedef EncodingStreamBuilder base_class;
   TestStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
   Connector BuildInput() override;
+  Connector BuildUdbConnections(Connector conn) override;
 };
 
 }  // namespace builders

@@ -765,6 +765,7 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
 
     pipe::ProtocoledPipeClient* client =
         new pipe::ProtocoledPipeClient(nullptr, read_command_client, write_responce_client);
+    client->SetName(sha.id);
     int res = stream_exec_func(new_name, &client_args, &config_args, client, mem);
     dlclose(handle);
     client->Close();
@@ -785,6 +786,7 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
 
     pipe::ProtocoledPipeClient* pipe_client =
         new pipe::ProtocoledPipeClient(server, read_responce_client, write_requests_client);
+    pipe_client->SetName(sha.id);
     server->RegisterClient(pipe_client);
     ChildStream* new_channel = new ChildStream(loop_, mem);
     new_channel->SetPipe(pipe_client);
@@ -1124,6 +1126,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponceServiceCommand(ProtocoledD
   if (dclient->PopRequestByID(resp->id, &req)) {
     if (req.method == SERVER_PING) {
       HandleResponcePingService(dclient, resp);
+    } else {
+      WARNING_LOG() << "HandleResponceServiceCommand not handled command: " << req.method;
     }
   }
 
