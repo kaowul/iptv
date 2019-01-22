@@ -36,7 +36,7 @@ class StatisticInfo : public common::serializer::JsonSerializer<StatisticInfo> {
   StreamStatus GetStatus() const;
   cpu_load_t GetCpuLoad() const;
   rss_t GetRss() const;
-  time_t GetTime() const;
+  time_t GetTimestamp() const;
 
  protected:
   common::Error SerializeFields(json_object* out) const override;
@@ -47,7 +47,7 @@ class StatisticInfo : public common::serializer::JsonSerializer<StatisticInfo> {
   StreamStatus status_;
   cpu_load_t cpu_load_;
   rss_t rss_;
-  time_t time_;
+  time_t timestamp_;
 };
 
 }  // namespace iptv_cloud

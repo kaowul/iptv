@@ -18,26 +18,26 @@
 
 #include "stream_commands_info/details/stats_info.h"
 
-#define FIELD_JOB_ID "id"
-#define FIELD_JOB_TYPE "type"
-// #define FIELD_JOB_UPTIME "uptime"
-#define FIELD_JOB_CPU "cpu"
-#define FIELD_JOB_RSS "rss"
-#define FIELD_JOB_STATUS "status"
-#define FIELD_JOB_LOOP_START_TIME "loop_start_time"
-#define FIELD_JOB_RESTARTS "restarts"
-#define FIELD_JOB_START_TIME "start_time"
-#define FIELD_JOB_CUR_TIME "cur_time"
+#define FIELD_STREAM_ID "id"
+#define FIELD_STREAM_TYPE "type"
+// #define FIELD_STREAM_UPTIME "uptime"
+#define FIELD_STREAM_CPU "cpu"
+#define FIELD_STREAM_RSS "rss"
+#define FIELD_STREAM_STATUS "status"
+#define FIELD_STREAM_LOOP_START_TIME "loop_start_time"
+#define FIELD_STREAM_RESTARTS "restarts"
+#define FIELD_STREAM_START_TIME "start_time"
+#define FIELD_STREAM_TIMESTAMP "timestamp"
 
-#define FIELD_JOB_INPUT_STREAMS "input_streams"
-#define FIELD_JOB_OUTPUT_STREAMS "output_streams"
+#define FIELD_STREAM_INPUT_STREAMS "input_streams"
+#define FIELD_STREAM_OUTPUT_STREAMS "output_streams"
 
 namespace iptv_cloud {
 
-StatisticInfo::StatisticInfo() : stream_struct_(), status_(), cpu_load_(), rss_(), time_() {}
+StatisticInfo::StatisticInfo() : stream_struct_(), status_(), cpu_load_(), rss_(), timestamp_() {}
 
 StatisticInfo::StatisticInfo(const StreamStruct& str, StreamStatus st, cpu_load_t cpu_load, rss_t rss, time_t time)
-    : stream_struct_(), status_(st), cpu_load_(cpu_load), rss_(rss), time_(time) {
+    : stream_struct_(), status_(st), cpu_load_(cpu_load), rss_(rss), timestamp_(time) {
   input_stream_info_t input;
   for (auto it = str.input.rbegin(); it != str.input.rend(); ++it) {
     StreamStats copy = *(*it);
@@ -74,8 +74,8 @@ StatisticInfo::rss_t StatisticInfo::GetRss() const {
   return rss_;
 }
 
-time_t StatisticInfo::GetTime() const {
-  return time_;
+time_t StatisticInfo::GetTimestamp() const {
+  return timestamp_;
 }
 
 common::Error StatisticInfo::SerializeFields(json_object* out) const {
@@ -84,8 +84,8 @@ common::Error StatisticInfo::SerializeFields(json_object* out) const {
   }
 
   const channel_id_t channel_id = stream_struct_->id;
-  json_object_object_add(out, FIELD_JOB_ID, json_object_new_string(channel_id.c_str()));
-  json_object_object_add(out, FIELD_JOB_TYPE, json_object_new_int(stream_struct_->type));
+  json_object_object_add(out, FIELD_STREAM_ID, json_object_new_string(channel_id.c_str()));
+  json_object_object_add(out, FIELD_STREAM_TYPE, json_object_new_int(stream_struct_->type));
 
   input_stream_info_t input_streams = stream_struct_->input;
   json_object* jinput_streams = json_object_new_array();
@@ -98,7 +98,7 @@ common::Error StatisticInfo::SerializeFields(json_object* out) const {
     }
     json_object_array_add(jinput_streams, jinf);
   }
-  json_object_object_add(out, FIELD_JOB_INPUT_STREAMS, jinput_streams);
+  json_object_object_add(out, FIELD_STREAM_INPUT_STREAMS, jinput_streams);
 
   output_stream_info_t output_streams = stream_struct_->output;
   json_object* joutput_streams = json_object_new_array();
@@ -111,28 +111,28 @@ common::Error StatisticInfo::SerializeFields(json_object* out) const {
     }
     json_object_array_add(joutput_streams, jinf);
   }
-  json_object_object_add(out, FIELD_JOB_OUTPUT_STREAMS, joutput_streams);
+  json_object_object_add(out, FIELD_STREAM_OUTPUT_STREAMS, joutput_streams);
 
-  json_object_object_add(out, FIELD_JOB_LOOP_START_TIME, json_object_new_int64(stream_struct_->loop_start_time));
-  json_object_object_add(out, FIELD_JOB_RSS, json_object_new_int64(rss_));
-  json_object_object_add(out, FIELD_JOB_CPU, json_object_new_double(cpu_load_));
-  json_object_object_add(out, FIELD_JOB_STATUS, json_object_new_int(status_));
-  json_object_object_add(out, FIELD_JOB_RESTARTS, json_object_new_int64(stream_struct_->restarts));
-  json_object_object_add(out, FIELD_JOB_START_TIME, json_object_new_int(stream_struct_->start_time));
-  json_object_object_add(out, FIELD_JOB_CUR_TIME, json_object_new_int64(time_));
+  json_object_object_add(out, FIELD_STREAM_LOOP_START_TIME, json_object_new_int64(stream_struct_->loop_start_time));
+  json_object_object_add(out, FIELD_STREAM_RSS, json_object_new_int64(rss_));
+  json_object_object_add(out, FIELD_STREAM_CPU, json_object_new_double(cpu_load_));
+  json_object_object_add(out, FIELD_STREAM_STATUS, json_object_new_int(status_));
+  json_object_object_add(out, FIELD_STREAM_RESTARTS, json_object_new_int64(stream_struct_->restarts));
+  json_object_object_add(out, FIELD_STREAM_START_TIME, json_object_new_int(stream_struct_->start_time));
+  json_object_object_add(out, FIELD_STREAM_TIMESTAMP, json_object_new_int64(timestamp_));
   return common::Error();
 }
 
 common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
   json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, FIELD_JOB_ID, &jid);
+  json_bool jid_exists = json_object_object_get_ex(serialized, FIELD_STREAM_ID, &jid);
   if (!jid_exists) {
     return common::make_error_inval();
   }
   channel_id_t cid = json_object_get_string(jid);
 
   json_object* jtype = nullptr;
-  json_bool jtype_exists = json_object_object_get_ex(serialized, FIELD_JOB_TYPE, &jtype);
+  json_bool jtype_exists = json_object_object_get_ex(serialized, FIELD_STREAM_TYPE, &jtype);
   if (!jtype_exists) {
     return common::make_error_inval();
   }
@@ -140,7 +140,7 @@ common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
 
   input_stream_info_t input;
   json_object* jinput = nullptr;
-  json_bool jinput_exists = json_object_object_get_ex(serialized, FIELD_JOB_INPUT_STREAMS, &jinput);
+  json_bool jinput_exists = json_object_object_get_ex(serialized, FIELD_STREAM_INPUT_STREAMS, &jinput);
   if (jinput_exists) {
     int len = json_object_array_length(jinput);
     for (int i = len - 1; i >= 0; --i) {
@@ -157,7 +157,7 @@ common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
 
   output_stream_info_t output;
   json_object* joutput = nullptr;
-  json_bool joutput_exists = json_object_object_get_ex(serialized, FIELD_JOB_OUTPUT_STREAMS, &joutput);
+  json_bool joutput_exists = json_object_object_get_ex(serialized, FIELD_STREAM_OUTPUT_STREAMS, &joutput);
   if (joutput_exists) {
     int len = json_object_array_length(joutput);
     for (int i = len - 1; i >= 0; --i) {
@@ -174,42 +174,42 @@ common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
 
   StreamStatus st = NEW;
   json_object* jstatus = nullptr;
-  json_bool jstatus_exists = json_object_object_get_ex(serialized, FIELD_JOB_STATUS, &jstatus);
+  json_bool jstatus_exists = json_object_object_get_ex(serialized, FIELD_STREAM_STATUS, &jstatus);
   if (jstatus_exists) {
     st = static_cast<StreamStatus>(json_object_get_int(jstatus));
   }
 
   cpu_load_t cpu_load = 0;
   json_object* jcpu_load = nullptr;
-  json_bool jcpu_load_exists = json_object_object_get_ex(serialized, FIELD_JOB_CPU, &jcpu_load);
+  json_bool jcpu_load_exists = json_object_object_get_ex(serialized, FIELD_STREAM_CPU, &jcpu_load);
   if (jcpu_load_exists) {
     cpu_load = json_object_get_double(jcpu_load);
   }
 
   rss_t rss = 0;
   json_object* jrss = nullptr;
-  json_bool jrss_exists = json_object_object_get_ex(serialized, FIELD_JOB_RSS, &jrss);
+  json_bool jrss_exists = json_object_object_get_ex(serialized, FIELD_STREAM_RSS, &jrss);
   if (jrss_exists) {
     rss = json_object_get_int(jrss);
   }
 
   time_t time = 0;
   json_object* jtime = nullptr;
-  json_bool jtime_exists = json_object_object_get_ex(serialized, FIELD_JOB_CUR_TIME, &jtime);
+  json_bool jtime_exists = json_object_object_get_ex(serialized, FIELD_STREAM_TIMESTAMP, &jtime);
   if (jtime_exists) {
     time = json_object_get_int(jtime);
   }
 
   time_t start_time = 0;
   json_object* jstart_time = nullptr;
-  json_bool jstart_time_exists = json_object_object_get_ex(serialized, FIELD_JOB_START_TIME, &jstart_time);
+  json_bool jstart_time_exists = json_object_object_get_ex(serialized, FIELD_STREAM_START_TIME, &jstart_time);
   if (jstart_time_exists) {
     start_time = json_object_get_int(jstart_time);
   }
 
   size_t restarts = 0;
   json_object* jrestarts = nullptr;
-  json_bool jrestarts_exists = json_object_object_get_ex(serialized, FIELD_JOB_RESTARTS, &jrestarts);
+  json_bool jrestarts_exists = json_object_object_get_ex(serialized, FIELD_STREAM_RESTARTS, &jrestarts);
   if (jrestarts_exists) {
     restarts = json_object_get_int64(jrestarts);
   }
@@ -217,7 +217,7 @@ common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
   time_t loop_start_time = 0;
   json_object* jloop_start_time = nullptr;
   json_bool jloop_start_time_exists =
-      json_object_object_get_ex(serialized, FIELD_JOB_LOOP_START_TIME, &jloop_start_time);
+      json_object_object_get_ex(serialized, FIELD_STREAM_LOOP_START_TIME, &jloop_start_time);
   if (jloop_start_time_exists) {
     loop_start_time = json_object_get_int64(jloop_start_time);
   }

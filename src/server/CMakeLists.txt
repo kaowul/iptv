@@ -6,7 +6,7 @@ SET(DAEMONS_HEADERS_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/license_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/stop_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/ping_info.h
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/statistic_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/server_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/prepare_info.h
 
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/start_info.h
@@ -20,7 +20,7 @@ SET(DAEMONS_SOURCES_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/activate_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/stop_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/ping_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/statistic_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/server_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/prepare_info.cpp
 
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/start_info.cpp

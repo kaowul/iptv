@@ -43,7 +43,7 @@
 #include "server/commands_info/service/activate_info.h"
 #include "server/commands_info/service/ping_info.h"
 #include "server/commands_info/service/prepare_info.h"
-#include "server/commands_info/service/statistic_info.h"
+#include "server/commands_info/service/server_info.h"
 #include "server/commands_info/service/stop_info.h"
 #include "server/commands_info/stream/quit_status_info.h"
 #include "server/commands_info/stream/restart_info.h"
@@ -1129,8 +1129,8 @@ std::string ProcessSlaveWrapper::MakeServiceStats() const {
   utils::SysinfoShot sshot = utils::GetMachineSysinfoShot();
   std::string uptime_str = common::MemSPrintf("%lu %lu %lu", sshot.loads[0], sshot.loads[1], sshot.loads[2]);
 
-  service::StatisticServiceInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
-                                     bytes_recv, bytes_send, sshot);
+  service::ServerInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot, bytes_recv,
+                           bytes_send, sshot);
 
   std::string node_stats;
   common::Error err_ser = stat.SerializeToString(&node_stats);
