@@ -21,6 +21,8 @@ Free IPTV cloud server
 
 Visit our site: [fastotv.com](https://fastotv.com)
 
+Admin panel
+==========
 ### Dashboard page:
 ![](https://fastotv.com/images/iptv_admin/dashboard.png)
 
