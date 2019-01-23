@@ -22,7 +22,7 @@ Free IPTV cloud server
 Visit our site: [fastotv.com](https://fastotv.com)
 
 ### Dashboard page:
-![https://github.com/fastogt/iptv_admin](https://fastotv.com/images/iptv_admin/dashboard.png)
+![](https://fastotv.com/images/iptv_admin/dashboard.png)
 
 Gstreamer Pipelines
 ==========
