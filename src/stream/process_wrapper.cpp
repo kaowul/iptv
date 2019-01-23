@@ -58,9 +58,9 @@ TimeShiftInfo make_timeshift_info(const utils::ArgsMap& args) {
   }
   tinfo.timshift_dir = common::file_system::ascii_directory_string_path(timeshift_dir);
 
-  tinfo.chunk_max_life_time_hours = 0;
-  if (!utils::ArgsGetValue(args, TIMESHIFT_CHUNK_MAX_LIFE_TIME_FIELD, &tinfo.chunk_max_life_time_hours)) {
-    tinfo.chunk_max_life_time_hours = 12;
+  chunk_life_time_t timeshift_chunk_life_time = 0;
+  if (utils::ArgsGetValue(args, TIMESHIFT_CHUNK_LIFE_TIME_FIELD, &timeshift_chunk_life_time)) {
+    tinfo.timeshift_chunk_life_time = timeshift_chunk_life_time;
   }
 
   time_shift_delay_t timeshift_delay = 0;

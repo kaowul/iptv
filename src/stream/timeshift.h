@@ -15,6 +15,7 @@
 #pragma once
 
 #include <limits>
+#include <string>
 
 #include <common/file_system/path.h>
 
@@ -24,19 +25,19 @@ namespace stream {
 typedef uint64_t chunk_index_t;
 static const chunk_index_t invalid_chunk_index = std::numeric_limits<chunk_index_t>::max();
 
-typedef uint32_t chunk_hours_t;
-typedef uint32_t time_shift_delay_t;
+typedef time_t chunk_life_time_t;
+typedef time_t time_shift_delay_t;
 
 struct TimeShiftInfo {
   TimeShiftInfo();
-  explicit TimeShiftInfo(const std::string& path, chunk_hours_t lth, time_shift_delay_t delay);
+  explicit TimeShiftInfo(const std::string& path, chunk_life_time_t lth, time_shift_delay_t delay);
 
   bool FindLastChunk(chunk_index_t* index, time_t* file_created_time) const WARN_UNUSED_RESULT;
   bool FindChunkToPlay(time_t chunk_duration, chunk_index_t* index) const WARN_UNUSED_RESULT;
 
   common::file_system::ascii_directory_string_path timshift_dir;
-  chunk_hours_t chunk_max_life_time_hours;
-  time_shift_delay_t timeshift_delay;  // in mins
+  chunk_life_time_t timeshift_chunk_life_time;
+  time_shift_delay_t timeshift_delay;
 };
 
 }  // namespace stream

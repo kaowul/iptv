@@ -15,6 +15,7 @@
 #include "timeshift.h"
 
 #include <algorithm>
+#include <string>
 
 #include <common/convert2string.h>
 #include <common/time.h>
@@ -24,6 +25,8 @@
 #include <common/file_system/string_path_utils.h>
 
 #include "stypes.h"
+
+#include "constants.h"
 
 namespace iptv_cloud {
 namespace stream {
@@ -51,10 +54,11 @@ bool compare_files(const common::file_system::ascii_file_string_path& first,
 }
 }  // namespace
 
-TimeShiftInfo::TimeShiftInfo() : timshift_dir(), chunk_max_life_time_hours(0), timeshift_delay(0) {}
+TimeShiftInfo::TimeShiftInfo()
+    : timshift_dir(), timeshift_chunk_life_time(DEFAULT_CHUNK_LIFE_TIME), timeshift_delay(0) {}
 
-TimeShiftInfo::TimeShiftInfo(const std::string& path, chunk_hours_t lth, time_shift_delay_t delay)
-    : timshift_dir(path), chunk_max_life_time_hours(lth), timeshift_delay(delay) {}
+TimeShiftInfo::TimeShiftInfo(const std::string& path, chunk_life_time_t lth, time_shift_delay_t delay)
+    : timshift_dir(path), timeshift_chunk_life_time(lth), timeshift_delay(delay) {}
 
 bool TimeShiftInfo::FindChunkToPlay(time_t chunk_duration, chunk_index_t* index) const {
   if (!index) {

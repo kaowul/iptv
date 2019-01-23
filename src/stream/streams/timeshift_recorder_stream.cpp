@@ -115,8 +115,7 @@ gboolean TimeShiftRecorderStream::HandleMainTimerTick() {
   TimeShiftInfo tinfo = GetTimeshiftInfo();
   time_t el = GetElipsedTime();
   if (el % no_data_panic_sec == 0) {
-    const chunk_hours_t chunk_time = tinfo.chunk_max_life_time_hours;
-    const time_t max_life_time = common::time::current_mstime() / 1000 - (chunk_time * 60 * 60);
+    const time_t max_life_time = common::time::current_mstime() / 1000 - tinfo.timeshift_chunk_life_time;
     utils::RemoveOldFilesByTime(tinfo.timshift_dir, max_life_time, CHUNK_EXT);
   }
   return base_class::HandleMainTimerTick();

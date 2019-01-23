@@ -33,9 +33,9 @@
 #define VIDEO_CODEC_FIELD "video_codec"
 #define AUDIO_CODEC_FIELD "audio_codec"
 #define AUDIO_SELECT_FIELD "audio_select"
-#define TIMESHIFT_DIR_FIELD "timeshift_dir"                        // requeired in timeshift mode
-#define TIMESHIFT_CHUNK_MAX_LIFE_TIME_FIELD "chunk_max_life_time"  // in hours
-#define TIMESHIFT_DELAY_FIELD "timeshift_delay"                    // in mins
+#define TIMESHIFT_DIR_FIELD "timeshift_dir"  // requeired in timeshift mode
+#define TIMESHIFT_CHUNK_LIFE_TIME_FIELD "timeshift_chunk_life_time"
+#define TIMESHIFT_DELAY_FIELD "timeshift_delay"
 #define TIMESHIFT_CHUNK_DURATION_FIELD "timeshift_chunk_duration"
 #define LOGO_FIELD "logo"
 #define LOOP_FIELD "loop"
