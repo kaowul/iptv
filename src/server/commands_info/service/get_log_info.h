@@ -14,15 +14,31 @@
 
 #pragma once
 
-#define LOGS_FILE_NAME "logs"
+#include <common/uri/url.h>
 
-struct cmd_args {
-  const char* feedback_dir;
-  int log_level;
+#include <common/serializer/json_serializer.h>
+
+namespace iptv_cloud {
+namespace server {
+namespace service {
+
+class GetLogInfo : public common::serializer::JsonSerializer<GetLogInfo> {
+ public:
+  typedef common::serializer::JsonSerializer<GetLogInfo> base_class;
+  typedef common::uri::Url url_t;
+  GetLogInfo();
+  explicit GetLogInfo(const url_t& log_path);
+
+  url_t GetLogPath() const;
+
+ protected:
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* obj) const override;
+
+ private:
+  common::uri::Url path_;
 };
 
-extern "C" int stream_exec(const char* process_name,
-                           const struct cmd_args* args,
-                           void* config_args,
-                           void* command_client,
-                           void* mem);
+}  // namespace service
+}  // namespace server
+}  // namespace iptv_cloud

@@ -8,11 +8,13 @@ SET(DAEMONS_HEADERS_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/ping_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/server_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/prepare_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/get_log_info.h
 
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/start_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/quit_status_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/restart_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/stop_info.h
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/get_log_info.h
 )
 
 SET(DAEMONS_SOURCES_COMANDS_INFO
@@ -22,11 +24,13 @@ SET(DAEMONS_SOURCES_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/ping_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/server_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/prepare_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/get_log_info.cpp
 
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/start_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/quit_status_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/restart_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/stop_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/get_log_info.cpp
 )
 
 SET(PIPE_HEADERS ${CMAKE_SOURCE_DIR}/src/server/pipe/pipe_client.h)

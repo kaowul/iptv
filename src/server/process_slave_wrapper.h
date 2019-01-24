@@ -94,6 +94,8 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
                                                    protocol::request_t* req) WARN_UNUSED_RESULT;
   common::ErrnoError HandleRequestClientRestartStream(ProtocoledDaemonClient* dclient,
                                                       protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientGetLogStream(ProtocoledDaemonClient* dclient,
+                                                     protocol::request_t* req) WARN_UNUSED_RESULT;
 
   // service
   common::ErrnoError HandleRequestClientPrepareService(ProtocoledDaemonClient* dclient,
@@ -102,6 +104,8 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
                                                  protocol::request_t* req) WARN_UNUSED_RESULT;
   common::ErrnoError HandleRequestClientPingService(ProtocoledDaemonClient* dclient,
                                                     protocol::request_t* req) WARN_UNUSED_RESULT;
+  common::ErrnoError HandleRequestClientGetLogService(ProtocoledDaemonClient* dclient,
+                                                      protocol::request_t* req) WARN_UNUSED_RESULT;
   common::ErrnoError HandleRequestClientStopService(ProtocoledDaemonClient* dclient,
                                                     protocol::request_t* req) WARN_UNUSED_RESULT;
 

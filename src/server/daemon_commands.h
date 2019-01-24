@@ -24,13 +24,15 @@
 #define CLIENT_START_STREAM "start_stream"  // {"config": {...}, "command_line": {...} }
 #define CLIENT_STOP_STREAM "stop_stream"
 #define CLIENT_RESTART_STREAM "restart_stream"
+#define CLIENT_GET_LOG_STREAM "get_log_stream"
 
-#define CLIENT_ACTIVATE "activate_request"  // { "key": "XXXXXXXXXXXXXXXXXX"}
+#define CLIENT_ACTIVATE "activate_request"  // {"key": "XXXXXXXXXXXXXXXXXX"}
 #define CLIENT_STOP_SERVICE "stop_service"  // {"delay": 0 }
 #define CLIENT_PREPARE_SERVICE \
   "prepare_service"  // { "feedback_directory": "", "timeshifts_directory": "", "hls_directory": "",
                      // "playlists_directory": "", "dvb_directory": "", "capture_card_directory": "" }
 #define CLIENT_PING_SERVICE "ping_service"
+#define CLIENT_GET_LOG_SERVICE "get_log_service"  // {"path":"http://localhost/service/id"}
 
 #define SERVER_PING "ping_client"
 
@@ -53,6 +55,9 @@ protocol::request_t PingDaemonRequest(protocol::sequance_id_t id,
 protocol::response_t StopServiceResponceSuccess(protocol::sequance_id_t id);
 protocol::response_t StopServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
+protocol::response_t GetLogServiceResponceSuccess(protocol::sequance_id_t id);
+protocol::response_t GetLogServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text);
+
 protocol::response_t ActivateResponce(protocol::sequance_id_t id, const std::string& result);  // ServerInfo
 protocol::response_t ActivateResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
@@ -71,6 +76,9 @@ protocol::response_t StopStreamResponceFail(protocol::sequance_id_t id, const st
 
 protocol::response_t RestartStreamResponceSuccess(protocol::sequance_id_t id);
 protocol::response_t RestartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
+
+protocol::response_t GetLogStreamResponceSuccess(protocol::sequance_id_t id);
+protocol::response_t GetLogStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text);
 
 // Broadcast
 protocol::request_t ChangedSourcesStreamBroadcast(protocol::serializet_params_t params);  // ChangedSouresInfo

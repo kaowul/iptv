@@ -27,6 +27,7 @@
 
 #include <common/file_system/file_system.h>
 #include <common/file_system/string_path_utils.h>
+#include <common/net/http_client.h>
 #include <common/net/net.h>
 #include <common/string_util.h>
 #include <common/system_info/system_info.h>
@@ -41,10 +42,12 @@
 #include "pipe/pipe_client.h"
 
 #include "server/commands_info/service/activate_info.h"
+#include "server/commands_info/service/get_log_info.h"
 #include "server/commands_info/service/ping_info.h"
 #include "server/commands_info/service/prepare_info.h"
 #include "server/commands_info/service/server_info.h"
 #include "server/commands_info/service/stop_info.h"
+#include "server/commands_info/stream/get_log_info.h"
 #include "server/commands_info/stream/quit_status_info.h"
 #include "server/commands_info/stream/restart_info.h"
 #include "server/commands_info/stream/stop_info.h"
@@ -70,6 +73,78 @@
 #define SERVICE_LOG_FILE_FIELD "log_file"
 
 namespace {
+
+bool GetHttpHostAndPort(const std::string& host, common::net::HostAndPort* out) {
+  if (host.empty() || !out) {
+    return false;
+  }
+
+  common::net::HostAndPort http_server;
+  size_t del = host.find_last_of(':');
+  if (del != std::string::npos) {
+    http_server.SetHost(host.substr(0, del));
+    std::string port_str = host.substr(del + 1);
+    uint16_t lport;
+    if (common::ConvertFromString(port_str, &lport)) {
+      http_server.SetPort(lport);
+    }
+  } else {
+    http_server.SetHost(host);
+    http_server.SetPort(80);
+  }
+  *out = http_server;
+  return true;
+}
+
+bool GetPostServerFromUrl(const common::uri::Url& url, common::net::HostAndPort* out) {
+  if (!url.IsValid() || !out) {
+    return false;
+  }
+
+  const std::string host_str = url.GetHost();
+  return GetHttpHostAndPort(host_str, out);
+}
+
+common::Optional<common::file_system::ascii_file_string_path> gen_stream_log_path(const std::string& feedback_dir) {
+  common::file_system::ascii_directory_string_path dir(feedback_dir);
+  return dir.MakeFileStringPath(LOGS_FILE_NAME);
+}
+
+common::Error post_http_file(const common::file_system::ascii_file_string_path& file_path,
+                             const common::uri::Url& url) {
+  common::net::HostAndPort http_server_address;
+  if (!GetPostServerFromUrl(url, &http_server_address)) {
+    return common::make_error_inval();
+  }
+
+  common::net::HttpClient cl(http_server_address);
+  common::ErrnoError errn = cl.Connect();
+  if (errn) {
+    return common::make_error_from_errno(errn);
+  }
+
+  const auto path = url.GetPath();
+  common::Error err = cl.PostFile(path, file_path);
+  if (err) {
+    cl.Disconnect();
+    return err;
+  }
+
+  common::http::HttpResponse lresp;
+  err = cl.ReadResponse(&lresp);
+  if (err) {
+    cl.Disconnect();
+    return err;
+  }
+
+  if (lresp.IsEmptyBody()) {
+    cl.Disconnect();
+    return common::make_error("Empty body");
+  }
+
+  cl.Disconnect();
+  return common::Error();
+}
 
 common::ErrnoError create_pipe(int* read_client_fd, int* write_client_fd) {
   if (!read_client_fd || !write_client_fd) {
@@ -929,6 +1004,44 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientRestartStream(Protoco
   return common::make_errno_error_inval();
 }
 
+common::ErrnoError ProcessSlaveWrapper::HandleRequestClientGetLogStream(ProtocoledDaemonClient* dclient,
+                                                                        protocol::request_t* req) {
+  CHECK(loop_->IsLoopThread());
+  if (!dclient->IsVerified()) {
+    return common::make_errno_error_inval();
+  }
+
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jgetlog_info = json_tokener_parse(params_ptr);
+    if (!jgetlog_info) {
+      return common::make_errno_error_inval();
+    }
+
+    stream::GetLogInfo log_info;
+    common::Error err_des = log_info.DeSerialize(jgetlog_info);
+    json_object_put(jgetlog_info);
+    if (err_des) {
+      const std::string err_str = err_des->GetDescription();
+      return common::make_errno_error(err_str, EAGAIN);
+    }
+
+    const auto remote_log_path = log_info.GetLogPath();
+    if (remote_log_path.GetScheme() == common::uri::Url::http) {
+      const auto stream_log_file = gen_stream_log_path(log_info.GetFeedbackDir());
+      if (stream_log_file) {
+        post_http_file(*stream_log_file, remote_log_path);
+      }
+    } else if (remote_log_path.GetScheme() == common::uri::Url::https) {
+    }
+    protocol::response_t resp = GetLogStreamResponceSuccess(req->id);
+    dclient->WriteResponce(resp);
+    return common::ErrnoError();
+  }
+
+  return common::make_errno_error_inval();
+}
+
 common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPrepareService(ProtocoledDaemonClient* dclient,
                                                                           protocol::request_t* req) {
   CHECK(loop_->IsLoopThread());
@@ -1036,6 +1149,42 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPingService(Protocole
   return common::make_errno_error_inval();
 }
 
+common::ErrnoError ProcessSlaveWrapper::HandleRequestClientGetLogService(ProtocoledDaemonClient* dclient,
+                                                                         protocol::request_t* req) {
+  CHECK(loop_->IsLoopThread());
+  if (!dclient->IsVerified()) {
+    return common::make_errno_error_inval();
+  }
+
+  if (req->params) {
+    const char* params_ptr = req->params->c_str();
+    json_object* jlog = json_tokener_parse(params_ptr);
+    if (!jlog) {
+      return common::make_errno_error_inval();
+    }
+
+    service::GetLogInfo get_log_info;
+    common::Error err_des = get_log_info.DeSerialize(jlog);
+    json_object_put(jlog);
+    if (err_des) {
+      const std::string err_str = err_des->GetDescription();
+      return common::make_errno_error(err_str, EAGAIN);
+    }
+
+    const auto remote_log_path = get_log_info.GetLogPath();
+    if (remote_log_path.GetScheme() == common::uri::Url::http) {
+      post_http_file(common::file_system::ascii_file_string_path(log_path_), remote_log_path);
+    } else if (remote_log_path.GetScheme() == common::uri::Url::https) {
+    }
+
+    protocol::response_t resp = GetLogServiceResponceSuccess(req->id);
+    dclient->WriteResponce(resp);
+    return common::ErrnoError();
+  }
+
+  return common::make_errno_error_inval();
+}
+
 common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(ProtocoledDaemonClient* dclient,
                                                                     protocol::request_t* req) {
   if (req->method == CLIENT_START_STREAM) {
@@ -1044,6 +1193,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(ProtocoledDa
     return HandleRequestClientStopStream(dclient, req);
   } else if (req->method == CLIENT_RESTART_STREAM) {
     return HandleRequestClientRestartStream(dclient, req);
+  } else if (req->method == CLIENT_GET_LOG_STREAM) {
+    return HandleRequestClientGetLogStream(dclient, req);
   } else if (req->method == CLIENT_PREPARE_SERVICE) {
     return HandleRequestClientPrepareService(dclient, req);
   } else if (req->method == CLIENT_STOP_SERVICE) {
@@ -1052,6 +1203,8 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestServiceCommand(ProtocoledDa
     return HandleRequestClientActivate(dclient, req);
   } else if (req->method == CLIENT_PING_SERVICE) {
     return HandleRequestClientPingService(dclient, req);
+  } else if (req->method == CLIENT_GET_LOG_SERVICE) {
+    return HandleRequestClientGetLogService(dclient, req);
   }
 
   WARNING_LOG() << "Received unknown method: " << req->method;

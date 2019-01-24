@@ -1,0 +1,79 @@
+/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+    This file is part of iptv_cloud.
+    iptv_cloud is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    iptv_cloud is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "server/commands_info/stream/get_log_info.h"
+
+#define GET_LOG_INFO_PATH_FIELD "path"
+#define GET_LOG_INFO_STREAM_ID_FIELD "id"
+#define GET_LOG_INFO_FEEDBACK_DIR_FIELD "feedback_directory"
+
+namespace iptv_cloud {
+namespace server {
+namespace stream {
+
+GetLogInfo::GetLogInfo() : base_class(), stream_id_(), feedback_dir_(), path_() {}
+
+GetLogInfo::GetLogInfo(stream_id_t stream_id, const std::string& feedback_dir, const url_t& path)
+    : stream_id_(stream_id), feedback_dir_(feedback_dir), path_(path) {}
+
+common::Error GetLogInfo::SerializeFields(json_object* obj) const {
+  const std::string path_str = path_.GetUrl();
+  json_object_object_add(obj, GET_LOG_INFO_PATH_FIELD, json_object_new_string(path_str.c_str()));
+  json_object_object_add(obj, GET_LOG_INFO_STREAM_ID_FIELD, json_object_new_string(stream_id_.c_str()));
+  json_object_object_add(obj, GET_LOG_INFO_FEEDBACK_DIR_FIELD, json_object_new_string(feedback_dir_.c_str()));
+  return common::Error();
+}
+
+common::Error GetLogInfo::DoDeSerialize(json_object* serialized) {
+  GetLogInfo inf;
+  json_object* jid = nullptr;
+  json_bool jid_exists = json_object_object_get_ex(serialized, GET_LOG_INFO_STREAM_ID_FIELD, &jid);
+  if (!jid_exists) {
+    return common::make_error_inval();
+  }
+  inf.stream_id_ = json_object_get_string(jid);
+
+  json_object* jfeedback_dir = nullptr;
+  json_bool jfeedback_dir_exists =
+      json_object_object_get_ex(serialized, GET_LOG_INFO_FEEDBACK_DIR_FIELD, &jfeedback_dir);
+  if (!jfeedback_dir_exists) {
+    return common::make_error_inval();
+  }
+  inf.feedback_dir_ = json_object_get_string(jfeedback_dir);
+
+  json_object* jpath = nullptr;
+  json_bool jpath_exists = json_object_object_get_ex(serialized, GET_LOG_INFO_PATH_FIELD, &jpath);
+  if (jpath_exists) {
+    inf.path_ = url_t(json_object_get_string(jpath));
+  }
+
+  *this = inf;
+  return common::Error();
+}
+
+GetLogInfo::url_t GetLogInfo::GetLogPath() const {
+  return path_;
+}
+
+GetLogInfo::stream_id_t GetLogInfo::GetStreamID() const {
+  return stream_id_;
+}
+
+std::string GetLogInfo::GetFeedbackDir() const {
+  return feedback_dir_;
+}
+
+}  // namespace stream
+}  // namespace server
+}  // namespace iptv_cloud

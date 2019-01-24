@@ -14,7 +14,7 @@
 
 #pragma once
 
-#define FEEDBACK_DIR_FIELD "feedback_dir"  // required
+#define FEEDBACK_DIR_FIELD "feedback_directory"  // required
 #define LOG_LEVEL_FIELD "log_level"
 #define ID_FIELD "id"      // required
 #define TYPE_FIELD "type"  // required

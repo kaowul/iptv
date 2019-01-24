@@ -38,7 +38,7 @@ int start_stream(const std::string& process_name,
                  const iptv_cloud::utils::ArgsMap& config_args,
                  common::libev::IoClient* command_client,
                  iptv_cloud::StreamStruct* mem) {
-  common::logging::INIT_LOGGER(process_name, feedback_dir + "/logs",
+  common::logging::INIT_LOGGER(process_name, feedback_dir + "/" + LOGS_FILE_NAME,
                                logs_level);  // initialization of logging system
   NOTICE_LOG() << "Running " PROJECT_VERSION_HUMAN;
   iptv_cloud::stream::ProcessWrapper proc(process_name, feedback_dir, config_args, command_client, mem);

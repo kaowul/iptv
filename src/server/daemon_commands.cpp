@@ -25,6 +25,14 @@ protocol::response_t StopServiceResponceFail(protocol::sequance_id_t id, const s
   return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
+protocol::response_t GetLogServiceResponceSuccess(protocol::sequance_id_t id) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage());
+}
+
+protocol::response_t GetLogServiceResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+  return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+}
+
 protocol::request_t StopServiceRequest(protocol::sequance_id_t id, protocol::serializet_params_t params) {
   protocol::request_t req;
   req.id = id;
@@ -66,6 +74,14 @@ protocol::response_t RestartStreamResponceSuccess(protocol::sequance_id_t id) {
 }
 
 protocol::response_t RestartStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
+  return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
+}
+
+protocol::response_t GetLogStreamResponceSuccess(protocol::sequance_id_t id) {
+  return protocol::response_t::MakeMessage(id, protocol::MakeSuccessMessage());
+}
+
+protocol::response_t GetLogStreamResponceFail(protocol::sequance_id_t id, const std::string& error_text) {
   return protocol::response_t::MakeError(id, protocol::MakeServerErrorFromText(error_text));
 }
 
