@@ -33,7 +33,7 @@ class ProtocoledDaemonClient;
 
 class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
  public:
-  enum { node_stats_send_seconds = 10, ping_timeout_clients_seconds = 60, cleanup_seconds = 5 };
+  enum { node_stats_send_seconds = 10, ping_timeout_clients_seconds = 60, cleanup_seconds = 3 };
 
   explicit ProcessSlaveWrapper(const std::string& licensy_key);
   ~ProcessSlaveWrapper() override;
@@ -71,6 +71,12 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
                                                           protocol::response_t* resp) WARN_UNUSED_RESULT;
 
  private:
+  typedef int (*stream_exec_t)(const char* process_name,
+                               const void* cmd_args,
+                               void* config_args,
+                               void* command_client,
+                               void* mem);
+
   ChildStream* FindChildByID(channel_id_t cid) const;
   void BroadcastClients(const protocol::request_t& req);
 
@@ -133,6 +139,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   common::libev::timer_id_t node_stats_timer_;
   common::libev::timer_id_t cleanup_timer_;
   NodeStats* node_stats_;
+  stream_exec_t stream_exec_func_;
 };
 
 }  // namespace server

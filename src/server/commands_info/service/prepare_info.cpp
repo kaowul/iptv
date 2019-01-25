@@ -19,6 +19,8 @@
 #include <common/file_system/file_system.h>
 #include <common/file_system/string_path_utils.h>
 
+#include "utils/utils.h"
+
 #define OK_RESULT "OK"
 
 #define PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD "feedback_directory"
@@ -158,12 +160,10 @@ DirectoryState::DirectoryState(const std::string& dir_str, const char* k)
 
   dir = common::file_system::ascii_directory_string_path(dir_str);
   const std::string dir_path = dir.GetPath();
-  if (!common::file_system::is_directory_exist(dir_path)) {
-    common::ErrnoError errn = common::file_system::create_directory(dir_path, true);
-    if (errn) {
-      error_str = errn->GetDescription();
-      return;
-    }
+  common::ErrnoError errn = utils::CreateAndCheckDir(dir_path);
+  if (errn) {
+    error_str = errn->GetDescription();
+    return;
   }
 
   is_valid = true;

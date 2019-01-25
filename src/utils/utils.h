@@ -14,10 +14,10 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
-#include <common/types.h>
-
+#include <common/error.h>
 #include <common/file_system/path.h>
 
 namespace iptv_cloud {
@@ -80,6 +80,7 @@ struct SysinfoShot {
 
 SysinfoShot GetMachineSysinfoShot();
 
+common::ErrnoError CreateAndCheckDir(const std::string& directory_path);
 void RemoveOldFilesByTime(const common::file_system::ascii_directory_string_path& dir,
                           time_t max_life_secs,
                           const char* ext);

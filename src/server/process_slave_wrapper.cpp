@@ -105,13 +105,12 @@ bool GetPostServerFromUrl(const common::uri::Url& url, common::net::HostAndPort*
   return GetHttpHostAndPort(host_str, out);
 }
 
-common::Optional<common::file_system::ascii_file_string_path> gen_stream_log_path(const std::string& feedback_dir) {
+common::Optional<common::file_system::ascii_file_string_path> MakeStreamLogPath(const std::string& feedback_dir) {
   common::file_system::ascii_directory_string_path dir(feedback_dir);
   return dir.MakeFileStringPath(LOGS_FILE_NAME);
 }
 
-common::Error post_http_file(const common::file_system::ascii_file_string_path& file_path,
-                             const common::uri::Url& url) {
+common::Error PostHttpFile(const common::file_system::ascii_file_string_path& file_path, const common::uri::Url& url) {
   common::net::HostAndPort http_server_address;
   if (!GetPostServerFromUrl(url, &http_server_address)) {
     return common::make_error_inval();
@@ -146,7 +145,7 @@ common::Error post_http_file(const common::file_system::ascii_file_string_path& 
   return common::Error();
 }
 
-common::ErrnoError create_pipe(int* read_client_fd, int* write_client_fd) {
+common::ErrnoError CreatePipe(int* read_client_fd, int* write_client_fd) {
   if (!read_client_fd || !write_client_fd) {
     return common::make_errno_error_inval();
   }
@@ -162,7 +161,7 @@ common::ErrnoError create_pipe(int* read_client_fd, int* write_client_fd) {
   return common::ErrnoError();
 }
 
-iptv_cloud::utils::ArgsMap read_slave_config(const std::string& path) {
+iptv_cloud::utils::ArgsMap ReadSlaveConfig(const std::string& path) {
   if (path.empty()) {
     CRITICAL_LOG() << "Invalid config path!";
   }
@@ -192,8 +191,11 @@ iptv_cloud::utils::ArgsMap read_slave_config(const std::string& path) {
 
 namespace iptv_cloud {
 namespace {
-common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInfo* sha) {
-  if (!sha) {
+common::ErrnoError MakeStreamInfo(const utils::ArgsMap& config_args,
+                                  StreamInfo* sha,
+                                  std::string* feedback_dir,
+                                  common::logging::LOG_LEVEL* logs_level) {
+  if (!sha || !feedback_dir || !logs_level) {
     return common::make_errno_error_inval();
   }
 
@@ -208,16 +210,19 @@ common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInf
   }
   lsha.type = static_cast<StreamType>(type);
 
-  std::string feedback_dir;
-  if (!utils::ArgsGetValue(config_args, FEEDBACK_DIR_FIELD, &feedback_dir)) {
+  std::string lfeedback_dir;
+  if (!utils::ArgsGetValue(config_args, FEEDBACK_DIR_FIELD, &lfeedback_dir)) {
     return common::make_errno_error("Define " FEEDBACK_DIR_FIELD " variable and make it valid.", EAGAIN);
   }
 
-  if (!common::file_system::is_directory_exist(feedback_dir)) {
-    common::ErrnoError errn = common::file_system::create_directory(feedback_dir, true);
-    if (errn) {
-      return errn;
-    }
+  int llogs_level;
+  if (!utils::ArgsGetValue(config_args, LOG_LEVEL_FIELD, &llogs_level)) {
+    llogs_level = common::logging::LOG_LEVEL_DEBUG;
+  }
+
+  common::ErrnoError errn = utils::CreateAndCheckDir(lfeedback_dir);
+  if (errn) {
+    return errn;
   }
 
   input_t input;
@@ -229,19 +234,14 @@ common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInf
     lsha.input.push_back(input_uri.GetID());
   }
 
-  bool is_multi_input = input.size() > 1;
-  bool is_timeshift_and_rec = (type == TIMESHIFT_RECORDER && !is_multi_input) || (type == CATCHUP && !is_multi_input);
-  if (is_timeshift_and_rec) {
+  bool is_timeshift_rec_or_catchup = type == TIMESHIFT_RECORDER || type == CATCHUP;  // no outputs
+  if (is_timeshift_rec_or_catchup) {
     std::string timeshift_dir;
-    if (utils::ArgsGetValue(config_args, TIMESHIFT_DIR_FIELD, &timeshift_dir)) {
-      if (!common::file_system::is_directory_exist(timeshift_dir)) {
-        common::ErrnoError errn = common::file_system::create_directory(timeshift_dir, true);
-        if (errn) {
-          return errn;
-        }
-      }
+    if (!utils::ArgsGetValue(config_args, TIMESHIFT_DIR_FIELD, &timeshift_dir)) {
+      return common::make_errno_error("Define " TIMESHIFT_DIR_FIELD " variable and make it valid.", EAGAIN);
     }
-    common::ErrnoError errn = common::file_system::node_access(timeshift_dir);
+
+    errn = utils::CreateAndCheckDir(timeshift_dir);
     if (errn) {
       return errn;
     }
@@ -256,13 +256,7 @@ common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInf
       if (ouri.GetScheme() == common::uri::Url::http) {
         const common::file_system::ascii_directory_string_path http_root = out_uri.GetHttpRoot();
         const std::string http_root_str = http_root.GetPath();
-        if (!common::file_system::is_directory_exist(http_root_str)) {
-          common::ErrnoError errn = common::file_system::create_directory(http_root_str, true);
-          if (errn) {
-            return errn;
-          }
-        }
-        common::ErrnoError errn = common::file_system::node_access(http_root_str);
+        common::ErrnoError errn = utils::CreateAndCheckDir(http_root_str);
         if (errn) {
           return errn;
         }
@@ -271,6 +265,8 @@ common::ErrnoError make_stream_info(const utils::ArgsMap& config_args, StreamInf
     }
   }
 
+  *logs_level = static_cast<common::logging::LOG_LEVEL>(llogs_level);
+  *feedback_dir = lfeedback_dir;
   *sha = lsha;
   return common::ErrnoError();
 }
@@ -294,7 +290,8 @@ ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key)
       ping_client_id_timer_(INVALID_TIMER_ID),
       node_stats_timer_(INVALID_TIMER_ID),
       cleanup_timer_(INVALID_TIMER_ID),
-      node_stats_(new NodeStats) {
+      node_stats_(new NodeStats),
+      stream_exec_func_(nullptr) {
   loop_ = new DaemonServer(GetServerHostAndPort(), this);
   loop_->SetName("back_end_server");
   ReadConfig();
@@ -337,6 +334,23 @@ ProcessSlaveWrapper::~ProcessSlaveWrapper() {
 }
 
 int ProcessSlaveWrapper::Exec(int argc, char** argv) {
+  const std::string absolute_source_dir = common::file_system::absolute_path_from_relative(RELATIVE_SOURCE_DIR);
+  const std::string lib_full_path = common::file_system::make_path(absolute_source_dir, CORE_LIBRARY);
+  void* handle = dlopen(lib_full_path.c_str(), RTLD_LAZY);
+  if (!handle) {
+    ERROR_LOG() << "Failed to load " CORE_LIBRARY " path: " << lib_full_path
+                << ", error: " << common::common_strerror(errno);
+    return EXIT_FAILURE;
+  }
+
+  stream_exec_func_ = reinterpret_cast<stream_exec_t>(dlsym(handle, "stream_exec"));
+  char* error = dlerror();
+  if (error) {
+    ERROR_LOG() << "Failed to load start stream function error: " << error;
+    dlclose(handle);
+    return EXIT_FAILURE;
+  }
+
   process_argc_ = argc;
   process_argv_ = argv;
 
@@ -373,6 +387,8 @@ finished:
     perf_thread.join();
   }
   delete perf_monitor;
+  stream_exec_func_ = nullptr;
+  dlclose(handle);
   return res;
 }
 
@@ -693,7 +709,9 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
 
   utils::ArgsMap config_args = options::ValidateConfig(config_str);
   StreamInfo sha;
-  common::ErrnoError err = make_stream_info(config_args, &sha);
+  std::string feedback_dir;
+  common::logging::LOG_LEVEL logs_level;
+  common::ErrnoError err = MakeStreamInfo(config_args, &sha, &feedback_dir, &logs_level);
   if (err) {
     return err;
   }
@@ -712,7 +730,7 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
 
   int read_command_client = 0;
   int write_requests_client = 0;
-  err = create_pipe(&read_command_client, &write_requests_client);
+  err = CreatePipe(&read_command_client, &write_requests_client);
   if (err) {
     FreeSharedStreamStruct(&mem);
     return err;
@@ -720,7 +738,7 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
 
   int read_responce_client = 0;
   int write_responce_client = 0;
-  err = create_pipe(&read_responce_client, &write_responce_client);
+  err = CreatePipe(&read_responce_client, &write_responce_client);
   if (err) {
     FreeSharedStreamStruct(&mem);
     return err;
@@ -732,37 +750,6 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
   pid_t pid = 0;
 #endif
   if (pid == 0) {  // child
-    typedef int (*stream_exec_t)(const char* process_name, const struct cmd_args* cmd_args, void* config_args,
-                                 void* command_client, void* mem);
-    const std::string absolute_source_dir = common::file_system::absolute_path_from_relative(RELATIVE_SOURCE_DIR);
-    const std::string lib_full_path = common::file_system::make_path(absolute_source_dir, CORE_LIBRARY);
-    void* handle = dlopen(lib_full_path.c_str(), RTLD_LAZY);
-    if (!handle) {
-      ERROR_LOG() << "Failed to load " CORE_LIBRARY " path: " << lib_full_path
-                  << ", error: " << common::common_strerror(errno);
-      _exit(EXIT_FAILURE);
-    }
-
-    stream_exec_t stream_exec_func = reinterpret_cast<stream_exec_t>(dlsym(handle, "stream_exec"));
-    char* error = dlerror();
-    if (error) {
-      ERROR_LOG() << "Failed to load start stream function error: " << error;
-      dlclose(handle);
-      _exit(EXIT_FAILURE);
-    }
-
-    std::string feedback_dir;
-    if (!utils::ArgsGetValue(config_args, FEEDBACK_DIR_FIELD, &feedback_dir)) {
-      ERROR_LOG() << "Define " FEEDBACK_DIR_FIELD " variable and make it valid.";
-      dlclose(handle);
-      _exit(EXIT_FAILURE);
-    }
-
-    int logs_level;
-    if (!utils::ArgsGetValue(config_args, LOG_LEVEL_FIELD, &logs_level)) {
-      logs_level = common::logging::LOG_LEVEL_DEBUG;
-    }
-
     const struct cmd_args client_args = {feedback_dir.c_str(), logs_level};
     const std::string new_process_name = common::MemSPrintf(STREAMER_NAME " %s", sha.id);
     for (int i = 0; i < process_argc_; ++i) {
@@ -789,8 +776,7 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
     pipe::ProtocoledPipeClient* client =
         new pipe::ProtocoledPipeClient(nullptr, read_command_client, write_responce_client);
     client->SetName(sha.id);
-    int res = stream_exec_func(new_name, &client_args, &config_args, client, mem);
-    dlclose(handle);
+    int res = stream_exec_func_(new_name, &client_args, &config_args, client, mem);
     client->Close();
     delete client;
     _exit(res);
@@ -1028,9 +1014,9 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientGetLogStream(Protocol
 
     const auto remote_log_path = log_info.GetLogPath();
     if (remote_log_path.GetScheme() == common::uri::Url::http) {
-      const auto stream_log_file = gen_stream_log_path(log_info.GetFeedbackDir());
+      const auto stream_log_file = MakeStreamLogPath(log_info.GetFeedbackDir());
       if (stream_log_file) {
-        post_http_file(*stream_log_file, remote_log_path);
+        PostHttpFile(*stream_log_file, remote_log_path);
       }
     } else if (remote_log_path.GetScheme() == common::uri::Url::https) {
     }
@@ -1173,7 +1159,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientGetLogService(Protoco
 
     const auto remote_log_path = get_log_info.GetLogPath();
     if (remote_log_path.GetScheme() == common::uri::Url::http) {
-      post_http_file(common::file_system::ascii_file_string_path(log_path_), remote_log_path);
+      PostHttpFile(common::file_system::ascii_file_string_path(log_path_), remote_log_path);
     } else if (remote_log_path.GetScheme() == common::uri::Url::https) {
     }
 
@@ -1256,7 +1242,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponceStreamsCommand(pipe::Proto
 }
 
 void ProcessSlaveWrapper::ReadConfig() {  // CONFIG_SLAVE_FILE_PATH
-  utils::ArgsMap slave_config_args = read_slave_config(CONFIG_SLAVE_FILE_PATH);
+  utils::ArgsMap slave_config_args = ReadSlaveConfig(CONFIG_SLAVE_FILE_PATH);
   if (!utils::ArgsGetValue(slave_config_args, SERVICE_ID_FIELD, &node_id_)) {
     CRITICAL_LOG() << "Define " SERVICE_ID_FIELD " variable and make it valid.";
   }

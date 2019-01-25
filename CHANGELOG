@@ -1,9 +1,10 @@
-1.1.0 /
+1.1.0 / January 25, 2019
 [Alexandr Topilski]
 - Docker image
-- Relay check fields
+- Relay/Encode/Timeshifts check fields
+- Get service/stream log command
 
-1.0.0 / January 14, 2018
+1.0.0 / January 14, 2019
 [Alexandr Topilski]
 - Fixed timeshift recorder
 - Stream library

@@ -25,10 +25,21 @@
 #include <string>
 
 #include <common/file_system/file_system.h>
+#include <common/file_system/string_path_utils.h>
 #include <common/sprintf.h>
 
 namespace iptv_cloud {
 namespace utils {
+
+common::ErrnoError CreateAndCheckDir(const std::string& directory_path) {
+  if (!common::file_system::is_directory_exist(directory_path)) {
+    common::ErrnoError errn = common::file_system::create_directory(directory_path, true);
+    if (errn) {
+      return errn;
+    }
+  }
+  return common::file_system::node_access(directory_path);
+}
 
 void RemoveOldFilesByTime(const common::file_system::ascii_directory_string_path& dir,
                           time_t max_life_secs,
