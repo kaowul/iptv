@@ -86,7 +86,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
 
   protocol::sequance_id_t NextRequestID();
 
-  common::ErrnoError CreateChildStream(common::libev::IoLoop* server, const stream::StartInfo& start_info);
+  common::ErrnoError CreateChildStream(const stream::StartInfo& start_info);
 
   common::ErrnoError HandleRequestChangedSourcesStream(pipe::ProtocoledPipeClient* pclient,
                                                        protocol::request_t* req) WARN_UNUSED_RESULT;

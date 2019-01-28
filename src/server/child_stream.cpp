@@ -14,21 +14,14 @@
 
 #include "server/child_stream.h"
 
-#include "stream_struct_utils.h"
-
-#include "pipe/pipe_client.h"
-
 #include "stream_commands.h"
+#include "stream_struct.h"
 
 namespace iptv_cloud {
 namespace server {
 
 ChildStream::ChildStream(common::libev::IoLoop* server, StreamStruct* mem)
-    : base_class(server), mem_(mem), pipe_client_(nullptr) {}
-
-ChildStream::~ChildStream() {
-  FreeSharedStreamStruct(&mem_);
-}
+    : base_class(server), mem_(mem), client_(nullptr) {}
 
 channel_id_t ChildStream::GetChannelID() const {
   return mem_->id;
@@ -38,30 +31,34 @@ bool ChildStream::Equals(const ChildStream& stream) const {
   return mem_->id == stream.mem_->id;
 }
 
-pipe::ProtocoledPipeClient* ChildStream::GetPipe() const {
-  return pipe_client_;
+StreamStruct* ChildStream::GetMem() const {
+  return mem_;
 }
 
-void ChildStream::SetPipe(pipe::ProtocoledPipeClient* pipe) {
-  pipe_client_ = pipe;
+ChildStream::client_t* ChildStream::GetClient() const {
+  return client_;
+}
+
+void ChildStream::SetClient(client_t* pipe) {
+  client_ = pipe;
 }
 
 common::ErrnoError ChildStream::SendStop(protocol::sequance_id_t id) {
-  if (!pipe_client_) {
+  if (!client_) {
     return common::make_errno_error_inval();
   }
 
   protocol::request_t req = StopStreamRequest(id);
-  return pipe_client_->WriteRequest(req);
+  return client_->WriteRequest(req);
 }
 
 common::ErrnoError ChildStream::SendRestart(protocol::sequance_id_t id) {
-  if (!pipe_client_) {
+  if (!client_) {
     return common::make_errno_error_inval();
   }
 
   protocol::request_t req = RestartStreamRequest(id);
-  return pipe_client_->WriteRequest(req);
+  return client_->WriteRequest(req);
 }
 
 }  // namespace server

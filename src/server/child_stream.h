@@ -14,24 +14,21 @@
 
 #pragma once
 
-#include "protocol/types.h"
+#include <common/libev/io_child.h>
+
+#include "protocol/protocol.h"
 
 #include "types.h"
-
-#include <common/libev/io_child.h>
 
 namespace iptv_cloud {
 struct StreamStruct;
 namespace server {
-namespace pipe {
-class ProtocoledPipeClient;
-}
 
 class ChildStream : public common::libev::IoChild {
  public:
   typedef common::libev::IoChild base_class;
+  typedef protocol::protocol_client_t client_t;
   ChildStream(common::libev::IoLoop* server, StreamStruct* mem);
-  ~ChildStream() override;
 
   common::ErrnoError SendStop(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
   common::ErrnoError SendRestart(protocol::sequance_id_t id) WARN_UNUSED_RESULT;
@@ -40,12 +37,14 @@ class ChildStream : public common::libev::IoChild {
 
   bool Equals(const ChildStream& stream) const;
 
-  pipe::ProtocoledPipeClient* GetPipe() const;
-  void SetPipe(pipe::ProtocoledPipeClient* pipe);
+  StreamStruct* GetMem() const;
+
+  client_t* GetClient() const;
+  void SetClient(client_t* pipe);
 
  private:
-  StreamStruct* mem_;
-  pipe::ProtocoledPipeClient* pipe_client_;
+  StreamStruct* const mem_;
+  client_t* client_;
 
   DISALLOW_COPY_AND_ASSIGN(ChildStream);
 };

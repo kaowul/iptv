@@ -428,9 +428,9 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
         common::ErrnoError err = dclient->WriteRequest(ping_request);
         if (err) {
           DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
-          err = client->Close();
+          err = dclient->Close();
           DCHECK(!err);
-          delete client;
+          delete dclient;
         } else {
           INFO_LOG() << "Pinged to client[" << client->GetFormatedName() << "], from server["
                      << server->GetFormatedName() << "], " << online_clients.size() << " client(s) connected.";
@@ -474,7 +474,11 @@ void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int 
              << ", signal: " << signal_number;
 
   loop_->UnRegisterChild(child);
-  delete child;
+
+  StreamStruct* mem = channel->GetMem();
+  FreeSharedStreamStruct(&mem);
+  DCHECK(!channel->GetClient()) << "In this place client should be nulled.";
+  delete channel;
 
   std::string quit_json;
   stream::QuitStatusInfo ch_status_info(cid, stabled_status, signal_number);
@@ -602,8 +606,8 @@ void ProcessSlaveWrapper::DataReceived(common::libev::IoClient* client) {
       auto childs = loop_->GetChilds();
       for (auto* child : childs) {
         ChildStream* channel = static_cast<ChildStream*>(child);
-        if (pipe_client == channel->GetPipe()) {
-          channel->SetPipe(nullptr);
+        if (pipe_client == channel->GetClient()) {
+          channel->SetClient(nullptr);
           break;
         }
       }
@@ -702,8 +706,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponcePingService(ProtocoledDaem
   return common::ErrnoError();
 }
 
-common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop* server,
-                                                          const stream::StartInfo& start_info) {
+common::ErrnoError ProcessSlaveWrapper::CreateChildStream(const stream::StartInfo& start_info) {
   CHECK(loop_->IsLoopThread());
   const std::string config_str = start_info.GetConfig();
 
@@ -794,11 +797,11 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(common::libev::IoLoop*
     }
 
     pipe::ProtocoledPipeClient* pipe_client =
-        new pipe::ProtocoledPipeClient(server, read_responce_client, write_requests_client);
+        new pipe::ProtocoledPipeClient(loop_, read_responce_client, write_requests_client);
     pipe_client->SetName(sha.id);
-    server->RegisterClient(pipe_client);
+    loop_->RegisterClient(pipe_client);
     ChildStream* new_channel = new ChildStream(loop_, mem);
-    new_channel->SetPipe(pipe_client);
+    new_channel->SetClient(pipe_client);
     loop_->RegisterChild(new_channel, pid);
   }
 
@@ -893,8 +896,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientStartStream(Protocole
       return common::make_errno_error(err_str, EAGAIN);
     }
 
-    common::libev::IoLoop* server = dclient->GetServer();
-    common::ErrnoError err = CreateChildStream(server, start_info);
+    common::ErrnoError err = CreateChildStream(start_info);
     if (err) {
       protocol::response_t resp = StartStreamResponceFail(req->id, err->GetDescription());
       dclient->WriteResponce(resp);
