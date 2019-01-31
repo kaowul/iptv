@@ -139,17 +139,19 @@ bool InitVideoEncodersWithArgs(const utils::ArgsMap& config,
 
 }  // namespace
 
-Config* make_config(const utils::ArgsMap& config) {
+common::Error make_config(const utils::ArgsMap& config_args, Config** config) {
+  if (!config) {
+    return common::make_error_inval();
+  }
+
   uint8_t stream_type;
-  if (!utils::ArgsGetValue(config, TYPE_FIELD, &stream_type)) {
-    WARNING_LOG() << "Define " TYPE_FIELD " variable and make it valid.";
-    return nullptr;
+  if (!utils::ArgsGetValue(config_args, TYPE_FIELD, &stream_type)) {
+    return common::make_error("Define " TYPE_FIELD " variable and make it valid.");
   }
 
   input_t input_urls;
-  if (!read_input(config, &input_urls)) {
-    WARNING_LOG() << "Define " INPUT_FIELD " variable and make it valid.";
-    return nullptr;
+  if (!read_input(config_args, &input_urls)) {
+    return common::make_error("Define " INPUT_FIELD " variable and make it valid.");
   }
 
   bool is_multi_input = input_urls.size() > 1;
@@ -158,14 +160,13 @@ Config* make_config(const utils::ArgsMap& config) {
 
   output_t output_urls;
   if (!is_timeshift_and_rec) {
-    if (!read_output(config, &output_urls)) {
-      WARNING_LOG() << "Define " OUTPUT_FIELD " variable and make it valid.";
-      return nullptr;
+    if (!read_output(config_args, &output_urls)) {
+      return common::make_error("Define " OUTPUT_FIELD " variable and make it valid.");
     }
   }
 
   size_t max_restart_attempts;
-  if (!utils::ArgsGetValue(config, RESTART_ATTEMPTS_FIELD, &max_restart_attempts)) {
+  if (!utils::ArgsGetValue(config_args, RESTART_ATTEMPTS_FIELD, &max_restart_attempts)) {
     max_restart_attempts = kDefaultRestartAttempts;
   }
   CHECK(max_restart_attempts > 0) << "restart attempts must be grether than 0!";
@@ -173,139 +174,142 @@ Config* make_config(const utils::ArgsMap& config) {
   Config conf(static_cast<StreamType>(stream_type), max_restart_attempts, input_urls, output_urls);
 
   time_t ttl_sec;
-  if (utils::ArgsGetValue(config, AUTO_EXIT_TIME_FIELD, &ttl_sec)) {
+  if (utils::ArgsGetValue(config_args, AUTO_EXIT_TIME_FIELD, &ttl_sec)) {
     conf.SetTimeToLigeStream(ttl_sec);
   }
 
   streams::AudioVideoConfig aconf(conf);
   bool have_video;
-  if (utils::ArgsGetValue(config, HAVE_VIDEO_FIELD, &have_video)) {
+  if (utils::ArgsGetValue(config_args, HAVE_VIDEO_FIELD, &have_video)) {
     aconf.SetHaveVideo(have_video);
   }
 
   bool have_audio;
-  if (utils::ArgsGetValue(config, HAVE_AUDIO_FIELD, &have_audio)) {
+  if (utils::ArgsGetValue(config_args, HAVE_AUDIO_FIELD, &have_audio)) {
     aconf.SetHaveAudio(have_audio);
   }
 
   int audio_select;
-  if (utils::ArgsGetValue(config, AUDIO_SELECT_FIELD, &audio_select)) {
+  if (utils::ArgsGetValue(config_args, AUDIO_SELECT_FIELD, &audio_select)) {
     aconf.SetAudioSelect(audio_select);
   }
 
   bool loop;
-  if (utils::ArgsGetValue(config, LOOP_FIELD, &loop)) {
+  if (utils::ArgsGetValue(config_args, LOOP_FIELD, &loop)) {
     aconf.SetLoop(loop);
   }
 
   if (stream_type == SCREEN) {
-    return new streams::AudioVideoConfig(aconf);
+    *config = new streams::AudioVideoConfig(aconf);
+    return common::Error();
   } else if (stream_type == RELAY || stream_type == TIMESHIFT_PLAYER) {
     streams::RelayConfig* rconfig = new streams::RelayConfig(aconf);
 
     std::string video_parser;
-    if (utils::ArgsGetValue(config, VIDEO_PARSER_FIELD, &video_parser)) {
+    if (utils::ArgsGetValue(config_args, VIDEO_PARSER_FIELD, &video_parser)) {
       rconfig->SetVideoParser(video_parser);
     }
     std::string audio_parser;
-    if (utils::ArgsGetValue(config, AUDIO_PARSER_FIELD, &audio_parser)) {
+    if (utils::ArgsGetValue(config_args, AUDIO_PARSER_FIELD, &audio_parser)) {
       rconfig->SetAudioParser(audio_parser);
     }
 
-    return rconfig;
+    *config = rconfig;
+    return common::Error();
   } else if (stream_type == ENCODE) {
     streams::EncodingConfig* econfig = new streams::EncodingConfig(aconf);
     bool deinterlace;
-    if (utils::ArgsGetValue(config, DEINTERLACE_FIELD, &deinterlace)) {
+    if (utils::ArgsGetValue(config_args, DEINTERLACE_FIELD, &deinterlace)) {
       econfig->SetDeinterlace(deinterlace);
     }
     int frame_rate;
-    if (utils::ArgsGetValue(config, FRAME_RATE_FIELD, &frame_rate)) {
+    if (utils::ArgsGetValue(config_args, FRAME_RATE_FIELD, &frame_rate)) {
       econfig->SetFrameRate(frame_rate);
     }
 
     double volume;
-    if (utils::ArgsGetValue(config, VOLUME_FIELD, &volume)) {
+    if (utils::ArgsGetValue(config_args, VOLUME_FIELD, &volume)) {
       econfig->SetVolume(volume);
     }
 
     std::string video_codec;
-    if (utils::ArgsGetValue(config, VIDEO_CODEC_FIELD, &video_codec)) {
+    if (utils::ArgsGetValue(config_args, VIDEO_CODEC_FIELD, &video_codec)) {
       econfig->SetVideoEncoder(video_codec);
     }
     std::string audio_codec;
-    if (utils::ArgsGetValue(config, AUDIO_CODEC_FIELD, &audio_codec)) {
+    if (utils::ArgsGetValue(config_args, AUDIO_CODEC_FIELD, &audio_codec)) {
       econfig->SetAudioEncoder(audio_codec);
     }
 
     int audio_channels;
-    if (utils::ArgsGetValue(config, AUDIO_CHANNELS_FIELD, &audio_channels)) {
+    if (utils::ArgsGetValue(config_args, AUDIO_CHANNELS_FIELD, &audio_channels)) {
       econfig->SetAudioChannelsCount(audio_channels);
     }
 
     common::draw::Size size;
-    if (utils::ArgsGetValue(config, SIZE_FIELD, &size)) {
+    if (utils::ArgsGetValue(config_args, SIZE_FIELD, &size)) {
       econfig->SetSize(size);
     }
 
     int v_bitrate;
-    if (utils::ArgsGetValue(config, VIDEO_BIT_RATE_FIELD, &v_bitrate)) {
+    if (utils::ArgsGetValue(config_args, VIDEO_BIT_RATE_FIELD, &v_bitrate)) {
       econfig->SetVideoBitrate(v_bitrate);
     }
 
     int a_bitrate;
-    if (utils::ArgsGetValue(config, AUDIO_BIT_RATE_FIELD, &a_bitrate)) {
+    if (utils::ArgsGetValue(config_args, AUDIO_BIT_RATE_FIELD, &a_bitrate)) {
       econfig->SetAudioBitrate(a_bitrate);
     }
 
     Logo logo;
-    if (utils::ArgsGetValue(config, LOGO_FIELD, &logo)) {
+    if (utils::ArgsGetValue(config_args, LOGO_FIELD, &logo)) {
       econfig->SetLogo(logo);
     }
 
     common::media::Rational rat;
-    if (utils::ArgsGetValue(config, ASPECT_RATIO_FIELD, &rat)) {
+    if (utils::ArgsGetValue(config_args, ASPECT_RATIO_FIELD, &rat)) {
       econfig->SetAspectRatio(rat);
     }
     decklink_video_mode_t decl_vm;
-    if (utils::ArgsGetValue(config, DECKLINK_VIDEO_MODE_FILELD, &decl_vm)) {
+    if (utils::ArgsGetValue(config_args, DECKLINK_VIDEO_MODE_FILELD, &decl_vm)) {
       econfig->SetDecklinkMode(decl_vm);
     }
 
     video_encoders_args_t video_encoder_args;
     video_encoders_str_args_t video_encoder_str_args;
-    if (InitVideoEncodersWithArgs(config, &video_encoder_args, &video_encoder_str_args)) {
+    if (InitVideoEncodersWithArgs(config_args, &video_encoder_args, &video_encoder_str_args)) {
       econfig->SetVideoEncoderArgs(video_encoder_args);
       econfig->SetVideoEncoderStrArgs(video_encoder_str_args);
     }
 
-    return econfig;
+    *config = econfig;
+    return common::Error();
   } else if (stream_type == TIMESHIFT_RECORDER || stream_type == CATCHUP) {
     streams::RelayConfig rel(aconf);
 
     std::string video_parser;
-    if (utils::ArgsGetValue(config, VIDEO_PARSER_FIELD, &video_parser)) {
+    if (utils::ArgsGetValue(config_args, VIDEO_PARSER_FIELD, &video_parser)) {
       rel.SetVideoParser(video_parser);
     }
     std::string audio_parser;
-    if (utils::ArgsGetValue(config, AUDIO_PARSER_FIELD, &audio_parser)) {
+    if (utils::ArgsGetValue(config_args, AUDIO_PARSER_FIELD, &audio_parser)) {
       rel.SetAudioParser(audio_parser);
     }
 
     streams::TimeshiftConfig* tconf = new streams::TimeshiftConfig(rel);
     if (stream_type == TIMESHIFT_RECORDER || stream_type == CATCHUP) {
       time_t timeshift_chunk_duration;
-      if (utils::ArgsGetValue(config, TIMESHIFT_CHUNK_DURATION_FIELD, &timeshift_chunk_duration)) {
+      if (utils::ArgsGetValue(config_args, TIMESHIFT_CHUNK_DURATION_FIELD, &timeshift_chunk_duration)) {
         tconf->SetTimeShiftChunkDuration(timeshift_chunk_duration);
       }
       CHECK(tconf->GetTimeShiftChunkDuration()) << "Avoid division by zero";
     }
 
-    return tconf;
+    *config = tconf;
+    return common::Error();
   }
 
-  NOTREACHED() << "Unhandled stream type: " << stream_type;
-  return nullptr;
+  return common::make_error("Unknown stream type: " + stream_type);
 }
 
 }  // namespace stream

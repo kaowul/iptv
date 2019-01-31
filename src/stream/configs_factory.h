@@ -14,11 +14,15 @@
 
 #pragma once
 
-#include "config.h"
+#include <common/error.h>
+
+#include "utils/arg_reader.h"
 
 namespace iptv_cloud {
 namespace stream {
 
-Config* make_config(const utils::ArgsMap& config);
-}
+class Config;
+common::Error make_config(const utils::ArgsMap& config_args, Config** config) WARN_UNUSED_RESULT;
+
+}  // namespace stream
 }  // namespace iptv_cloud

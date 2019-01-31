@@ -83,7 +83,7 @@ void PlaylistEncodingStream::HandleNeedData(GstElement* pipeline, guint rsize) {
   GstBuffer* buffer = gst_buffer_new_wrapped(ptr, size);
   GstFlowReturn ret = app_src_->PushBuffer(buffer);
   if (ret != GST_FLOW_OK) {
-    WARNING_LOG() << GetID() << " gst_app_src_push_buffer failed: " << gst_flow_get_name(ret);
+    WARNING_LOG() << "gst_app_src_push_buffer failed: " << gst_flow_get_name(ret);
     Quit(EXIT_INNER);
   }
 }
@@ -100,7 +100,7 @@ FILE* PlaylistEncodingStream::OpenNextFile() {
     if (!*loop) {
       input_t input = econf->GetInput();
       if (curent_pos_ >= input.size()) {
-        INFO_LOG() << GetID() << " No more files for playing";
+        INFO_LOG() << "No more files for playing";
         return nullptr;  // EOS
       }
     }
@@ -118,12 +118,12 @@ FILE* PlaylistEncodingStream::OpenNextFile() {
   std::string cur_path = path.GetPath();
   FILE* file = fopen(cur_path.c_str(), "rb");
   if (file) {
-    INFO_LOG() << GetID() << " File " << cur_path << " open for playing";
+    INFO_LOG() << "File " << cur_path << " open for playing";
     if (client_) {
       client_->OnInputChanged(iuri);
     }
   } else {
-    WARNING_LOG() << GetID() << " File " << cur_path << " can't open for playing";
+    WARNING_LOG() << "File " << cur_path << " can't open for playing";
   }
   return file;
 }

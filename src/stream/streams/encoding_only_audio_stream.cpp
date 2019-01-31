@@ -50,7 +50,7 @@ gboolean EncodingOnlyAudioStream::HandleDecodeBinAutoplugger(GstElement* elem, G
     return TRUE;
   }
 
-  INFO_LOG() << GetID() << " caps notified: " << type_title << "(" << type_full << ")";
+  INFO_LOG() << "Caps notified: " << type_title << "(" << type_full << ")";
   SupportedAudioCodec saudio;
   SupportedVideoCodec svideo;
   SupportedDemuxer sdemuxer;

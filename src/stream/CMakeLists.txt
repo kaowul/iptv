@@ -10,7 +10,7 @@ SET(GLOBAL_HEADERS
 
   ${CMAKE_SOURCE_DIR}/src/stream/probes.h
   ${CMAKE_SOURCE_DIR}/src/stream/timeshift.h
-  ${CMAKE_SOURCE_DIR}/src/stream/process_wrapper.h
+  ${CMAKE_SOURCE_DIR}/src/stream/stream_controller.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/main_wrapper.h
   ${CMAKE_SOURCE_DIR}/src/stream/gstreamer_utils.h
@@ -30,7 +30,7 @@ SET(GLOBAL_SOURCES
 
   ${CMAKE_SOURCE_DIR}/src/stream/probes.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/timeshift.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/process_wrapper.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/stream_controller.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/main_wrapper.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/gstreamer_utils.cpp
 

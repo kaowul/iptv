@@ -133,7 +133,7 @@ gboolean EncodingStream::HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pa
     return TRUE;
   }
 
-  INFO_LOG() << GetID() << " caps notified: " << type_title << "(" << type_full << ")";
+  INFO_LOG() << "Caps notified: " << type_title << "(" << type_full << ")";
   SupportedAudioCodec saudio;
   SupportedVideoCodec svideo;
   SupportedDemuxer sdemuxer;
@@ -199,7 +199,7 @@ void EncodingStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
   }
 
   const EncodingConfig* config = static_cast<const EncodingConfig*>(GetConfig());
-  INFO_LOG() << GetID() << " pad added: " << new_pad_type;
+  INFO_LOG() << "Pad added: " << new_pad_type;
   elements::Element* dest = nullptr;
   bool is_video = strncmp(new_pad_type, "video", 5) == 0;
   bool is_audio = strncmp(new_pad_type, "audio", 5) == 0;
@@ -233,8 +233,7 @@ void EncodingStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
     GstPadLinkReturn ret = gst_pad_link(new_pad, sink_pad->GetGstPad());
     if (GST_PAD_LINK_FAILED(ret)) {
     } else {
-      DEBUG_LOG() << GetID() << " pad emitted: " << GST_ELEMENT_NAME(src) << " " << GST_PAD_NAME(new_pad) << " "
-                  << new_pad_type;
+      DEBUG_LOG() << "Pad emitted: " << GST_ELEMENT_NAME(src) << " " << GST_PAD_NAME(new_pad) << " " << new_pad_type;
     }
   } else {
     DEBUG_LOG() << "pad-emitter: pad is linked";

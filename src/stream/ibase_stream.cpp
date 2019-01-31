@@ -476,7 +476,7 @@ void IBaseStream::Quit(ExitStatus status) {
   GstMessage* message = gst_message_new_application(GST_OBJECT(pipeline), result);
   bool res = gst_element_post_message(pipeline, message);
   if (!res) {
-    WARNING_LOG() << GetID() << " Failed to post quit message.";
+    WARNING_LOG() << "Failed to post quit message.";
   }
 }
 
@@ -515,7 +515,7 @@ GstBusSyncReply IBaseStream::HandleSyncBusMessageReceived(GstBus* bus, GstMessag
       const GstStructure* exit_status_struct = gst_message_get_structure(message);
       const GValue* status_val = gst_structure_get_value(exit_status_struct, "status");
       gint exit_status = gvalue_cast<gint>(status_val);
-      WARNING_LOG() << GetID() << " Received exit command, status: " << exit_status;
+      WARNING_LOG() << "Received exit command, status: " << exit_status;
       // DCHECK(g_main_loop_is_running(loop_));
       g_main_loop_quit(loop_);
       last_exit_status_ = static_cast<ExitStatus>(exit_status);
@@ -530,7 +530,7 @@ GstBusSyncReply IBaseStream::HandleSyncBusMessageReceived(GstBus* bus, GstMessag
 }
 
 void IBaseStream::OnOutputDataFailed() {
-  WARNING_LOG() << GetID() << " There is no output data for a last " << no_data_panic_sec << " seconds.";
+  WARNING_LOG() << "There is no output data for a last " << no_data_panic_sec << " seconds.";
   Quit(EXIT_INNER);
 }
 
@@ -539,7 +539,7 @@ void IBaseStream::OnOutputDataOK() {
 }
 
 void IBaseStream::OnInputDataFailed() {
-  WARNING_LOG() << GetID() << " There is no input data for a last " << no_data_panic_sec << " seconds.";
+  WARNING_LOG() << "There is no input data for a last " << no_data_panic_sec << " seconds.";
   Quit(EXIT_INNER);
 }
 
@@ -587,9 +587,9 @@ gboolean IBaseStream::HandleMainTimerTick() {
   if (up_time > no_data_panic_tick) {  // check is stream in noraml state
     size_t count_in_eos = CountInputEOS();
     size_t count_out_eos = CountOutEOS();
-    DEBUG_LOG() << GetID() << " NoData checkpoint: input eos (" << count_in_eos << "/" << input_stream_count
-                << "), output eos (" << count_out_eos << "/" << output_stream_count << "), received bytes "
-                << checkpoint_diff_in_total << ", sended bytes " << checkpoint_diff_out_total;
+    DEBUG_LOG() << "NoData checkpoint: input eos (" << count_in_eos << "/" << input_stream_count << "), output eos ("
+                << count_out_eos << "/" << output_stream_count << "), received bytes " << checkpoint_diff_in_total
+                << ", sended bytes " << checkpoint_diff_out_total;
     bool is_input_failed = checkpoint_diff_in_total < MIN_IN_DATA;
     if (is_input_failed) {
       OnInputDataFailed();
@@ -639,7 +639,7 @@ gboolean IBaseStream::HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* mes
   } else if (type == GST_MESSAGE_CLOCK_LOST) {
     GstClock* clock = nullptr;
     gst_message_parse_clock_lost(message, &clock);
-    INFO_LOG() << GetID() << " ASYNC GST_MESSAGE_CLOCK_LOST: " << GST_OBJECT_NAME(clock);
+    INFO_LOG() << "ASYNC GST_MESSAGE_CLOCK_LOST: " << GST_OBJECT_NAME(clock);
   } else if (type == GST_MESSAGE_DURATION_CHANGED) {
     input_t input = config_->GetInput();
     for (size_t i = 0; i < input.size(); ++i) {
@@ -663,7 +663,7 @@ gboolean IBaseStream::HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* mes
       }
     }
   } else if (type == GST_MESSAGE_EOS) {
-    WARNING_LOG() << GetID() << " Received end of stream: " << GST_OBJECT_NAME(src);
+    WARNING_LOG() << " Received end of stream: " << GST_OBJECT_NAME(src);
     if (client_) {
       client_->OnPipelineEOS(this);
     }
@@ -681,9 +681,8 @@ void IBaseStream::SetStatus(StreamStatus status) {
     return;
   }
 
-  INFO_LOG() << GetID() << " Changing status from " << common::ConvertToString(status_) << " to "
-             << common::ConvertToString(status);
   status_ = status;
+  INFO_LOG() << "Changing status to: " << common::ConvertToString(status);
   if (client_) {
     client_->OnStatusChanged(this, status);
   }

@@ -26,7 +26,7 @@
 #include <common/file_system/string_path_utils.h>
 
 #include "config_fields.h"
-#include "process_wrapper.h"
+#include "stream_controller.h"
 
 #include "utils/arg_converter.h"
 
@@ -41,7 +41,15 @@ int start_stream(const std::string& process_name,
   const std::string logs_path = common::file_system::make_path(feedback_dir, LOGS_FILE_NAME);
   common::logging::INIT_LOGGER(process_name, logs_path, logs_level);  // initialization of logging system
   NOTICE_LOG() << "Running " PROJECT_VERSION_HUMAN;
-  iptv_cloud::stream::ProcessWrapper proc(process_name, feedback_dir, config_args, command_client, mem);
+
+  iptv_cloud::stream::StreamController proc(feedback_dir, command_client, mem);
+  common::Error err = proc.Init(config_args);
+  if (err) {
+    WARNING_LOG() << err->GetDescription();
+    NOTICE_LOG() << "Quiting " PROJECT_VERSION_HUMAN;
+    return EXIT_FAILURE;
+  }
+
   int res = proc.Exec();
   NOTICE_LOG() << "Quiting " PROJECT_VERSION_HUMAN;
   return res;

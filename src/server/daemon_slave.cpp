@@ -104,6 +104,8 @@ int main(int argc, char** argv, char** envp) {
     }
   }
 
+  common::logging::SET_LOGGER_PROJECT_NAME(STREAMER_SERVICE_NAME);
+
   const pid_t daemon_pid = getpid();
   const std::string folder_path_to_pid = common::file_system::get_dir_path(PIDFILE_PATH);
   if (folder_path_to_pid.empty()) {

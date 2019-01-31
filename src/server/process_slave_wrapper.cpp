@@ -754,7 +754,7 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(const stream::StartInf
 #endif
   if (pid == 0) {  // child
     const struct cmd_args client_args = {feedback_dir.c_str(), logs_level};
-    const std::string new_process_name = common::MemSPrintf(STREAMER_NAME " %s", sha.id);
+    const std::string new_process_name = common::MemSPrintf(STREAMER_NAME "_%s", sha.id);
     for (int i = 0; i < process_argc_; ++i) {
       memset(process_argv_[i], 0, strlen(process_argv_[i]));
     }

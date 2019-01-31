@@ -30,16 +30,15 @@
 namespace iptv_cloud {
 namespace stream {
 
-class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream::IStreamClient {
+class StreamController : public common::libev::IoLoopObserver, public IBaseStream::IStreamClient {
  public:
   enum constants : uint32_t { restart_after_frozen_sec = 60 };
 
-  ProcessWrapper(const std::string& process_name,
-                 const std::string& feedback_dir,
-                 const utils::ArgsMap& config_args,
-                 common::libev::IoClient* command_client,
-                 StreamStruct* mem);
-  ~ProcessWrapper() override;
+  StreamController(const std::string& feedback_dir, common::libev::IoClient* command_client, StreamStruct* mem);
+
+  common::Error Init(const utils::ArgsMap& config_args);
+
+  ~StreamController() override;
 
   int Exec();
 
@@ -95,7 +94,6 @@ class ProcessWrapper : public common::libev::IoLoopObserver, public IBaseStream:
 
   void DumpStreamStatus(StreamStruct* stat, StreamStatus st);
 
-  const std::string process_name_;
   const std::string feedback_dir_;
   const Config* config_;
   TimeShiftInfo timeshift_info_;
