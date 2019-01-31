@@ -23,11 +23,6 @@ namespace stream {
 
 GstElement* make_element_safe(const std::string& type, const std::string& name);
 
-/**
- * @brief returns name of pad
- * @param pad pointer
- * @return name
- */
 const gchar* pad_get_type(GstPad* pad);
 
 template <typename T>

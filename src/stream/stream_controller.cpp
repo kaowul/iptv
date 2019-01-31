@@ -70,7 +70,7 @@ TimeShiftInfo make_timeshift_info(const utils::ArgsMap& args) {
   return tinfo;
 }
 
-bool PrepareStatus(StreamStruct* stats, StreamStatus st, double cpu_load, std::string* status_out) {
+bool PrepareStatus(StreamStruct* stats, double cpu_load, std::string* status_out) {
   if (!stats || !status_out) {
     return false;
   }
@@ -81,7 +81,7 @@ bool PrepareStatus(StreamStruct* stats, StreamStatus st, double cpu_load, std::s
 
   long rss = common::system_info::GetProcessRss(getpid());
   const time_t current_time = common::time::current_mstime() / 1000;
-  StatisticInfo sinf(*stats, st, cpu_load, rss, current_time);
+  StatisticInfo sinf(*stats, cpu_load, rss, current_time);
 
   std::string out;
   common::Error err = sinf.SerializeToString(&out);
@@ -206,7 +206,8 @@ int StreamController::Exec() {
       const streams::TimeshiftConfig* tconfig = static_cast<const streams::TimeshiftConfig*>(config_);
       time_t timeshift_chunk_duration = tconfig->GetTimeShiftChunkDuration();
       while (!timeshift_info_.FindChunkToPlay(timeshift_chunk_duration, &start_chunk_index)) {
-        DumpStreamStatus(mem_, WAITING);
+        mem_->status = WAITING;
+        DumpStreamStatus(mem_);
 
         {
           std::unique_lock<std::mutex> lock(stop_mutex_);
@@ -251,7 +252,8 @@ int StreamController::Exec() {
     size_t wait_time = 0;
     if (++restart_attempts_ == config_->GetMaxRestartAttempts()) {
       restart_attempts_ = 0;
-      DumpStreamStatus(mem_, FROZEN);
+      mem_->status = FROZEN;
+      DumpStreamStatus(mem_);
       wait_time = restart_after_frozen_sec;
     } else {
       wait_time = restart_attempts_ * (restart_after_frozen_sec / config_->GetMaxRestartAttempts());
@@ -464,7 +466,7 @@ void StreamController::RestartStream() {
 
 void StreamController::OnStatusChanged(IBaseStream* stream, StreamStatus status) {
   UNUSED(status);
-  DumpStreamStatus(stream->GetStats(), stream->GetStatus());
+  DumpStreamStatus(stream->GetStats());
 }
 
 GstPadProbeInfo* StreamController::OnCheckReveivedData(IBaseStream* stream, Probe* probe, GstPadProbeInfo* info) {
@@ -490,7 +492,7 @@ void StreamController::OnPipelineEOS(IBaseStream* stream) {
 }
 
 void StreamController::OnTimeoutUpdated(IBaseStream* stream) {
-  DumpStreamStatus(stream->GetStats(), stream->GetStatus());
+  DumpStreamStatus(stream->GetStats());
 }
 
 void StreamController::OnASyncMessageReceived(IBaseStream* stream, GstMessage* message) {
@@ -523,9 +525,9 @@ void StreamController::OnPipelineCreated(IBaseStream* stream) {
   }
 }
 
-void StreamController::DumpStreamStatus(StreamStruct* stat, StreamStatus st) {
+void StreamController::DumpStreamStatus(StreamStruct* stat) {
   std::string status_json;
-  if (PrepareStatus(stat, st, common::system_info::GetCpuLoad(getpid()), &status_json)) {
+  if (PrepareStatus(stat, common::system_info::GetCpuLoad(getpid()), &status_json)) {
     protocol::request_t req = StatisticStreamBroadcast(status_json);
     static_cast<StreamServer*>(loop_)->WriteRequest(req);
   }

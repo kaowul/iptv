@@ -30,10 +30,9 @@ class StatisticInfo : public common::serializer::JsonSerializer<StatisticInfo> {
   typedef std::shared_ptr<StreamStruct> stream_struct_t;
 
   StatisticInfo();
-  StatisticInfo(const StreamStruct& str, StreamStatus st, cpu_load_t cpu_load, rss_t rss, time_t time);
+  StatisticInfo(const StreamStruct& str, cpu_load_t cpu_load, rss_t rss, time_t time);
 
   stream_struct_t GetStreamStruct() const;
-  StreamStatus GetStatus() const;
   cpu_load_t GetCpuLoad() const;
   rss_t GetRss() const;
   time_t GetTimestamp() const;
@@ -44,7 +43,6 @@ class StatisticInfo : public common::serializer::JsonSerializer<StatisticInfo> {
 
  private:
   stream_struct_t stream_struct_;
-  StreamStatus status_;
   cpu_load_t cpu_load_;
   rss_t rss_;
   time_t timestamp_;

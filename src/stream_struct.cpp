@@ -61,16 +61,24 @@ StreamStruct::StreamStruct() : StreamStruct(StreamInfo()) {}
 StreamStruct::StreamStruct(const StreamInfo& sha) : StreamStruct(sha, common::time::current_mstime() / 1000, 0, 0) {}
 
 StreamStruct::StreamStruct(const StreamInfo& sha, time_t start_time, time_t lst, size_t rest)
-    : StreamStruct(sha.id, sha.type, make_inputs(sha.input), make_outputs(sha.output), start_time, lst, rest) {}
+    : StreamStruct(sha.id, sha.type, NEW, make_inputs(sha.input), make_outputs(sha.output), start_time, lst, rest) {}
 
 StreamStruct::StreamStruct(channel_id_t cid,
                            StreamType type,
+                           StreamStatus status,
                            input_stream_info_t input,
                            output_stream_info_t output,
                            time_t start_time,
                            time_t lst,
                            size_t rest)
-    : id(cid), type(type), start_time(start_time), loop_start_time(lst), restarts(rest), input(input), output(output) {}
+    : id(cid),
+      type(type),
+      start_time(start_time),
+      loop_start_time(lst),
+      restarts(rest),
+      status(status),
+      input(input),
+      output(output) {}
 
 bool StreamStruct::IsValid() const {
   return !id.empty();

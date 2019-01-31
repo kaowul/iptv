@@ -41,10 +41,6 @@ struct Consistency {
   gboolean saw_serialized_event;
 };
 
-/**
- * @brief A probe structure
- * Defines some supporting variables for probes
- */
 class Probe {
  public:
   Probe(const std::string& name, element_id_t id, IBaseStream* stream);
@@ -69,7 +65,6 @@ class Probe {
 
   IBaseStream* const stream_;
 
-  //! name of a probe
   const std::string name_;
   const element_id_t id_;
   gulong id_buffer_;

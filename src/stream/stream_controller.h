@@ -92,7 +92,7 @@ class StreamController : public common::libev::IoLoopObserver, public IBaseStrea
 
   common::ErrnoError SendResponceToParent(const std::string& cmd) WARN_UNUSED_RESULT;
 
-  void DumpStreamStatus(StreamStruct* stat, StreamStatus st);
+  void DumpStreamStatus(StreamStruct* stat);
 
   const std::string feedback_dir_;
   const Config* config_;

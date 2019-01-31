@@ -170,9 +170,8 @@ IBaseStream::IBaseStream(const Config* config, IStreamClient* client, StreamStru
       probe_out_(),
       loop_(g_main_loop_new(ctx_holder::instance()->ctx, FALSE)),
       pipeline_(nullptr),
-      status_(NEW),
-      status_tick(0),
-      no_data_panic_tick(0),
+      status_tick_(0),
+      no_data_panic_tick_(0),
       stats_(stats),
       last_exit_status_(EXIT_INNER),
       is_live_(false),
@@ -181,8 +180,10 @@ IBaseStream::IBaseStream(const Config* config, IStreamClient* client, StreamStru
   /*INFO_LOG() << "Api inited input: " <<
      common::ConvertToString(api_->GetInput())
              << ", output: " << common::ConvertToString(api_->GetOutput());*/
+  SetStatus(NEW);
   CHECK(config) << "Config must be!";
   CHECK(stats && stats->IsValid()) << "Stats must be!";
+  CHECK_EQ(GetType(), config_->GetType());
   RuntimeCleanUp();
 }
 
@@ -305,6 +306,7 @@ IBaseStream::~IBaseStream() {
     g_object_unref(pipeline_);
     pipeline_ = nullptr;
   }
+  SetStatus(NEW);
 }
 
 ExitStatus IBaseStream::Exec() {
@@ -466,7 +468,7 @@ void IBaseStream::Play() {
 }
 
 void IBaseStream::ResetDataWait() {
-  no_data_panic_tick = GetElipsedTime() + no_data_panic_sec;  // update no_data_panic timestamp
+  no_data_panic_tick_ = GetElipsedTime() + no_data_panic_sec;  // update no_data_panic timestamp
   stats_->ResetDataWait();
 }
 
@@ -489,20 +491,8 @@ time_t IBaseStream::GetElipsedTime() const {
   return current_time - stats_->start_time;
 }
 
-StreamStatus IBaseStream::GetStatus() const {
-  return status_;
-}
-
-channel_id_t IBaseStream::GetID() const {
-  return stats_->id;
-}
-
 StreamType IBaseStream::GetType() const {
   return stats_->type;
-}
-
-std::vector<Probe*> IBaseStream::GetProbesOut() const {
-  return probe_out_;
 }
 
 GstBusSyncReply IBaseStream::HandleSyncBusMessageReceived(GstBus* bus, GstMessage* message) {
@@ -562,7 +552,7 @@ gboolean IBaseStream::HandleMainTimerTick() {
   }*/
 
   const time_t up_time = GetElipsedTime();
-  const size_t diff = (no_data_panic_sec - no_data_panic_tick + up_time) + 1;
+  const size_t diff = (no_data_panic_sec - no_data_panic_tick_ + up_time) + 1;
 
   size_t checkpoint_diff_in_total = 0;
   common::media::DesireBytesPerSec checkpoint_desire_in_total;
@@ -584,7 +574,7 @@ gboolean IBaseStream::HandleMainTimerTick() {
     checkpoint_diff_out_total += checkpoint_diff_out_stream;
   }
 
-  if (up_time > no_data_panic_tick) {  // check is stream in noraml state
+  if (up_time > no_data_panic_tick_) {  // check is stream in noraml state
     size_t count_in_eos = CountInputEOS();
     size_t count_out_eos = CountOutEOS();
     DEBUG_LOG() << "NoData checkpoint: input eos (" << count_in_eos << "/" << input_stream_count << "), output eos ("
@@ -618,8 +608,8 @@ gboolean IBaseStream::HandleMainTimerTick() {
   */
 
   if (IsActive()) {
-    if (status_tick <= up_time) {
-      status_tick = up_time + Config::report_delay_sec;  // update status timestamp
+    if (status_tick_ <= up_time) {
+      status_tick_ = up_time + Config::report_delay_sec;  // update status timestamp
       if (client_) {
         client_->OnTimeoutUpdated(this);
       }
@@ -677,11 +667,7 @@ gboolean IBaseStream::HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* mes
 }
 
 void IBaseStream::SetStatus(StreamStatus status) {
-  if (status_ == status) {
-    return;
-  }
-
-  status_ = status;
+  stats_->status = status;
   INFO_LOG() << "Changing status to: " << common::ConvertToString(status);
   if (client_) {
     client_->OnStatusChanged(this, status);
@@ -689,7 +675,7 @@ void IBaseStream::SetStatus(StreamStatus status) {
 }
 
 bool IBaseStream::IsActive() const {
-  return status_ != INIT;
+  return stats_->status != INIT;
 }
 
 void IBaseStream::HandleProbeEvent(Probe* probe, GstEvent* event) {

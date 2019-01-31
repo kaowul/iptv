@@ -34,10 +34,10 @@
 
 namespace iptv_cloud {
 
-StatisticInfo::StatisticInfo() : stream_struct_(), status_(), cpu_load_(), rss_(), timestamp_() {}
+StatisticInfo::StatisticInfo() : stream_struct_(), cpu_load_(), rss_(), timestamp_() {}
 
-StatisticInfo::StatisticInfo(const StreamStruct& str, StreamStatus st, cpu_load_t cpu_load, rss_t rss, time_t time)
-    : stream_struct_(), status_(st), cpu_load_(cpu_load), rss_(rss), timestamp_(time) {
+StatisticInfo::StatisticInfo(const StreamStruct& str, cpu_load_t cpu_load, rss_t rss, time_t time)
+    : stream_struct_(), cpu_load_(cpu_load), rss_(rss), timestamp_(time) {
   input_stream_info_t input;
   for (auto it = str.input.rbegin(); it != str.input.rend(); ++it) {
     StreamStats copy = *(*it);
@@ -49,7 +49,7 @@ StatisticInfo::StatisticInfo(const StreamStruct& str, StreamStatus st, cpu_load_
     output.push_back(new StreamStats(copy));
   }
   StreamStruct* struc =
-      new StreamStruct(str.id, str.type, input, output, str.start_time, str.loop_start_time, str.restarts);
+      new StreamStruct(str.id, str.type, str.status, input, output, str.start_time, str.loop_start_time, str.restarts);
   stream_struct_.reset(struc);
 
   /*cpu_load_t cpu_load = cpu_load_;
@@ -60,10 +60,6 @@ StatisticInfo::StatisticInfo(const StreamStruct& str, StreamStatus st, cpu_load_
 
 StatisticInfo::stream_struct_t StatisticInfo::GetStreamStruct() const {
   return stream_struct_;
-}
-
-StreamStatus StatisticInfo::GetStatus() const {
-  return status_;
 }
 
 StatisticInfo::cpu_load_t StatisticInfo::GetCpuLoad() const {
@@ -116,7 +112,7 @@ common::Error StatisticInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, FIELD_STREAM_LOOP_START_TIME, json_object_new_int64(stream_struct_->loop_start_time));
   json_object_object_add(out, FIELD_STREAM_RSS, json_object_new_int64(rss_));
   json_object_object_add(out, FIELD_STREAM_CPU, json_object_new_double(cpu_load_));
-  json_object_object_add(out, FIELD_STREAM_STATUS, json_object_new_int(status_));
+  json_object_object_add(out, FIELD_STREAM_STATUS, json_object_new_int(stream_struct_->status));
   json_object_object_add(out, FIELD_STREAM_RESTARTS, json_object_new_int64(stream_struct_->restarts));
   json_object_object_add(out, FIELD_STREAM_START_TIME, json_object_new_int(stream_struct_->start_time));
   json_object_object_add(out, FIELD_STREAM_TIMESTAMP, json_object_new_int64(timestamp_));
@@ -222,8 +218,8 @@ common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
     loop_start_time = json_object_get_int64(jloop_start_time);
   }
 
-  StreamStruct strct(cid, type, input, output, start_time, loop_start_time, restarts);
-  *this = StatisticInfo(strct, st, cpu_load, rss, time);
+  StreamStruct strct(cid, type, st, input, output, start_time, loop_start_time, restarts);
+  *this = StatisticInfo(strct, cpu_load, rss, time);
   return common::Error();
 }
 

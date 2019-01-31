@@ -53,6 +53,7 @@ struct StreamStruct {
   StreamStruct(const StreamInfo& sha, time_t start_time, time_t lst, size_t rest);
   StreamStruct(channel_id_t cid,
                StreamType type,
+               StreamStatus status,
                input_stream_info_t input,
                output_stream_info_t output,
                time_t start_time,
@@ -74,6 +75,7 @@ struct StreamStruct {
 
   time_t loop_start_time;
   size_t restarts;
+  StreamStatus status;
 
   const input_stream_info_t input;    // ptrs
   const output_stream_info_t output;  // ptrs

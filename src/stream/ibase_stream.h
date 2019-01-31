@@ -70,10 +70,7 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
 
   time_t GetElipsedTime() const;  // stream life time sec
 
-  StreamStatus GetStatus() const;
-  channel_id_t GetID() const;
   StreamType GetType() const;
-  std::vector<Probe*> GetProbesOut() const;
 
   bool IsActive() const;
 
@@ -116,7 +113,7 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
 
   virtual void HandleBufferingMessage(GstMessage* message);
 
-  virtual void SetStatus(StreamStatus status);
+  void SetStatus(StreamStatus status);
 
   virtual gboolean HandleMainTimerTick();
   virtual GstBusSyncReply HandleSyncBusMessageReceived(GstBus* bus, GstMessage* message);
@@ -158,10 +155,8 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
   GstElement* pipeline_;
   elements_line_t pipeline_elements_;
 
-  StreamStatus status_;
-
-  time_t status_tick;
-  time_t no_data_panic_tick;
+  time_t status_tick_;
+  time_t no_data_panic_tick_;
 
   StreamStruct* const stats_;
 
