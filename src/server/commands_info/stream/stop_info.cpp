@@ -14,37 +14,13 @@
 
 #include "server/commands_info/stream/stop_info.h"
 
-#define STOP_STREAM_INFO_STREAM_ID_FIELD "id"
-
 namespace iptv_cloud {
 namespace server {
 namespace stream {
 
-StopInfo::StopInfo() : base_class(), stream_id_() {}
+StopInfo::StopInfo() : base_class() {}
 
-StopInfo::StopInfo(stream_id_t stream_id) : stream_id_(stream_id) {}
-
-StopInfo::stream_id_t StopInfo::GetStreamID() const {
-  return stream_id_;
-}
-
-common::Error StopInfo::DoDeSerialize(json_object* serialized) {
-  json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, STOP_STREAM_INFO_STREAM_ID_FIELD, &jid);
-  if (!jid_exists) {
-    return common::make_error_inval();
-  }
-
-  StopInfo inf;
-  inf.stream_id_ = json_object_get_string(jid);
-  *this = inf;
-  return common::Error();
-}
-
-common::Error StopInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, STOP_STREAM_INFO_STREAM_ID_FIELD, json_object_new_string(stream_id_.c_str()));
-  return common::Error();
-}
+StopInfo::StopInfo(stream_id_t stream_id) : base_class(stream_id) {}
 
 }  // namespace stream
 }  // namespace server

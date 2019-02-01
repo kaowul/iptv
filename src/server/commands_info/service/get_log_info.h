@@ -33,7 +33,7 @@ class GetLogInfo : public common::serializer::JsonSerializer<GetLogInfo> {
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* obj) const override;
+  common::Error SerializeFields(json_object* out) const override;
 
  private:
   common::uri::Url path_;

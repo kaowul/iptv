@@ -77,7 +77,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
                                void* command_client,
                                void* mem);
 
-  ChildStream* FindChildByID(channel_id_t cid) const;
+  ChildStream* FindChildByID(stream_id_t cid) const;
   void BroadcastClients(const protocol::request_t& req);
 
   struct NodeStats;

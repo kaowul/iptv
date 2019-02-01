@@ -24,11 +24,6 @@ StopInfo::StopInfo() : base_class(), delay_(0) {}
 
 StopInfo::StopInfo(const std::string& license, common::time64_t delay) : base_class(license), delay_(delay) {}
 
-common::Error StopInfo::SerializeFields(json_object* obj) const {
-  json_object_object_add(obj, STOP_SERVICE_INFO_DELAY_FIELD, json_object_new_int64(delay_));
-  return base_class::SerializeFields(obj);
-}
-
 common::Error StopInfo::DoDeSerialize(json_object* serialized) {
   StopInfo inf;
   common::Error err = inf.base_class::DoDeSerialize(serialized);
@@ -44,6 +39,11 @@ common::Error StopInfo::DoDeSerialize(json_object* serialized) {
 
   *this = inf;
   return common::Error();
+}
+
+common::Error StopInfo::SerializeFields(json_object* out) const {
+  json_object_object_add(out, STOP_SERVICE_INFO_DELAY_FIELD, json_object_new_int64(delay_));
+  return base_class::SerializeFields(out);
 }
 
 common::time64_t StopInfo::GetDelay() const {

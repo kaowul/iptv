@@ -10,6 +10,7 @@ SET(DAEMONS_HEADERS_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/prepare_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/get_log_info.h
 
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/stream_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/start_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/quit_status_info.h
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/restart_info.h
@@ -26,6 +27,7 @@ SET(DAEMONS_SOURCES_COMANDS_INFO
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/prepare_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/service/get_log_info.cpp
 
+  ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/stream_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/start_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/quit_status_info.cpp
   ${CMAKE_SOURCE_DIR}/src/server/commands_info/stream/restart_info.cpp

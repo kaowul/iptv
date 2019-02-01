@@ -30,14 +30,14 @@ namespace iptv_cloud {
 
 OutputUri::OutputUri() : OutputUri(0, common::uri::Url()) {}
 
-OutputUri::OutputUri(stream_id_t id, const common::uri::Url& output)
+OutputUri::OutputUri(uri_id_t id, const common::uri::Url& output)
     : id_(id), output_(output), http_root_(), size_(), audio_bit_rate_(), video_bit_rate_() {}
 
-stream_id_t OutputUri::GetID() const {
+OutputUri::uri_id_t OutputUri::GetID() const {
   return id_;
 }
 
-void OutputUri::SetID(stream_id_t id) {
+void OutputUri::SetID(uri_id_t id) {
   id_ = id;
 }
 
@@ -89,11 +89,6 @@ bool OutputUri::Equals(const OutputUri& inf) const {
 }  // namespace iptv_cloud
 
 namespace common {
-
-namespace {
-const std::string hls_type_str[] = {"none", "pull", "push"};
-const std::string hls_out_type_str[] = {"main", "adaptive"};
-}  // namespace
 
 std::string ConvertToString(const iptv_cloud::OutputUri& value) {
   common::file_system::ascii_directory_string_path ps = value.GetHttpRoot();

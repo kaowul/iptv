@@ -22,8 +22,8 @@
 
 namespace iptv_cloud {
 
-typedef uint64_t stream_id_t;
-typedef std::string channel_id_t;
+typedef uint64_t channel_id_t;
+typedef std::string stream_id_t;
 typedef common::Optional<double> volume_t;
 typedef double alpha_t;
 typedef common::Optional<int> bit_rate_t;

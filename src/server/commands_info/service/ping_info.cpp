@@ -27,8 +27,8 @@ namespace service {
 
 ServerPingInfo::ServerPingInfo() : timestamp_(common::time::current_utc_mstime()) {}
 
-common::Error ServerPingInfo::SerializeFields(json_object* obj) const {
-  json_object_object_add(obj, SERVER_INFO_TIMESTAMP_FIELD, json_object_new_int64(timestamp_));
+common::Error ServerPingInfo::SerializeFields(json_object* out) const {
+  json_object_object_add(out, SERVER_INFO_TIMESTAMP_FIELD, json_object_new_int64(timestamp_));
   return common::Error();
 }
 
@@ -50,8 +50,8 @@ timestamp_t ServerPingInfo::GetTimeStamp() const {
 
 ClientPingInfo::ClientPingInfo() : timestamp_(common::time::current_utc_mstime()) {}
 
-common::Error ClientPingInfo::SerializeFields(json_object* obj) const {
-  json_object_object_add(obj, CLIENT_INFO_TIMESTAMP_FIELD, json_object_new_int64(timestamp_));
+common::Error ClientPingInfo::SerializeFields(json_object* out) const {
+  json_object_object_add(out, CLIENT_INFO_TIMESTAMP_FIELD, json_object_new_int64(timestamp_));
   return common::Error();
 }
 

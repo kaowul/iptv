@@ -12,51 +12,51 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream_stats.h"
+#include "channel_stats.h"
 
 #include <common/time.h>
 
 namespace iptv_cloud {
 
-StreamStats::StreamStats() : StreamStats(0) {}
+ChannelStats::ChannelStats() : ChannelStats(0) {}
 
-StreamStats::StreamStats(stream_id_t sid)
-    : id_(sid),
+ChannelStats::ChannelStats(channel_id_t cid)
+    : id_(cid),
       last_update_time_(0),
       total_bytes_(0),
       prev_total_bytes_(0),
       bytes_per_second_(0),
       desire_bytes_per_second_() {}
 
-stream_id_t StreamStats::GetID() const {
+channel_id_t ChannelStats::GetID() const {
   return id_;
 }
 
-time_t StreamStats::GetLastUpdateTime() const {
+time_t ChannelStats::GetLastUpdateTime() const {
   return last_update_time_;
 }
 
-void StreamStats::SetLastUpdateTime(time_t t) {
+void ChannelStats::SetLastUpdateTime(time_t t) {
   last_update_time_ = t;
 }
 
-size_t StreamStats::GetTotalBytes() const {
+size_t ChannelStats::GetTotalBytes() const {
   return total_bytes_;
 }
 
-size_t StreamStats::GetPrevTotalBytes() const {
+size_t ChannelStats::GetPrevTotalBytes() const {
   return prev_total_bytes_;
 }
 
-void StreamStats::SetPrevTotalBytes(size_t bytes) {
+void ChannelStats::SetPrevTotalBytes(size_t bytes) {
   prev_total_bytes_ = bytes;
 }
 
-size_t StreamStats::GetDiffTotalBytes() const {
+size_t ChannelStats::GetDiffTotalBytes() const {
   return total_bytes_ - prev_total_bytes_;
 }
 
-void StreamStats::UpdateBps(size_t sec) {
+void ChannelStats::UpdateBps(size_t sec) {
   if (!sec) {
     return;
   }
@@ -64,28 +64,28 @@ void StreamStats::UpdateBps(size_t sec) {
   bytes_per_second_ = GetDiffTotalBytes() / sec;
 }
 
-size_t StreamStats::GetBps() const {
+size_t ChannelStats::GetBps() const {
   return bytes_per_second_;
 }
 
-void StreamStats::SetBps(size_t bps) {
+void ChannelStats::SetBps(size_t bps) {
   bytes_per_second_ = bps;
 }
 
-void StreamStats::UpdateCheckPoint() {
+void ChannelStats::UpdateCheckPoint() {
   prev_total_bytes_ = total_bytes_;
 }
 
-void StreamStats::SetTotalBytes(size_t bytes) {
+void ChannelStats::SetTotalBytes(size_t bytes) {
   total_bytes_ = bytes;
   last_update_time_ = common::time::current_mstime();
 }
 
-void StreamStats::SetDesireBytesPerSecond(const common::media::DesireBytesPerSec& bps) {
+void ChannelStats::SetDesireBytesPerSecond(const common::media::DesireBytesPerSec& bps) {
   desire_bytes_per_second_ = bps;
 }
 
-common::media::DesireBytesPerSec StreamStats::GetDesireBytesPerSecond() const {
+common::media::DesireBytesPerSec ChannelStats::GetDesireBytesPerSecond() const {
   return desire_bytes_per_second_;
 }
 

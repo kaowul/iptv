@@ -14,35 +14,32 @@
 
 #pragma once
 
+#include <string>
+
 #include <common/uri/url.h>
 
-#include <common/serializer/json_serializer.h>
-
-#include "types.h"
+#include "server/commands_info/stream/stream_info.h"
 
 namespace iptv_cloud {
 namespace server {
 namespace stream {
 
-class GetLogInfo : public common::serializer::JsonSerializer<GetLogInfo> {
+class GetLogInfo : public StreamInfo {
  public:
-  typedef common::serializer::JsonSerializer<GetLogInfo> base_class;
+  typedef StreamInfo base_class;
   typedef common::uri::Url url_t;
-  typedef channel_id_t stream_id_t;
 
   GetLogInfo();
   explicit GetLogInfo(stream_id_t stream_id, const std::string& feedback_dir, const url_t& log_path);
 
   url_t GetLogPath() const;
-  stream_id_t GetStreamID() const;
   std::string GetFeedbackDir() const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* obj) const override;
+  common::Error SerializeFields(json_object* out) const override;
 
  private:
-  stream_id_t stream_id_;
   std::string feedback_dir_;
   common::uri::Url path_;
 };

@@ -14,7 +14,6 @@
 
 #include "server/commands_info/stream/quit_status_info.h"
 
-#define STATUS_STREAM_INFO_STREAM_ID_FIELD "id"
 #define STATUS_STREAM_INFO_SIGNAL_FIELD "signal"
 #define STATUS_STREAM_INFO_EXIT_STATUS_FIELD "exit_status"
 
@@ -22,14 +21,10 @@ namespace iptv_cloud {
 namespace server {
 namespace stream {
 
-QuitStatusInfo::QuitStatusInfo() : base_class(), stream_id_(), exit_status_(), signal_() {}
+QuitStatusInfo::QuitStatusInfo() : base_class(), exit_status_(), signal_() {}
 
 QuitStatusInfo::QuitStatusInfo(stream_id_t stream_id, int exit_status, int signal)
-    : stream_id_(stream_id), exit_status_(exit_status), signal_(signal) {}
-
-QuitStatusInfo::stream_id_t QuitStatusInfo::GetStreamID() const {
-  return stream_id_;
-}
+    : base_class(stream_id), exit_status_(exit_status), signal_(signal) {}
 
 int QuitStatusInfo::GetSignal() const {
   return signal_;
@@ -41,10 +36,9 @@ int QuitStatusInfo::GetExitStatus() const {
 
 common::Error QuitStatusInfo::DoDeSerialize(json_object* serialized) {
   QuitStatusInfo inf;
-  json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, STATUS_STREAM_INFO_STREAM_ID_FIELD, &jid);
-  if (!jid_exists) {
-    return common::make_error_inval();
+  common::Error err = inf.base_class::DoDeSerialize(serialized);
+  if (err) {
+    return err;
   }
 
   json_object* jsignal = nullptr;
@@ -60,7 +54,6 @@ common::Error QuitStatusInfo::DoDeSerialize(json_object* serialized) {
     return common::make_error_inval();
   }
 
-  inf.stream_id_ = json_object_get_string(jid);
   inf.signal_ = json_object_get_int(jsignal);
   inf.exit_status_ = json_object_get_int(jexit_status);
   *this = inf;
@@ -68,10 +61,9 @@ common::Error QuitStatusInfo::DoDeSerialize(json_object* serialized) {
 }
 
 common::Error QuitStatusInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, STATUS_STREAM_INFO_STREAM_ID_FIELD, json_object_new_string(stream_id_.c_str()));
   json_object_object_add(out, STATUS_STREAM_INFO_SIGNAL_FIELD, json_object_new_int(signal_));
   json_object_object_add(out, STATUS_STREAM_INFO_EXIT_STATUS_FIELD, json_object_new_int(exit_status_));
-  return common::Error();
+  return base_class::SerializeFields(out);
 }
 
 }  // namespace stream

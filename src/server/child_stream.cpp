@@ -23,7 +23,7 @@ namespace server {
 ChildStream::ChildStream(common::libev::IoLoop* server, StreamStruct* mem)
     : base_class(server), mem_(mem), client_(nullptr) {}
 
-channel_id_t ChildStream::GetChannelID() const {
+stream_id_t ChildStream::GetStreamID() const {
   return mem_->id;
 }
 

@@ -25,11 +25,12 @@ namespace iptv_cloud {
 class OutputUri {
  public:
   typedef common::file_system::ascii_directory_string_path http_root_t;
+  typedef channel_id_t uri_id_t;
   OutputUri();
-  explicit OutputUri(stream_id_t id, const common::uri::Url& output);
+  explicit OutputUri(uri_id_t id, const common::uri::Url& output);
 
-  stream_id_t GetID() const;
-  void SetID(stream_id_t id);
+  uri_id_t GetID() const;
+  void SetID(uri_id_t id);
 
   common::uri::Url GetOutput() const;
   void SetOutput(const common::uri::Url& uri);
@@ -49,7 +50,7 @@ class OutputUri {
   bool Equals(const OutputUri& inf) const;
 
  private:
-  stream_id_t id_;
+  uri_id_t id_;
   common::uri::Url output_;
   http_root_t http_root_;
 

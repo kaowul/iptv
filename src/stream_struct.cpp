@@ -18,7 +18,7 @@
 
 #include <common/time.h>
 
-#include "stream_stats.h"
+#include "channel_stats.h"
 
 namespace common {
 
@@ -35,18 +35,18 @@ std::string ConvertToString(iptv_cloud::StreamStatus st) {
 namespace iptv_cloud {
 
 namespace {
-output_stream_info_t make_outputs(const std::vector<stream_id_t>& output) {
-  output_stream_info_t res;
-  for (stream_id_t out : output) {
-    res.push_back(new StreamStats(out));
+output_channels_info_t make_outputs(const std::vector<channel_id_t>& output) {
+  output_channels_info_t res;
+  for (auto out : output) {
+    res.push_back(new ChannelStats(out));
   }
   return res;
 }
 
-input_stream_info_t make_inputs(const std::vector<stream_id_t>& input) {
-  input_stream_info_t res;
-  for (stream_id_t in : input) {
-    res.push_back(new StreamStats(in));
+input_channels_info_t make_inputs(const std::vector<channel_id_t>& input) {
+  input_channels_info_t res;
+  for (auto in : input) {
+    res.push_back(new ChannelStats(in));
   }
   return res;
 }
@@ -63,15 +63,15 @@ StreamStruct::StreamStruct(const StreamInfo& sha) : StreamStruct(sha, common::ti
 StreamStruct::StreamStruct(const StreamInfo& sha, time_t start_time, time_t lst, size_t rest)
     : StreamStruct(sha.id, sha.type, NEW, make_inputs(sha.input), make_outputs(sha.output), start_time, lst, rest) {}
 
-StreamStruct::StreamStruct(channel_id_t cid,
+StreamStruct::StreamStruct(stream_id_t sid,
                            StreamType type,
                            StreamStatus status,
-                           input_stream_info_t input,
-                           output_stream_info_t output,
+                           input_channels_info_t input,
+                           output_channels_info_t output,
                            time_t start_time,
                            time_t lst,
                            size_t rest)
-    : id(cid),
+    : id(sid),
       type(type),
       start_time(start_time),
       loop_start_time(lst),

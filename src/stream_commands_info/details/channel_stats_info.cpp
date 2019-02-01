@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream_commands_info/details/stats_info.h"
+#include "stream_commands_info/details/channel_stats_info.h"
 
 #include <string>
 
@@ -26,16 +26,16 @@
 namespace iptv_cloud {
 namespace details {
 
-StatsInfo::StatsInfo() : StatsInfo(StreamStats()) {}
+ChannelStatsInfo::ChannelStatsInfo() : ChannelStatsInfo(ChannelStats()) {}
 
-StatsInfo::StatsInfo(const StreamStats& stats) : stats_(stats) {}
+ChannelStatsInfo::ChannelStatsInfo(const ChannelStats& stats) : stats_(stats) {}
 
-StreamStats StatsInfo::GetStats() const {
+ChannelStats ChannelStatsInfo::GetChannelStats() const {
   return stats_;
 }
 
-common::Error StatsInfo::SerializeFields(json_object* out) const {
-  stream_id_t sid = stats_.GetID();
+common::Error ChannelStatsInfo::SerializeFields(json_object* out) const {
+  channel_id_t sid = stats_.GetID();
   json_object_object_add(out, FIELD_STATS_ID, json_object_new_int64(sid));
 
   time_t last = stats_.GetLastUpdateTime();
@@ -57,13 +57,13 @@ common::Error StatsInfo::SerializeFields(json_object* out) const {
   return common::Error();
 }
 
-common::Error StatsInfo::DoDeSerialize(json_object* serialized) {
+common::Error ChannelStatsInfo::DoDeSerialize(json_object* serialized) {
   json_object* jid = nullptr;
   json_bool jid_exists = json_object_object_get_ex(serialized, FIELD_STATS_ID, &jid);
   if (!jid_exists) {
     return common::make_error_inval();
   }
-  StreamStats stats(json_object_get_int64(jid));
+  ChannelStats stats(json_object_get_int64(jid));
 
   json_object* jlut = nullptr;
   json_bool jlut_exists = json_object_object_get_ex(serialized, FIELD_STATS_LAST_UPDATE_TIME, &jlut);
@@ -96,7 +96,7 @@ common::Error StatsInfo::DoDeSerialize(json_object* serialized) {
     stats.SetDesireBytesPerSecond(dbps);
   }
 
-  *this = StatsInfo(stats);
+  *this = ChannelStatsInfo(stats);
   return common::Error();
 }
 

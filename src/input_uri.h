@@ -24,8 +24,9 @@ namespace iptv_cloud {
 
 class InputUri {
  public:
+  typedef channel_id_t uri_id_t;
   InputUri();
-  explicit InputUri(stream_id_t id, const common::uri::Url& input);
+  explicit InputUri(uri_id_t id, const common::uri::Url& input);
 
   bool GetRelayVideo() const;
   void SetRelayVideo(bool rv);
@@ -33,8 +34,8 @@ class InputUri {
   bool GetRelayAudio() const;
   void SetRelayAudio(bool ra);
 
-  stream_id_t GetID() const;
-  void SetID(stream_id_t id);
+  uri_id_t GetID() const;
+  void SetID(uri_id_t id);
 
   common::uri::Url GetInput() const;
   void SetInput(const common::uri::Url& uri);
@@ -48,7 +49,7 @@ class InputUri {
   bool Equals(const InputUri& inf) const;
 
  private:
-  stream_id_t id_;
+  uri_id_t id_;
   common::uri::Url input_;
 
   volume_t volume_;

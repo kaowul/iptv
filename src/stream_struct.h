@@ -25,16 +25,16 @@ namespace iptv_cloud {
 
 enum StreamStatus { NEW = 0, INIT = 1, STARTED = 2, READY = 3, PLAYING = 4, FROZEN = 5, WAITING = 6 };
 
-class StreamStats;
+class ChannelStats;
 
-typedef std::vector<StreamStats*> input_stream_info_t;
-typedef std::vector<StreamStats*> output_stream_info_t;
+typedef std::vector<ChannelStats*> input_channels_info_t;
+typedef std::vector<ChannelStats*> output_channels_info_t;
 
 struct StreamInfo {
-  channel_id_t id;
+  stream_id_t id;
   StreamType type;
-  std::vector<stream_id_t> input;
-  std::vector<stream_id_t> output;
+  std::vector<channel_id_t> input;
+  std::vector<channel_id_t> output;
 
   bool Equals(const StreamInfo& inf) const;
 };
@@ -51,11 +51,11 @@ struct StreamStruct {
   StreamStruct();
   explicit StreamStruct(const StreamInfo& sha);
   StreamStruct(const StreamInfo& sha, time_t start_time, time_t lst, size_t rest);
-  StreamStruct(channel_id_t cid,
+  StreamStruct(stream_id_t sid,
                StreamType type,
                StreamStatus status,
-               input_stream_info_t input,
-               output_stream_info_t output,
+               input_channels_info_t input,
+               output_channels_info_t output,
                time_t start_time,
                time_t lst,
                size_t rest);
@@ -68,7 +68,7 @@ struct StreamStruct {
 
   void ResetDataWait();
 
-  const channel_id_t id;
+  const stream_id_t id;
   const StreamType type;
 
   const time_t start_time;  // sec
@@ -77,8 +77,8 @@ struct StreamStruct {
   size_t restarts;
   StreamStatus status;
 
-  const input_stream_info_t input;    // ptrs
-  const output_stream_info_t output;  // ptrs
+  const input_channels_info_t input;    // ptrs
+  const output_channels_info_t output;  // ptrs
 
  private:
   DISALLOW_COPY_AND_ASSIGN(StreamStruct);

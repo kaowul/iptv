@@ -20,31 +20,9 @@ namespace iptv_cloud {
 namespace server {
 namespace stream {
 
-RestartInfo::RestartInfo() : base_class(), stream_id_() {}
+RestartInfo::RestartInfo() : base_class() {}
 
-RestartInfo::RestartInfo(stream_id_t stream_id) : stream_id_(stream_id) {}
-
-RestartInfo::stream_id_t RestartInfo::GetStreamID() const {
-  return stream_id_;
-}
-
-common::Error RestartInfo::DoDeSerialize(json_object* serialized) {
-  RestartInfo inf;
-  json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(serialized, RESTART_INFO_STREAM_ID_FIELD, &jid);
-  if (!jid_exists) {
-    return common::make_error_inval();
-  }
-
-  inf.stream_id_ = json_object_get_string(jid);
-  *this = inf;
-  return common::Error();
-}
-
-common::Error RestartInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, RESTART_INFO_STREAM_ID_FIELD, json_object_new_string(stream_id_.c_str()));
-  return common::Error();
-}
+RestartInfo::RestartInfo(stream_id_t stream_id) : base_class(stream_id) {}
 
 }  // namespace stream
 }  // namespace server

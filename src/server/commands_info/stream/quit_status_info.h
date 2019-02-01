@@ -14,23 +14,19 @@
 
 #pragma once
 
-#include <common/serializer/json_serializer.h>
-
-#include "types.h"
+#include "server/commands_info/stream/stream_info.h"
 
 namespace iptv_cloud {
 namespace server {
 namespace stream {
 
-class QuitStatusInfo : public common::serializer::JsonSerializer<QuitStatusInfo> {
+class QuitStatusInfo : public StreamInfo {
  public:
-  typedef JsonSerializer<QuitStatusInfo> base_class;
-  typedef channel_id_t stream_id_t;
+  typedef StreamInfo base_class;
 
   QuitStatusInfo();
   explicit QuitStatusInfo(stream_id_t stream_id, int exit_status, int signal);
 
-  stream_id_t GetStreamID() const;
   int GetSignal() const;
   int GetExitStatus() const;
 
@@ -39,7 +35,6 @@ class QuitStatusInfo : public common::serializer::JsonSerializer<QuitStatusInfo>
   common::Error SerializeFields(json_object* out) const override;
 
  private:
-  stream_id_t stream_id_;
   int exit_status_;
   int signal_;
 };

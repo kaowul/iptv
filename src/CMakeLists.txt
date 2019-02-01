@@ -14,7 +14,7 @@ SET(GLOBAL_COMMON_HEADERS
   ${CMAKE_SOURCE_DIR}/src/input_uri.h
   ${CMAKE_SOURCE_DIR}/src/logo.h
   ${CMAKE_SOURCE_DIR}/src/stream_struct.h
-  ${CMAKE_SOURCE_DIR}/src/stream_stats.h
+  ${CMAKE_SOURCE_DIR}/src/channel_stats.h
   ${CMAKE_SOURCE_DIR}/src/stream_commands.h
   ${CMAKE_SOURCE_DIR}/src/types.h
 )
@@ -27,7 +27,7 @@ SET(GLOBAL_COMMON_SOURCES
   ${CMAKE_SOURCE_DIR}/src/input_uri.cpp
   ${CMAKE_SOURCE_DIR}/src/logo.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_struct.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream_stats.cpp
+  ${CMAKE_SOURCE_DIR}/src/channel_stats.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_commands.cpp
   ${CMAKE_SOURCE_DIR}/src/types.cpp
 )
@@ -46,14 +46,14 @@ SET(STREAM_COMMANDS_INFO_HEADERS
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/restart_info.h
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/changed_sources_info.h
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/statistic_info.h
-  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/details/stats_info.h
+  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/details/channel_stats_info.h
 )
 SET(STREAM_COMMANDS_INFO_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/stop_info.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/restart_info.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/changed_sources_info.cpp
   ${CMAKE_SOURCE_DIR}/src/stream_commands_info/statistic_info.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/details/stats_info.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream_commands_info/details/channel_stats_info.cpp
 )
 
 FIND_PACKAGE(Common REQUIRED)

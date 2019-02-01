@@ -34,7 +34,7 @@ class StopInfo : public LicenseInfo {
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
-  common::Error SerializeFields(json_object* obj) const override;
+  common::Error SerializeFields(json_object* out) const override;
 
  private:
   common::time64_t delay_;

@@ -29,11 +29,11 @@
 
 #include "dumpers/dumpers_factory.h"
 
+#include "channel_stats.h"
 #include "stream/elements/element.h"
 #include "stream/gstreamer_utils.h"
 #include "stream/ibase_builder.h"
 #include "stream/probes.h"  // for Probe (ptr only), PROBE_IN, PROBE_OUT
-#include "stream_stats.h"
 
 #include "utils/utils.h"
 
@@ -368,7 +368,7 @@ void IBaseStream::RegisterAudioCaps(SupportedAudioCodec saudio, GstCaps* caps, e
     gint rate = 0, channels = 0;
     if (gst_structure_get_int(pad_struct, "rate", &rate) && gst_structure_get_int(pad_struct, "channels", &channels)) {
       common::media::DesireBytesPerSec kbps = common::media::CalculateDesireAudioBandwidthBytesPerSec(rate, channels);
-      input_stream_info_t ins = stats_->input;
+      input_channels_info_t ins = stats_->input;
       common::media::DesireBytesPerSec prev = ins[id]->GetDesireBytesPerSecond();
       common::media::DesireBytesPerSec next = prev + kbps;
       ins[id]->SetDesireBytesPerSecond(next);
@@ -390,7 +390,7 @@ void IBaseStream::RegisterVideoCaps(SupportedVideoCodec svideo, GstCaps* caps, e
       gint height = 0;
       if (gst_structure_get_int(pad_struct, "width", &width) && gst_structure_get_int(pad_struct, "height", &height)) {
         common::media::DesireBytesPerSec kbps = common::media::CalculateDesireMPEGBandwidthBytesPerSec(width, height);
-        input_stream_info_t ins = stats_->input;
+        input_channels_info_t ins = stats_->input;
         common::media::DesireBytesPerSec prev = ins[id]->GetDesireBytesPerSecond();
         ins[id]->SetDesireBytesPerSecond(prev + kbps);
         desire_flags_ |= INITED_VIDEO;
@@ -414,7 +414,7 @@ void IBaseStream::RegisterVideoCaps(SupportedVideoCodec svideo, GstCaps* caps, e
 
         common::media::DesireBytesPerSec kbps =
             common::media::CalculateDesireH264BandwidthBytesPerSec(width, height, framerate, profile);
-        input_stream_info_t ins = stats_->input;
+        input_channels_info_t ins = stats_->input;
         common::media::DesireBytesPerSec prev = ins[id]->GetDesireBytesPerSecond();
         ins[id]->SetDesireBytesPerSecond(prev + kbps);
         desire_flags_ |= INITED_VIDEO;
@@ -556,7 +556,7 @@ gboolean IBaseStream::HandleMainTimerTick() {
 
   size_t checkpoint_diff_in_total = 0;
   common::media::DesireBytesPerSec checkpoint_desire_in_total;
-  input_stream_info_t in = stats_->input;
+  input_channels_info_t in = stats_->input;
   size_t input_stream_count = in.size();
   for (size_t i = 0; i < input_stream_count; ++i) {
     size_t checkpoint_diff_out_stream = in[i]->GetDiffTotalBytes();
@@ -566,7 +566,7 @@ gboolean IBaseStream::HandleMainTimerTick() {
   }
 
   size_t checkpoint_diff_out_total = 0;
-  output_stream_info_t out = stats_->output;
+  output_channels_info_t out = stats_->output;
   size_t output_stream_count = out.size();
   for (size_t i = 0; i < output_stream_count; ++i) {
     size_t checkpoint_diff_out_stream = out[i]->GetDiffTotalBytes();
@@ -742,18 +742,18 @@ gboolean IBaseStream::main_timer_callback(gpointer user_data) {
 
 void IBaseStream::UpdateStats(const Probe* probe, gsize size) {
   if (probe->GetName() == PROBE_IN) {
-    input_stream_info_t ins = stats_->input;
+    input_channels_info_t ins = stats_->input;
     if (probe->GetID() < ins.size()) {
-      StreamStats* stream_info = ins[probe->GetID()];
-      const size_t prev_total = stream_info->GetTotalBytes();
-      stream_info->SetTotalBytes(prev_total + size);
+      ChannelStats* cahnnel_info = ins[probe->GetID()];
+      const size_t prev_total = cahnnel_info->GetTotalBytes();
+      cahnnel_info->SetTotalBytes(prev_total + size);
     }
   } else if (probe->GetName() == PROBE_OUT) {
-    output_stream_info_t outs = stats_->output;
+    output_channels_info_t outs = stats_->output;
     if (probe->GetID() < outs.size()) {
-      StreamStats* stream_info = outs[probe->GetID()];
-      const size_t prev_total = stream_info->GetTotalBytes();
-      stream_info->SetTotalBytes(prev_total + size);
+      ChannelStats* cahnnel_info = outs[probe->GetID()];
+      const size_t prev_total = cahnnel_info->GetTotalBytes();
+      cahnnel_info->SetTotalBytes(prev_total + size);
     }
   }
 }

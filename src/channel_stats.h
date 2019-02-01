@@ -20,12 +20,12 @@
 
 namespace iptv_cloud {
 
-class StreamStats {  // only compile time size fields
+class ChannelStats {  // only compile time size fields
  public:
-  StreamStats();
-  explicit StreamStats(stream_id_t sid);
+  ChannelStats();
+  explicit ChannelStats(channel_id_t cid);
 
-  stream_id_t GetID() const;
+  channel_id_t GetID() const;
 
   time_t GetLastUpdateTime() const;
   void SetLastUpdateTime(time_t t);
@@ -47,11 +47,8 @@ class StreamStats {  // only compile time size fields
   void SetDesireBytesPerSecond(const common::media::DesireBytesPerSec& bps);
   common::media::DesireBytesPerSec GetDesireBytesPerSecond() const;
 
-  void SetIsBroken(bool broken);
-  bool IsBroken() const;
-
  private:
-  stream_id_t id_;
+  channel_id_t id_;
 
   time_t last_update_time_;  // up_time
   size_t total_bytes_;       // received bytes

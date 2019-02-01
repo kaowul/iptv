@@ -16,7 +16,7 @@
 
 #include <math.h>
 
-#include "stream_commands_info/details/stats_info.h"
+#include "stream_commands_info/details/channel_stats_info.h"
 
 #define FIELD_STREAM_ID "id"
 #define FIELD_STREAM_TYPE "type"
@@ -38,15 +38,15 @@ StatisticInfo::StatisticInfo() : stream_struct_(), cpu_load_(), rss_(), timestam
 
 StatisticInfo::StatisticInfo(const StreamStruct& str, cpu_load_t cpu_load, rss_t rss, time_t time)
     : stream_struct_(), cpu_load_(cpu_load), rss_(rss), timestamp_(time) {
-  input_stream_info_t input;
+  input_channels_info_t input;
   for (auto it = str.input.rbegin(); it != str.input.rend(); ++it) {
-    StreamStats copy = *(*it);
-    input.push_back(new StreamStats(copy));
+    ChannelStats copy = *(*it);
+    input.push_back(new ChannelStats(copy));
   }
-  output_stream_info_t output;
+  output_channels_info_t output;
   for (auto it = str.output.rbegin(); it != str.output.rend(); ++it) {
-    StreamStats copy = *(*it);
-    output.push_back(new StreamStats(copy));
+    ChannelStats copy = *(*it);
+    output.push_back(new ChannelStats(copy));
   }
   StreamStruct* struc =
       new StreamStruct(str.id, str.type, str.status, input, output, str.start_time, str.loop_start_time, str.restarts);
@@ -79,15 +79,15 @@ common::Error StatisticInfo::SerializeFields(json_object* out) const {
     return common::make_error_inval();
   }
 
-  const channel_id_t channel_id = stream_struct_->id;
+  const auto channel_id = stream_struct_->id;
   json_object_object_add(out, FIELD_STREAM_ID, json_object_new_string(channel_id.c_str()));
   json_object_object_add(out, FIELD_STREAM_TYPE, json_object_new_int(stream_struct_->type));
 
-  input_stream_info_t input_streams = stream_struct_->input;
+  input_channels_info_t input_streams = stream_struct_->input;
   json_object* jinput_streams = json_object_new_array();
-  for (StreamStats* inf : input_streams) {
+  for (ChannelStats* inf : input_streams) {
     json_object* jinf = nullptr;
-    details::StatsInfo sinf(*inf);
+    details::ChannelStatsInfo sinf(*inf);
     common::Error err = sinf.Serialize(&jinf);
     if (err) {
       continue;
@@ -96,11 +96,11 @@ common::Error StatisticInfo::SerializeFields(json_object* out) const {
   }
   json_object_object_add(out, FIELD_STREAM_INPUT_STREAMS, jinput_streams);
 
-  output_stream_info_t output_streams = stream_struct_->output;
+  output_channels_info_t output_streams = stream_struct_->output;
   json_object* joutput_streams = json_object_new_array();
-  for (StreamStats* inf : output_streams) {
+  for (ChannelStats* inf : output_streams) {
     json_object* jinf = nullptr;
-    details::StatsInfo sinf(*inf);
+    details::ChannelStatsInfo sinf(*inf);
     common::Error err = sinf.Serialize(&jinf);
     if (err) {
       continue;
@@ -125,7 +125,7 @@ common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
   if (!jid_exists) {
     return common::make_error_inval();
   }
-  channel_id_t cid = json_object_get_string(jid);
+  const auto cid = json_object_get_string(jid);
 
   json_object* jtype = nullptr;
   json_bool jtype_exists = json_object_object_get_ex(serialized, FIELD_STREAM_TYPE, &jtype);
@@ -134,37 +134,37 @@ common::Error StatisticInfo::DoDeSerialize(json_object* serialized) {
   }
   StreamType type = static_cast<StreamType>(json_object_get_int(jtype));
 
-  input_stream_info_t input;
+  input_channels_info_t input;
   json_object* jinput = nullptr;
   json_bool jinput_exists = json_object_object_get_ex(serialized, FIELD_STREAM_INPUT_STREAMS, &jinput);
   if (jinput_exists) {
     int len = json_object_array_length(jinput);
     for (int i = len - 1; i >= 0; --i) {
       json_object* jin = json_object_array_get_idx(jinput, i);
-      details::StatsInfo sinf;
+      details::ChannelStatsInfo sinf;
       common::Error err = sinf.DeSerialize(jin);
       if (err) {
         continue;
       }
 
-      input.push_back(new StreamStats(sinf.GetStats()));
+      input.push_back(new ChannelStats(sinf.GetChannelStats()));
     }
   }
 
-  output_stream_info_t output;
+  output_channels_info_t output;
   json_object* joutput = nullptr;
   json_bool joutput_exists = json_object_object_get_ex(serialized, FIELD_STREAM_OUTPUT_STREAMS, &joutput);
   if (joutput_exists) {
     int len = json_object_array_length(joutput);
     for (int i = len - 1; i >= 0; --i) {
       json_object* jin = json_object_array_get_idx(joutput, i);
-      details::StatsInfo sinf;
+      details::ChannelStatsInfo sinf;
       common::Error err = sinf.DeSerialize(jin);
       if (err) {
         continue;
       }
 
-      output.push_back(new StreamStats(sinf.GetStats()));
+      output.push_back(new ChannelStats(sinf.GetChannelStats()));
     }
   }
 

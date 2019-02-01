@@ -456,9 +456,9 @@ void ProcessSlaveWrapper::Moved(common::libev::IoLoop* server, common::libev::Io
 
 void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int status) {
   ChildStream* channel = static_cast<ChildStream*>(child);
-  const channel_id_t cid = channel->GetChannelID();
+  const auto sid = channel->GetStreamID();
 
-  INFO_LOG() << "Successful finished children id: " << cid;
+  INFO_LOG() << "Successful finished children id: " << sid;
   int stabled_status = EXIT_SUCCESS;
   int signal_number = 0;
 
@@ -470,7 +470,7 @@ void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int 
   if (WIFSIGNALED(status)) {
     signal_number = WTERMSIG(status);
   }
-  INFO_LOG() << "Stream id: " << cid << ", exit with status: " << (stabled_status ? "FAILURE" : "SUCCESS")
+  INFO_LOG() << "Stream id: " << sid << ", exit with status: " << (stabled_status ? "FAILURE" : "SUCCESS")
              << ", signal: " << signal_number;
 
   loop_->UnRegisterChild(child);
@@ -481,7 +481,7 @@ void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int 
   delete channel;
 
   std::string quit_json;
-  stream::QuitStatusInfo ch_status_info(cid, stabled_status, signal_number);
+  stream::QuitStatusInfo ch_status_info(sid, !stabled_status, signal_number);  // reverse status
   common::Error err_ser = ch_status_info.SerializeToString(&quit_json);
   if (err_ser) {
     const std::string err_str = err_ser->GetDescription();
@@ -492,11 +492,11 @@ void ProcessSlaveWrapper::ChildStatusChanged(common::libev::IoChild* child, int 
   BroadcastClients(QuitStatusStreamBroadcast(quit_json));
 }
 
-ChildStream* ProcessSlaveWrapper::FindChildByID(channel_id_t cid) const {
+ChildStream* ProcessSlaveWrapper::FindChildByID(stream_id_t cid) const {
   auto childs = loop_->GetChilds();
   for (auto* child : childs) {
     ChildStream* channel = static_cast<ChildStream*>(child);
-    if (channel->GetChannelID() == cid) {
+    if (channel->GetStreamID() == cid) {
       return channel;
     }
   }
