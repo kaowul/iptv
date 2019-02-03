@@ -29,8 +29,6 @@ EncodingOnlyVideoStream::EncodingOnlyVideoStream(const EncodingConfig* config,
                                                  StreamStruct* stats)
     : EncodingStream(config, client, stats) {}
 
-EncodingOnlyVideoStream::~EncodingOnlyVideoStream() {}
-
 const char* EncodingOnlyVideoStream::ClassName() const {
   return "EncodingOnlyVideoStream";
 }

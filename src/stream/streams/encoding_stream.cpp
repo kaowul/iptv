@@ -39,8 +39,6 @@ IBaseBuilder* EncodingStream::CreateBuilder() {
 EncodingStream::EncodingStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
     : base_class(config, client, stats) {}
 
-EncodingStream::~EncodingStream() {}
-
 const char* EncodingStream::ClassName() const {
   return "EncodingStream";
 }

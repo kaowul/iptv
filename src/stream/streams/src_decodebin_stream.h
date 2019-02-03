@@ -31,7 +31,6 @@ class SrcDecodeBinStream : public IBaseStream {
 
  public:
   SrcDecodeBinStream(const Config* config, IStreamClient* client, StreamStruct* stats);
-  ~SrcDecodeBinStream() override;
 
   const char* ClassName() const override;
 

@@ -21,8 +21,6 @@ namespace builders {
 
 GstBaseBuilder::GstBaseBuilder(const Config* api, IBaseBuilderObserver* observer) : IBaseBuilder(api, observer) {}
 
-GstBaseBuilder::~GstBaseBuilder() {}
-
 bool GstBaseBuilder::InitPipeline() {
   Connector conn = BuildInput();
   conn = BuildUdbConnections(conn);

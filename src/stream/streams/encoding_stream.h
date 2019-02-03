@@ -26,7 +26,6 @@ class EncodingStream : public SrcDecodeBinStream {
  public:
   typedef SrcDecodeBinStream base_class;
   EncodingStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
-  ~EncodingStream() override;
 
   const char* ClassName() const override;
 

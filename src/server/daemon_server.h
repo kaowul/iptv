@@ -23,7 +23,6 @@ class DaemonServer : public common::libev::tcp::TcpServer {
  public:
   typedef common::libev::tcp::TcpServer base_class;
   explicit DaemonServer(const common::net::HostAndPort& host, common::libev::IoLoopObserver* observer = nullptr);
-  ~DaemonServer() override;
 
  private:
   common::libev::tcp::TcpClient* CreateClient(const common::net::socket_info& info) override;

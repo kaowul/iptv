@@ -44,8 +44,6 @@ void SrcDecodeBinStream::ConnectDecodebinSignals(elements::ElementDecodebin* dec
 SrcDecodeBinStream::SrcDecodeBinStream(const Config* config, IStreamClient* client, StreamStruct* stats)
     : IBaseStream(config, client, stats) {}
 
-SrcDecodeBinStream::~SrcDecodeBinStream() {}
-
 const char* SrcDecodeBinStream::ClassName() const {
   return "SrcDecodeBinStream";
 }

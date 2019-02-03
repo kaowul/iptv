@@ -24,7 +24,6 @@ namespace server {
 class DaemonClient : public common::libev::tcp::TcpClient {
  public:
   typedef common::libev::tcp::TcpClient base_class;
-  ~DaemonClient() override;
 
   bool IsVerified() const;
   void SetVerified(bool verif);

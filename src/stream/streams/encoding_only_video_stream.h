@@ -23,7 +23,6 @@ namespace streams {
 class EncodingOnlyVideoStream : public EncodingStream {
  public:
   EncodingOnlyVideoStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
-  ~EncodingOnlyVideoStream() override;
 
   const char* ClassName() const override;
 

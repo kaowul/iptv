@@ -29,8 +29,6 @@ EncodingOnlyAudioStream::EncodingOnlyAudioStream(const EncodingConfig* config,
                                                  StreamStruct* stats)
     : EncodingStream(config, client, stats) {}
 
-EncodingOnlyAudioStream::~EncodingOnlyAudioStream() {}
-
 const char* EncodingOnlyAudioStream::ClassName() const {
   return "EncodingOnlyAudioStream";
 }

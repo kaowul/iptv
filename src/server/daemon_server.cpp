@@ -22,8 +22,6 @@ namespace server {
 DaemonServer::DaemonServer(const common::net::HostAndPort& host, common::libev::IoLoopObserver* observer)
     : base_class(host, true, observer) {}
 
-DaemonServer::~DaemonServer() {}
-
 common::libev::tcp::TcpClient* DaemonServer::CreateClient(const common::net::socket_info& info) {
   return new ProtocoledDaemonClient(this, info);
 }

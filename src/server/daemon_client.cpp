@@ -20,8 +20,6 @@ namespace server {
 DaemonClient::DaemonClient(common::libev::IoLoop* server, const common::net::socket_info& info)
     : base_class(server, info), is_verified_(false) {}
 
-DaemonClient::~DaemonClient() {}
-
 bool DaemonClient::IsVerified() const {
   return is_verified_;
 }
