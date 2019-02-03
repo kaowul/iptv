@@ -14,6 +14,7 @@
 
 #include "stream/streams/src_decodebin_stream.h"
 
+#include "stream/config.h"
 #include "stream/pad/pad.h"
 
 namespace iptv_cloud {
@@ -51,7 +52,7 @@ const char* SrcDecodeBinStream::ClassName() const {
 
 void SrcDecodeBinStream::PreLoop() {
   const Config* conf = GetConfig();
-  input_t input = conf->GetInput();
+  const auto input = conf->GetInput();
   if (client_) {
     client_->OnInputChanged(input[0]);
   }

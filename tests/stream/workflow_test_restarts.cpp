@@ -7,7 +7,7 @@
 #include <common/file_system/file_system.h>
 #include <common/sprintf.h>
 
-#include "stream/constants.h"
+#include "constants.h"
 
 #include "stream/configs_factory.h"
 #include "stream/streams/screen_stream.h"

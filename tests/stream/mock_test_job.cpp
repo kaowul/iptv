@@ -4,7 +4,7 @@
 
 #include <thread>
 
-#include "stream/constants.h"
+#include "constants.h"
 
 #include "stream/configs_factory.h"
 #include "stream/streams/screen_stream.h"
@@ -49,15 +49,10 @@ TEST(Job, Status) {
   uri.SetOutput(common::uri::Url("screen"));
   ouri.push_back(uri);
 
-  const std::string uri_str = common::ConvertToString(ouri);
-
-  iptv_cloud::utils::ArgsMap args = {std::make_pair(FEEDBACK_DIR_FIELD, "~"), std::make_pair(INPUT_FIELD, "test"),
-                                     std::make_pair(OUTPUT_FIELD, uri_str)};
   FakeObserver cl;
   iptv_cloud::stream::streams_init(0, NULL);
   iptv_cloud::StreamStruct st(iptv_cloud::StreamInfo{"screen", iptv_cloud::SCREEN, {}, {0}});
-  iptv_cloud::stream::IBaseStream* job = new iptv_cloud::stream::streams::ScreenStream(
-      static_cast<iptv_cloud::stream::streams::AudioVideoConfig*>(iptv_cloud::stream::make_config(args)), &cl, &st);
+  iptv_cloud::stream::IBaseStream* job = new iptv_cloud::stream::streams::ScreenStream(nullptr, &cl, &st);
   std::thread th(&quit_job, job);
   EXPECT_CALL(cl, OnStatusChanged(job, _)).Times(4);
   EXPECT_CALL(cl, OnTimeoutUpdated(job)).Times(::testing::AnyNumber());

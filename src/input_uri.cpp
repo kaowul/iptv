@@ -20,6 +20,7 @@
 #include <json-c/json_tokener.h>
 
 #include "constants.h"
+#include "stream/stypes.h"
 
 #define FIELD_INPUT_ID "id"
 #define FIELD_INPUT_URI "uri"
@@ -28,8 +29,6 @@
 #define FIELD_INPUT_RELAY_VIDEO "relay_video"
 #define FIELD_INPUT_MUTE_AUDIO "mute"
 #define FIELD_INPUT_VOLUME_AUDIO "volume"
-
-#define TEST_URL "test"
 
 namespace iptv_cloud {
 

@@ -94,6 +94,8 @@
 
 #define TS_TEMPLATE "%05d" CHUNK_EXT
 
+#define TEST_URL "test"
+
 // devices
 #define SCREEN_URL "screen"
 #define DECKLINK_URL "decklink"

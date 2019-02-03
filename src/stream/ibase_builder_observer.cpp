@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ibase_builder_observer.h"
+#include "stream/ibase_builder_observer.h"
 
 namespace iptv_cloud {
 namespace stream {

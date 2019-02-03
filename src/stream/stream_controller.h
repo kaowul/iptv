@@ -23,6 +23,7 @@
 
 #include "protocol/types.h"
 #include "timeshift.h"
+#include "utils/arg_converter.h"
 #include "utils/utils.h"
 
 #include "stream/ibase_stream.h"

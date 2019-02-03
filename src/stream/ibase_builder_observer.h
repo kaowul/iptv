@@ -16,7 +16,7 @@
 
 #include <common/uri/url.h>
 
-#include "stypes.h"
+#include "stream/stypes.h"
 
 namespace iptv_cloud {
 namespace stream {

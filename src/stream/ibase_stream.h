@@ -19,9 +19,13 @@
 #include <string>
 #include <vector>
 
-#include "config.h"
-#include "ibase_builder_observer.h"
+#include <common/file_system/path.h>
+#include <common/types.h>
+
+#include "input_uri.h"
+
 #include "stream/gst_types.h"
+#include "stream/ibase_builder_observer.h"
 #include "stream_struct.h"  // for StreamStatus, StreamStruct (ptr only)
 
 namespace iptv_cloud {
@@ -29,6 +33,7 @@ namespace stream {
 
 class IBaseBuilder;
 class Probe;
+class Config;
 
 enum ExitStatus { EXIT_SELF, EXIT_INNER };
 

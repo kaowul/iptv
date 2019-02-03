@@ -27,9 +27,9 @@
 
 #include <common/time.h>
 
-#include "dumpers/dumpers_factory.h"
-
 #include "channel_stats.h"
+
+#include "stream/dumpers/dumpers_factory.h"
 #include "stream/elements/element.h"
 #include "stream/gstreamer_utils.h"
 #include "stream/ibase_builder.h"
