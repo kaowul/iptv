@@ -31,7 +31,7 @@ namespace iptv_cloud {
 OutputUri::OutputUri() : OutputUri(0, common::uri::Url()) {}
 
 OutputUri::OutputUri(uri_id_t id, const common::uri::Url& output)
-    : id_(id), output_(output), http_root_(), size_(), audio_bit_rate_(), video_bit_rate_() {}
+    : base_class(), id_(id), output_(output), http_root_(), size_(), audio_bit_rate_(), video_bit_rate_() {}
 
 OutputUri::uri_id_t OutputUri::GetID() const {
   return id_;
@@ -86,59 +86,22 @@ bool OutputUri::Equals(const OutputUri& inf) const {
          audio_bit_rate_ == inf.audio_bit_rate_ && video_bit_rate_ == inf.video_bit_rate_;
 }
 
-}  // namespace iptv_cloud
-
-namespace common {
-
-std::string ConvertToString(const iptv_cloud::OutputUri& value) {
-  common::file_system::ascii_directory_string_path ps = value.GetHttpRoot();
-  const std::string http_root_str = ps.GetPath();
-
-  json_object* obj = json_object_new_object();
-  json_object_object_add(obj, FIELD_OUTPUT_ID, json_object_new_int64(value.GetID()));
-  std::string url_str = common::ConvertToString(value.GetOutput());
-  json_object_object_add(obj, FIELD_OUTPUT_URI, json_object_new_string(url_str.c_str()));
-  json_object_object_add(obj, FIELD_OUTPUT_HTTP_ROOT, json_object_new_string(http_root_str.c_str()));
-  const std::string size_str = common::ConvertToString(value.GetSize());
-  json_object_object_add(obj, FIELD_OUTPUT_SIZE, json_object_new_string(size_str.c_str()));
-  const auto vid_bit_rate = value.GetVideoBitrate();
-  if (vid_bit_rate) {
-    json_object_object_add(obj, FIELD_OUTPUT_VIDEO_BITRATE, json_object_new_int(*vid_bit_rate));
-  }
-  const auto audio_bit_rate = value.GetAudioBitrate();
-  if (audio_bit_rate) {
-    json_object_object_add(obj, FIELD_OUTPUT_AUDIO_BITRATE, json_object_new_int(*audio_bit_rate));
-  }
-  std::string res = json_object_get_string(obj);
-  json_object_put(obj);
-  return res;
-}
-
-bool ConvertFromString(const std::string& from, iptv_cloud::OutputUri* out) {
-  if (!out) {
-    return false;
-  }
-
-  json_object* obj = json_tokener_parse(from.c_str());
-  if (!obj) {
-    return false;
-  }
-
-  iptv_cloud::OutputUri res;
+common::Error OutputUri::DoDeSerialize(json_object* serialized) {
+  OutputUri res;
   json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_ID, &jid);
+  json_bool jid_exists = json_object_object_get_ex(serialized, FIELD_OUTPUT_ID, &jid);
   if (jid_exists) {
     res.SetID(json_object_get_int64(jid));
   }
 
   json_object* juri = nullptr;
-  json_bool juri_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_URI, &juri);
+  json_bool juri_exists = json_object_object_get_ex(serialized, FIELD_OUTPUT_URI, &juri);
   if (juri_exists) {
     res.SetOutput(common::uri::Url(json_object_get_string(juri)));
   }
 
   json_object* jhttp_root = nullptr;
-  json_bool jhttp_root_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_HTTP_ROOT, &jhttp_root);
+  json_bool jhttp_root_exists = json_object_object_get_ex(serialized, FIELD_OUTPUT_HTTP_ROOT, &jhttp_root);
   if (jhttp_root_exists) {
     const char* http_root_str = json_object_get_string(jhttp_root);
     const common::file_system::ascii_directory_string_path http_root(http_root_str);
@@ -146,7 +109,7 @@ bool ConvertFromString(const std::string& from, iptv_cloud::OutputUri* out) {
   }
 
   json_object* jsize = nullptr;
-  json_bool jsize_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_SIZE, &jsize);
+  json_bool jsize_exists = json_object_object_get_ex(serialized, FIELD_OUTPUT_SIZE, &jsize);
   if (jsize_exists) {
     common::draw::Size size;
     if (common::ConvertFromString(json_object_get_string(jsize), &size)) {
@@ -155,20 +118,40 @@ bool ConvertFromString(const std::string& from, iptv_cloud::OutputUri* out) {
   }
 
   json_object* jvbitrate = nullptr;
-  json_bool jvbitrate_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_VIDEO_BITRATE, &jvbitrate);
+  json_bool jvbitrate_exists = json_object_object_get_ex(serialized, FIELD_OUTPUT_VIDEO_BITRATE, &jvbitrate);
   if (jvbitrate_exists) {
     res.SetVideoBitrate(json_object_get_int(jvbitrate));
   }
 
   json_object* jabitrate = nullptr;
-  json_bool jabitrate_exists = json_object_object_get_ex(obj, FIELD_OUTPUT_AUDIO_BITRATE, &jabitrate);
+  json_bool jabitrate_exists = json_object_object_get_ex(serialized, FIELD_OUTPUT_AUDIO_BITRATE, &jabitrate);
   if (jabitrate_exists) {
     res.SetAudioBitrate(json_object_get_int(jabitrate));
   }
 
-  json_object_put(obj);
-  *out = res;
-  return true;
+  *this = res;
+  return common::Error();
 }
 
-}  // namespace common
+common::Error OutputUri::SerializeFields(json_object* out) const {
+  common::file_system::ascii_directory_string_path ps = GetHttpRoot();
+  const std::string http_root_str = ps.GetPath();
+
+  json_object_object_add(out, FIELD_OUTPUT_ID, json_object_new_int64(GetID()));
+  std::string url_str = common::ConvertToString(GetOutput());
+  json_object_object_add(out, FIELD_OUTPUT_URI, json_object_new_string(url_str.c_str()));
+  json_object_object_add(out, FIELD_OUTPUT_HTTP_ROOT, json_object_new_string(http_root_str.c_str()));
+  const std::string size_str = common::ConvertToString(GetSize());
+  json_object_object_add(out, FIELD_OUTPUT_SIZE, json_object_new_string(size_str.c_str()));
+  const auto vid_bit_rate = GetVideoBitrate();
+  if (vid_bit_rate) {
+    json_object_object_add(out, FIELD_OUTPUT_VIDEO_BITRATE, json_object_new_int(*vid_bit_rate));
+  }
+  const auto audio_bit_rate = GetAudioBitrate();
+  if (audio_bit_rate) {
+    json_object_object_add(out, FIELD_OUTPUT_AUDIO_BITRATE, json_object_new_int(*audio_bit_rate));
+  }
+  return common::Error();
+}
+
+}  // namespace iptv_cloud

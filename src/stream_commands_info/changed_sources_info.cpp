@@ -26,9 +26,15 @@ ChangedSouresInfo::ChangedSouresInfo(stream_id_t sid, const url_t& url) : base_c
 ChangedSouresInfo::ChangedSouresInfo() : base_class(), id_(), url_() {}
 
 common::Error ChangedSouresInfo::SerializeFields(json_object* out) const {
-  std::string url_str = common::ConvertToString(url_);
+  json_object* url_obj = json_object_new_object();
+  common::Error err = url_.Serialize(&url_obj);
+  if (err) {
+    json_object_put(url_obj);
+    return err;
+  }
+
   json_object_object_add(out, CHANGE_SOURCES_ID_FIELD, json_object_new_string(id_.c_str()));
-  json_object_object_add(out, CHANGE_SOURCES_URL_FIELD, json_object_new_string(url_str.c_str()));
+  json_object_object_add(out, CHANGE_SOURCES_URL_FIELD, url_obj);
   return common::Error();
 }
 
@@ -53,10 +59,9 @@ common::Error ChangedSouresInfo::DoDeSerialize(json_object* serialized) {
   json_object* jurl = nullptr;
   json_bool jurl_exists = json_object_object_get_ex(serialized, CHANGE_SOURCES_URL_FIELD, &jurl);
   if (jurl_exists) {
-    std::string url_str = json_object_get_string(jurl);
-    url_t lurl;
-    if (common::ConvertFromString(url_str, &lurl)) {
-      inf.url_ = lurl;
+    common::Error err = inf.url_.DeSerialize(jurl);
+    if (err) {
+      return err;
     }
   }
 

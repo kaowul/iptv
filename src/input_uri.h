@@ -16,15 +16,18 @@
 
 #include <string>
 
+#include <common/serializer/json_serializer.h>
 #include <common/uri/url.h>
 
 #include "types.h"
 
 namespace iptv_cloud {
 
-class InputUri {
+class InputUri : public common::serializer::JsonSerializer<InputUri> {
  public:
+  typedef JsonSerializer<InputUri> base_class;
   typedef channel_id_t uri_id_t;
+
   InputUri();
   explicit InputUri(uri_id_t id, const common::uri::Url& input);
 
@@ -48,6 +51,10 @@ class InputUri {
 
   bool Equals(const InputUri& inf) const;
 
+ protected:
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
+
  private:
   uri_id_t id_;
   common::uri::Url input_;
@@ -70,8 +77,3 @@ inline bool operator!=(const InputUri& left, const InputUri& right) {
 bool IsTestUrl(const InputUri& url);
 
 }  // namespace iptv_cloud
-
-namespace common {
-std::string ConvertToString(const iptv_cloud::InputUri& value);  // json
-bool ConvertFromString(const std::string& from, iptv_cloud::InputUri* out);
-}  // namespace common

@@ -49,9 +49,9 @@ bool ConvertFromString(const std::string& output_urls, iptv_cloud::output_t* out
   int len = json_object_array_length(jurls);
   for (int i = 0; i < len; ++i) {
     json_object* jurl = json_object_array_get_idx(jurls, i);
-    const char* uri_str = json_object_get_string(jurl);
     iptv_cloud::OutputUri lurl;
-    if (common::ConvertFromString(uri_str, &lurl)) {
+    common::Error err = lurl.DeSerialize(jurl);
+    if (!err) {
       output.push_back(lurl);
     }
   }
@@ -81,9 +81,9 @@ bool ConvertFromString(const std::string& input_urls, iptv_cloud::input_t* out) 
   int len = json_object_array_length(jurls);
   for (int i = 0; i < len; ++i) {
     json_object* jurl = json_object_array_get_idx(jurls, i);
-    const char* uri_str = json_object_get_string(jurl);
     iptv_cloud::InputUri url;
-    if (common::ConvertFromString(uri_str, &url)) {
+    common::Error err = url.DeSerialize(jurl);
+    if (!err) {
       input.push_back(url);
     }
   }

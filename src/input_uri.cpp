@@ -35,7 +35,7 @@ namespace iptv_cloud {
 InputUri::InputUri() : InputUri(0, common::uri::Url()) {}
 
 InputUri::InputUri(uri_id_t id, const common::uri::Url& input)
-    : id_(id), input_(input), volume_(), mute_(false), relay_video_(false), relay_audio_(false) {}
+    : base_class(), id_(id), input_(input), volume_(), mute_(false), relay_video_(false), relay_audio_(false) {}
 
 bool InputUri::GetRelayVideo() const {
   return relay_video_;
@@ -90,81 +90,65 @@ bool InputUri::Equals(const InputUri& inf) const {
          relay_video_ == inf.relay_video_ && relay_audio_ == inf.relay_audio_;
 }
 
-bool IsTestUrl(const InputUri& url) {
-  return url.GetInput() == common::uri::Url(TEST_URL);
-}
-
-}  // namespace iptv_cloud
-
-namespace common {
-
-std::string ConvertToString(const iptv_cloud::InputUri& value) {
-  json_object* obj = json_object_new_object();
-  json_object_object_add(obj, FIELD_INPUT_ID, json_object_new_int64(value.GetID()));
-  std::string url_str = common::ConvertToString(value.GetInput());
-  json_object_object_add(obj, FIELD_INPUT_URI, json_object_new_string(url_str.c_str()));
-  const auto vol = value.GetVolume();
-  if (vol) {
-    json_object_object_add(obj, FIELD_INPUT_VOLUME_AUDIO, json_object_new_double(*vol));
-  }
-  json_object_object_add(obj, FIELD_INPUT_MUTE_AUDIO, json_object_new_boolean(value.GetMute()));
-  json_object_object_add(obj, FIELD_INPUT_RELAY_VIDEO, json_object_new_boolean(value.GetRelayVideo()));
-  json_object_object_add(obj, FIELD_INPUT_RELAY_AUDIO, json_object_new_boolean(value.GetRelayAudio()));
-  std::string res = json_object_get_string(obj);
-  json_object_put(obj);
-  return res;
-}
-
-bool ConvertFromString(const std::string& from, iptv_cloud::InputUri* out) {
-  if (!out) {
-    return false;
-  }
-
-  json_object* obj = json_tokener_parse(from.c_str());
-  if (!obj) {
-    return false;
-  }
-
-  iptv_cloud::InputUri res;
+common::Error InputUri::DoDeSerialize(json_object* serialized) {
+  InputUri res;
   json_object* jid = nullptr;
-  json_bool jid_exists = json_object_object_get_ex(obj, FIELD_INPUT_ID, &jid);
+  json_bool jid_exists = json_object_object_get_ex(serialized, FIELD_INPUT_ID, &jid);
   if (jid_exists) {
     res.SetID(json_object_get_int64(jid));
   }
 
   json_object* juri = nullptr;
-  json_bool juri_exists = json_object_object_get_ex(obj, FIELD_INPUT_URI, &juri);
+  json_bool juri_exists = json_object_object_get_ex(serialized, FIELD_INPUT_URI, &juri);
   if (juri_exists) {
     res.SetInput(common::uri::Url(json_object_get_string(juri)));
   }
 
   json_object* juri_volume_audio = nullptr;
-  json_bool juri_volume_audio_exists = json_object_object_get_ex(obj, FIELD_INPUT_VOLUME_AUDIO, &juri_volume_audio);
+  json_bool juri_volume_audio_exists =
+      json_object_object_get_ex(serialized, FIELD_INPUT_VOLUME_AUDIO, &juri_volume_audio);
   if (juri_volume_audio_exists) {
     res.SetVolume(json_object_get_double(juri_volume_audio));
   }
 
   json_object* juri_mute_audio = nullptr;
-  json_bool juri_mute_audio_exists = json_object_object_get_ex(obj, FIELD_INPUT_MUTE_AUDIO, &juri_mute_audio);
+  json_bool juri_mute_audio_exists = json_object_object_get_ex(serialized, FIELD_INPUT_MUTE_AUDIO, &juri_mute_audio);
   if (juri_mute_audio_exists) {
     res.SetMute(json_object_get_boolean(juri_mute_audio));
   }
 
   json_object* juri_relay_video = nullptr;
-  json_bool juri_relay_video_exists = json_object_object_get_ex(obj, FIELD_INPUT_RELAY_VIDEO, &juri_relay_video);
+  json_bool juri_relay_video_exists = json_object_object_get_ex(serialized, FIELD_INPUT_RELAY_VIDEO, &juri_relay_video);
   if (juri_relay_video_exists) {
     res.SetRelayVideo(json_object_get_boolean(juri_relay_video));
   }
 
   json_object* juri_relay_audio = nullptr;
-  json_bool juri_relay_audio_exists = json_object_object_get_ex(obj, FIELD_INPUT_RELAY_AUDIO, &juri_relay_audio);
+  json_bool juri_relay_audio_exists = json_object_object_get_ex(serialized, FIELD_INPUT_RELAY_AUDIO, &juri_relay_audio);
   if (juri_relay_audio_exists) {
     res.SetRelayAudio(json_object_get_boolean(juri_relay_audio));
   }
 
-  json_object_put(obj);
-  *out = res;
-  return true;
+  *this = res;
+  return common::Error();
 }
 
-}  // namespace common
+common::Error InputUri::SerializeFields(json_object* out) const {
+  json_object_object_add(out, FIELD_INPUT_ID, json_object_new_int64(GetID()));
+  std::string url_str = common::ConvertToString(GetInput());
+  json_object_object_add(out, FIELD_INPUT_URI, json_object_new_string(url_str.c_str()));
+  const auto vol = GetVolume();
+  if (vol) {
+    json_object_object_add(out, FIELD_INPUT_VOLUME_AUDIO, json_object_new_double(*vol));
+  }
+  json_object_object_add(out, FIELD_INPUT_MUTE_AUDIO, json_object_new_boolean(GetMute()));
+  json_object_object_add(out, FIELD_INPUT_RELAY_VIDEO, json_object_new_boolean(GetRelayVideo()));
+  json_object_object_add(out, FIELD_INPUT_RELAY_AUDIO, json_object_new_boolean(GetRelayAudio()));
+  return common::Error();
+}
+
+bool IsTestUrl(const InputUri& url) {
+  return url.GetInput() == common::uri::Url(TEST_URL);
+}
+
+}  // namespace iptv_cloud
