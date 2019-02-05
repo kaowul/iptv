@@ -36,7 +36,8 @@ class ServerInfo : public common::serializer::JsonSerializer<ServerInfo> {
                       const utils::HddShot& hdd_shot,
                       uint64_t net_bytes_recv,
                       uint64_t net_bytes_send,
-                      const utils::SysinfoShot& sys);
+                      const utils::SysinfoShot& sys,
+                      time_t timestamp);
 
   std::string GetNodeID() const;
   int GetCpuLoad() const;

@@ -274,11 +274,12 @@ common::ErrnoError MakeStreamInfo(const utils::ArgsMap& config_args,
 namespace server {
 
 struct ProcessSlaveWrapper::NodeStats {
-  NodeStats() : prev(), prev_nshot(), gpu_load(0) {}
+  NodeStats() : prev(), prev_nshot(), gpu_load(0), timestamp(common::time::current_mstime() / 1000) {}
 
   utils::CpuShot prev;
   utils::NetShot prev_nshot;
   int gpu_load;
+  time_t timestamp;
 };
 
 ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key)
@@ -377,6 +378,7 @@ int ProcessSlaveWrapper::Exec(int argc, char** argv) {
 
   node_stats_->prev = utils::GetMachineCpuShot();
   node_stats_->prev_nshot = utils::GetMachineNetShot();
+  node_stats_->timestamp = common::time::current_mstime() / 1000;
   res = server->Exec();
 
 finished:
@@ -1261,17 +1263,23 @@ std::string ProcessSlaveWrapper::MakeServiceStats() const {
   node_stats_->prev = next;
 
   utils::NetShot next_nshot = utils::GetMachineNetShot();
-  uint64_t bytes_recv = (next_nshot.bytes_recv + node_stats_->prev_nshot.bytes_recv) / 2;
-  uint64_t bytes_send = (next_nshot.bytes_send + node_stats_->prev_nshot.bytes_send) / 2;
+  uint64_t bytes_recv = (next_nshot.bytes_recv - node_stats_->prev_nshot.bytes_recv);
+  uint64_t bytes_send = (next_nshot.bytes_send - node_stats_->prev_nshot.bytes_send);
   node_stats_->prev_nshot = next_nshot;
 
   utils::MemoryShot mem_shot = utils::GetMachineMemoryShot();
   utils::HddShot hdd_shot = utils::GetMachineHddShot();
   utils::SysinfoShot sshot = utils::GetMachineSysinfoShot();
   std::string uptime_str = common::MemSPrintf("%lu %lu %lu", sshot.loads[0], sshot.loads[1], sshot.loads[2]);
+  time_t current_time = common::time::current_mstime() / 1000;
+  time_t ts_diff = current_time - node_stats_->timestamp;
+  if (ts_diff == 0) {
+    ts_diff = 1;  // divide by zero
+  }
+  node_stats_->timestamp = current_time;
 
-  service::ServerInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot, bytes_recv,
-                           bytes_send, sshot);
+  service::ServerInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
+                           bytes_recv / ts_diff, bytes_send / ts_diff, sshot, current_time);
 
   std::string node_stats;
   common::Error err_ser = stat.SerializeToString(&node_stats);

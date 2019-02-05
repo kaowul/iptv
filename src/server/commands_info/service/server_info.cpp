@@ -14,8 +14,6 @@
 
 #include "server/commands_info/service/server_info.h"
 
-#include <common/time.h>
-
 #define STATISTIC_SERVICE_INFO_UPTIME_FIELD "uptime"
 #define STATISTIC_SERVICE_INFO_TIMESTAMP_FIELD "timestamp"
 #define STATISTIC_SERVICE_INFO_ID_FIELD "id"
@@ -61,7 +59,8 @@ ServerInfo::ServerInfo(const std::string& node_id,
                        const utils::HddShot& hdd_shot,
                        uint64_t net_bytes_recv,
                        uint64_t net_bytes_send,
-                       const utils::SysinfoShot& sys)
+                       const utils::SysinfoShot& sys,
+                       time_t timestamp)
     : base_class(),
       node_id_(node_id),
       cpu_load_(cpu_load),
@@ -71,7 +70,7 @@ ServerInfo::ServerInfo(const std::string& node_id,
       hdd_shot_(hdd_shot),
       net_bytes_recv_(net_bytes_recv),
       net_bytes_send_(net_bytes_send),
-      current_ts_(common::time::current_mstime() / 1000),
+      current_ts_(timestamp),
       sys_shot_(sys),
       proj_ver_(PROJECT_VERSION_HUMAN) {}
 
