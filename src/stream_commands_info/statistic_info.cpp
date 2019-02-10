@@ -20,7 +20,6 @@
 
 #define FIELD_STREAM_ID "id"
 #define FIELD_STREAM_TYPE "type"
-// #define FIELD_STREAM_UPTIME "uptime"
 #define FIELD_STREAM_CPU "cpu"
 #define FIELD_STREAM_RSS "rss"
 #define FIELD_STREAM_STATUS "status"

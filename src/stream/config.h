@@ -45,9 +45,7 @@ class Config {
   size_t max_restart_attempts_;
   ttl_t ttl_sec_;
 
-  //! input uri
   input_t input_;
-  //! output uri
   output_t output_;
 };
 

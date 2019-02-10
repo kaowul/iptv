@@ -26,7 +26,8 @@
 #include <common/file_system/string_path_utils.h>
 
 #include "config_fields.h"
-#include "stream_controller.h"
+
+#include "stream/stream_controller.h"
 
 #include "utils/arg_converter.h"
 

@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ilinker.h"
+#include "stream/ilinker.h"
 
 namespace iptv_cloud {
 namespace stream {

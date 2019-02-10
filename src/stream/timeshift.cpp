@@ -24,9 +24,8 @@
 #include <common/file_system/file_system_utils.h>
 #include <common/file_system/string_path_utils.h>
 
-#include "stypes.h"
-
 #include "constants.h"
+#include "stypes.h"
 
 namespace iptv_cloud {
 namespace stream {
