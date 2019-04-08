@@ -1,4 +1,4 @@
-About IPTV cloud
+About IPTV/Video cloud
 ===============
 Free IPTV/Video cloud server
 ### Features:
