@@ -1,6 +1,6 @@
 About IPTV cloud
 ===============
-Free IPTV cloud server
+Free IPTV/Video cloud server
 ### Features:
 * Encode/Transcode
 * GPU Encode/Decode/Post Processing
