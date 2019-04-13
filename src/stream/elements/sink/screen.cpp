@@ -50,7 +50,6 @@ Element* make_video_device_sink(SinkDeviceType dev, element_id_t sink_id) {
     return make_video_deck_sink(sink_id);
   }
 
-  NOTREACHED();
   return nullptr;
 }
 
@@ -61,7 +60,6 @@ Element* make_audio_device_sink(SinkDeviceType dev, element_id_t sink_id) {
     return make_audio_deck_sink(sink_id);
   }
 
-  NOTREACHED();
   return nullptr;
 }
 

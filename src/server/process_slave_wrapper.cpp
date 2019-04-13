@@ -511,7 +511,10 @@ void ProcessSlaveWrapper::BroadcastClients(const protocol::request_t& req) {
   for (size_t i = 0; i < clients.size(); ++i) {
     ProtocoledDaemonClient* dclient = dynamic_cast<ProtocoledDaemonClient*>(clients[i]);
     if (dclient && dclient->IsVerified()) {
-      dclient->WriteRequest(req);
+      common::ErrnoError err = dclient->WriteRequest(req);
+      if (err) {
+        WARNING_LOG() << "BroadcastClients error: " << err->GetDescription();
+      }
     }
   }
 }

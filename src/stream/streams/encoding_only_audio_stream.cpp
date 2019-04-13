@@ -61,7 +61,6 @@ gboolean EncodingOnlyAudioStream::HandleDecodeBinAutoplugger(GstElement* elem, G
     } else if (sdemuxer == VIDEO_FLV_DEMUXER) {
       return TRUE;
     }
-    DNOTREACHED();
   } else if (is_video) {
     if (svideo == VIDEO_H264_CODEC) {
       GstStructure* pad_struct = gst_caps_get_structure(caps, 0);

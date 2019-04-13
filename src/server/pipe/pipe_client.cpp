@@ -37,8 +37,9 @@ descriptor_t ProtocoledPipeClient::GetFd() const {
 }
 
 common::ErrnoError ProtocoledPipeClient::DoClose() {
-  pipe_write_client_->Close();
-  pipe_read_client_->Close();
+  common::ErrnoError err = pipe_write_client_->Close();
+  err = pipe_read_client_->Close();
+  UNUSED(err);
   return common::ErrnoError();
 }
 

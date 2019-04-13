@@ -173,10 +173,6 @@ GstPadProbeReturn Probe::source_callback_probe_buffer(GstPad* pad, GstPadProbeIn
       probe->consistency_.eos = TRUE;
       probe->consistency_.segment = FALSE;
     } else {
-      if (event_type == GST_EVENT_SEGMENT) {
-        DEBUG_LOG() << "Event tag: " << gst_event_get_structure(event);
-      }
-
       if (GST_EVENT_IS_SERIALIZED(event) && GST_EVENT_IS_DOWNSTREAM(event)) {
         if (probe->consistency_.eos) {
           INFO_LOG() << "Event received after EOS";

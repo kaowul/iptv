@@ -66,13 +66,17 @@ void RemoveOldFilesByTime(const common::file_system::ascii_directory_string_path
     if (pch) {
       std::string file_path = common::MemSPrintf("%s%s", path, dent->d_name);
       time_t mtime;
-      common::file_system::get_file_time_last_modification(file_path, &mtime);
-      if (mtime < max_life_secs) {
-        common::ErrnoError err = common::file_system::remove_file(file_path);
-        if (err) {
-          WARNING_LOG() << "Can't remove file: " << file_path << ", error: " << err->GetDescription();
-        } else {
-          DEBUG_LOG() << "File path: " << file_path << " removed.";
+      common::ErrnoError err = common::file_system::get_file_time_last_modification(file_path, &mtime);
+      if (!err) {
+        WARNING_LOG() << "Can't get timestamp file: " << file_path << ", error: " << err->GetDescription();
+      } else {
+        if (mtime < max_life_secs) {
+          err = common::file_system::remove_file(file_path);
+          if (err) {
+            WARNING_LOG() << "Can't remove file: " << file_path << ", error: " << err->GetDescription();
+          } else {
+            DEBUG_LOG() << "File path: " << file_path << " removed.";
+          }
         }
       }
     }

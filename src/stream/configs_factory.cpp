@@ -297,19 +297,17 @@ common::Error make_config(const utils::ArgsMap& config_args, Config** config) {
     }
 
     streams::TimeshiftConfig* tconf = new streams::TimeshiftConfig(rel);
-    if (stream_type == TIMESHIFT_RECORDER || stream_type == CATCHUP) {
-      time_t timeshift_chunk_duration;
-      if (utils::ArgsGetValue(config_args, TIMESHIFT_CHUNK_DURATION_FIELD, &timeshift_chunk_duration)) {
-        tconf->SetTimeShiftChunkDuration(timeshift_chunk_duration);
-      }
-      CHECK(tconf->GetTimeShiftChunkDuration()) << "Avoid division by zero";
+    time_t timeshift_chunk_duration;
+    if (utils::ArgsGetValue(config_args, TIMESHIFT_CHUNK_DURATION_FIELD, &timeshift_chunk_duration)) {
+      tconf->SetTimeShiftChunkDuration(timeshift_chunk_duration);
     }
+    CHECK(tconf->GetTimeShiftChunkDuration()) << "Avoid division by zero";
 
     *config = tconf;
     return common::Error();
   }
 
-  return common::make_error("Unknown stream type: " + stream_type);
+  return common::make_error("Unknown stream type: " + common::ConvertToString(stream_type));
 }
 
 }  // namespace stream

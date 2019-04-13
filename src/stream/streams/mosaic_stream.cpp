@@ -83,7 +83,6 @@ gboolean MosaicStream::HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad,
     } else if (sdemuxer == VIDEO_FLV_DEMUXER) {
       return TRUE;
     }
-    DNOTREACHED();
   } else if (is_video) {
     if (svideo == VIDEO_H264_CODEC) {
       GstStructure* pad_struct = gst_caps_get_structure(caps, 0);
@@ -118,8 +117,15 @@ gboolean MosaicStream::HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad,
         return TRUE;
       }
       return TRUE;
+    } else if (saudio == AUDIO_AAC_CODEC) {
+      GstStructure* pad_struct = gst_caps_get_structure(caps, 0);
+      gint rate = 0;
+      if (pad_struct && gst_structure_get_int(pad_struct, "rate", &rate)) {
+        RegisterAudioCaps(saudio, caps, elem_id);
+        return TRUE;
+      }
+      return TRUE;
     }
-    DNOTREACHED();
   }
 
   SupportedRawStream sraw;

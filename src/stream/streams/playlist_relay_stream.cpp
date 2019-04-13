@@ -64,8 +64,13 @@ void PlaylistRelayStream::HandleNeedData(GstElement* pipeline, guint rsize) {
   UNUSED(pipeline);
   UNUSED(rsize);
 
+  char* ptr = static_cast<char*>(calloc(BUFFER_SIZE, sizeof(char)));
+  if (!ptr) {
+    app_src_->SendEOS();  // send  eos
+    return;
+  }
+
   size_t size = 0;
-  char* ptr = nullptr;
   while (size == 0) {
     if (!current_file_) {
       current_file_ = OpenNextFile();
@@ -73,15 +78,14 @@ void PlaylistRelayStream::HandleNeedData(GstElement* pipeline, guint rsize) {
 
     if (!current_file_) {
       app_src_->SendEOS();  // send  eos
+      free(ptr);
       return;
     }
 
-    ptr = static_cast<char*>(calloc(BUFFER_SIZE, sizeof(char)));
     size = fread(ptr, sizeof(char), BUFFER_SIZE, current_file_);
     if (size == 0) {
       fclose(current_file_);
       current_file_ = nullptr;
-      free(ptr);
     }
   }
 

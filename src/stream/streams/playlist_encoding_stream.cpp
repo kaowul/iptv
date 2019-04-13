@@ -60,7 +60,12 @@ void PlaylistEncodingStream::HandleNeedData(GstElement* pipeline, guint rsize) {
   UNUSED(rsize);
 
   size_t size = 0;
-  char* ptr = nullptr;
+  char* ptr = static_cast<char*>(calloc(BUFFER_SIZE, sizeof(char)));
+  if (!ptr) {
+    app_src_->SendEOS();
+    return;
+  }
+
   while (size == 0) {
     if (!current_file_) {
       current_file_ = OpenNextFile();
@@ -68,15 +73,14 @@ void PlaylistEncodingStream::HandleNeedData(GstElement* pipeline, guint rsize) {
 
     if (!current_file_) {
       app_src_->SendEOS();
+      free(ptr);
       return;
     }
 
-    ptr = static_cast<char*>(calloc(BUFFER_SIZE, sizeof(char)));
     size = fread(ptr, sizeof(char), BUFFER_SIZE, current_file_);
     if (size == 0) {
       fclose(current_file_);
       current_file_ = nullptr;
-      free(ptr);
     }
   }
 

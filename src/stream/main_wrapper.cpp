@@ -64,12 +64,14 @@ int stream_exec(const char* process_name,
                 void* mem) {
   if (!process_name || !args || !config_args_ptr || !command_client || !mem) {
     CRITICAL_LOG() << "Invalid arguments.";
+    return EXIT_FAILURE;
   }
 
   const iptv_cloud::utils::ArgsMap config_args = *static_cast<iptv_cloud::utils::ArgsMap*>(config_args_ptr);
   const char* feedback_dir_ptr = args->feedback_dir;
   if (!feedback_dir_ptr) {
     CRITICAL_LOG() << "Define " FEEDBACK_DIR_FIELD " variable and make it valid.";
+    return EXIT_FAILURE;
   }
 
   common::logging::LOG_LEVEL logs_level = static_cast<common::logging::LOG_LEVEL>(args->log_level);

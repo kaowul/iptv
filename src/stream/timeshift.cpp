@@ -119,7 +119,10 @@ bool TimeShiftInfo::FindLastChunk(chunk_index_t* index, time_t* file_created_tim
 
   std::sort(files.begin(), files.end(), compare_files);
   common::file_system::ascii_file_string_path last_file = files.back();
-  common::file_system::get_file_time_last_modification(last_file.GetPath(), file_created_time);
+  common::ErrnoError err = common::file_system::get_file_time_last_modification(last_file.GetPath(), file_created_time);
+  if (err) {
+    return false;
+  }
   chunk_index_t lindex;
   if (!common::ConvertFromString(last_file.GetBaseFileName(), &lindex)) {
     return false;
