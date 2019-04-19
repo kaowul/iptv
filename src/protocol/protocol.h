@@ -39,7 +39,7 @@ class ProtocolClient : public Client {
   typedef Client base_class;
 
   template <typename... Args>
-  ProtocolClient(Args... args) : base_class(args...) {}
+  explicit ProtocolClient(Args... args) : base_class(args...) {}
 
   common::ErrnoError WriteRequest(const request_t& request) WARN_UNUSED_RESULT {
     common::ErrnoError err = detail::WriteRequest(this, request);

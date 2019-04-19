@@ -39,6 +39,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   ~ProcessSlaveWrapper() override;
 
   static int SendStopDaemonRequest(const std::string& license);
+  static common::net::HostAndPort GetServerHostAndPort();
 
   int Exec(int argc, char** argv);
 
@@ -80,7 +81,6 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   ChildStream* FindChildByID(stream_id_t cid) const;
   void BroadcastClients(const protocol::request_t& req);
 
-  struct NodeStats;
   common::ErrnoError DaemonDataReceived(ProtocoledDaemonClient* dclient) WARN_UNUSED_RESULT;
   common::ErrnoError PipeDataReceived(pipe::ProtocoledPipeClient* pclient) WARN_UNUSED_RESULT;
 
@@ -88,6 +88,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
 
   common::ErrnoError CreateChildStream(const stream::StartInfo& start_info);
 
+  // stream
   common::ErrnoError HandleRequestChangedSourcesStream(pipe::ProtocoledPipeClient* pclient,
                                                        protocol::request_t* req) WARN_UNUSED_RESULT;
 
@@ -121,7 +122,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   void ReadConfig();
   std::string MakeServiceStats() const;
 
-  static common::net::HostAndPort GetServerHostAndPort();
+  struct NodeStats;
 
   std::string node_id_;
   const time_t start_time_;
