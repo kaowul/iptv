@@ -18,6 +18,7 @@
 #include <json-c/json_tokener.h>
 
 #include "constants.h"
+#include "stream/stypes.h"
 
 #define FIELD_OUTPUT_ID "id"
 #define FIELD_OUTPUT_URI "uri"
@@ -152,6 +153,10 @@ common::Error OutputUri::SerializeFields(json_object* out) const {
     json_object_object_add(out, FIELD_OUTPUT_AUDIO_BITRATE, json_object_new_int(*audio_bit_rate));
   }
   return common::Error();
+}
+
+bool IsTestOutputUrl(const OutputUri& url) {
+  return url.GetOutput() == common::uri::Url(TEST_URL);
 }
 
 }  // namespace iptv_cloud

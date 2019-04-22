@@ -25,6 +25,7 @@
 #include "stream/streams/mosaic_stream.h"
 #include "stream/streams/playlist_encoding_stream.h"
 #include "stream/streams/playlist_relay_stream.h"
+#include "stream/streams/test/test_life_stream.h"
 #include "stream/streams/test_stream.h"
 #include "stream/streams/timeshift_player_stream.h"
 #include "stream/streams/timeshift_recorder_stream.h"
@@ -40,7 +41,8 @@ IBaseStream* StreamsFactory::CreateStream(const Config* config,
                                           const TimeShiftInfo& tinfo,
                                           chunk_index_t start_chunk_index) {
   input_t input = config->GetInput();
-  if (config->GetType() == RELAY) {
+  StreamType type = config->GetType();
+  if (type == RELAY) {
     const streams::RelayConfig* rconfig = static_cast<const streams::RelayConfig*>(config);
     InputUri iuri = input[0];
     common::uri::Url input_uri = iuri.GetInput();
@@ -54,7 +56,7 @@ IBaseStream* StreamsFactory::CreateStream(const Config* config,
     }*/
 
     return new streams::RelayStream(rconfig, client, stats);
-  } else if (config->GetType() == ENCODE) {
+  } else if (type == ENCODE) {
     const streams::EncodingConfig* econfig = static_cast<const streams::EncodingConfig*>(config);
     InputUri iuri = input[0];
     common::uri::Url input_uri = iuri.GetInput();
@@ -66,7 +68,7 @@ IBaseStream* StreamsFactory::CreateStream(const Config* config,
       return new streams::MosaicStream(econfig, client, stats);
     }
 
-    if (IsTestUrl(iuri)) {
+    if (IsTestInputUrl(iuri)) {
       return new streams::TestStream(econfig, client, stats);
     }
 
@@ -81,15 +83,18 @@ IBaseStream* StreamsFactory::CreateStream(const Config* config,
     }
 
     return new streams::EncodingStream(econfig, client, stats);
-  } else if (config->GetType() == TIMESHIFT_PLAYER) {
+  } else if (type == TIMESHIFT_PLAYER) {
     const streams::RelayConfig* tconfig = static_cast<const streams::RelayConfig*>(config);
     return new streams::TimeShiftPlayerStream(tconfig, tinfo, client, stats, start_chunk_index);
-  } else if (config->GetType() == TIMESHIFT_RECORDER) {
+  } else if (type == TIMESHIFT_RECORDER) {
     const streams::TimeshiftConfig* tconfig = static_cast<const streams::TimeshiftConfig*>(config);
     return new streams::TimeShiftRecorderStream(tconfig, tinfo, client, stats);
-  } else if (config->GetType() == CATCHUP) {
+  } else if (type == CATCHUP) {
     const streams::TimeshiftConfig* tconfig = static_cast<const streams::TimeshiftConfig*>(config);
     return new streams::CatchupStream(tconfig, tinfo, client, stats);
+  } else if (type == TEST_LIFE) {
+    const streams::RelayConfig* rconfig = static_cast<const streams::RelayConfig*>(config);
+    return new streams::test::TestLifeStream(rconfig, client, stats);
   }
 
   NOTREACHED();

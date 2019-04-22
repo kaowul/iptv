@@ -12,26 +12,28 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/test_stream.h"
+#include "stream/streams/test/test_life_stream.h"
 
-#include "stream/streams/builders/test_input_stream_builder.h"
+#include "stream/streams/builders/test/test_life_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
+namespace test {
 
-TestStream::TestStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
-    : EncodingStream(config, client, stats) {}
+TestLifeStream::TestLifeStream(const RelayConfig* config, IStreamClient* client, StreamStruct* stats)
+    : RelayStream(config, client, stats) {}
 
-const char* TestStream::ClassName() const {
-  return "TestStream";
+const char* TestLifeStream::ClassName() const {
+  return "TestLifeStream";
 }
 
-IBaseBuilder* TestStream::CreateBuilder() {
-  const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetConfig());
-  return new builders::TestInputStreamBuilder(econf, this);
+IBaseBuilder* TestLifeStream::CreateBuilder() {
+  const RelayConfig* econf = static_cast<const RelayConfig*>(GetConfig());
+  return new builders::test::TestLifeStreamBuilder(econf, this);
 }
 
+}  // namespace test
 }  // namespace streams
 }  // namespace stream
 }  // namespace iptv_cloud

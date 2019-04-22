@@ -21,10 +21,10 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-class TestStreamBuilder : public EncodingStreamBuilder {
+class TestInputStreamBuilder : public EncodingStreamBuilder {
  public:
   typedef EncodingStreamBuilder base_class;
-  TestStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
+  TestInputStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
   Connector BuildInput() override;
   Connector BuildUdbConnections(Connector conn) override;
 };

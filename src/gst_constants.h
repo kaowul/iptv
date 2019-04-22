@@ -18,6 +18,7 @@
 
 #define DECODEBIN "decodebin"
 #define FAKE_SINK "fakesink"
+#define TEST_SINK "testsink"
 #define VIDEO_TEST_SRC "videotestsrc"
 #define AUDIO_TEST_SRC "audiotestsrc"
 #define VIDEO_SCREEN_SINK "autovideosink"

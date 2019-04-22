@@ -202,7 +202,7 @@ common::Error make_config(const utils::ArgsMap& config_args, Config** config) {
   if (stream_type == SCREEN) {
     *config = new streams::AudioVideoConfig(aconf);
     return common::Error();
-  } else if (stream_type == RELAY || stream_type == TIMESHIFT_PLAYER) {
+  } else if (stream_type == RELAY || stream_type == TIMESHIFT_PLAYER || stream_type == TEST_LIFE) {
     streams::RelayConfig* rconfig = new streams::RelayConfig(aconf);
 
     std::string video_parser;

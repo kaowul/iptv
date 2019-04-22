@@ -74,6 +74,6 @@ inline bool operator!=(const InputUri& left, const InputUri& right) {
   return !operator==(left, right);
 }
 
-bool IsTestUrl(const InputUri& url);
+bool IsTestInputUrl(const InputUri& url);
 
 }  // namespace iptv_cloud

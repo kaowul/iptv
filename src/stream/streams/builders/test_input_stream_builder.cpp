@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/builders/test_stream_builder.h"
+#include "stream/streams/builders/test_input_stream_builder.h"
 
 #include "stream/elements/element.h"  // for Element
 #include "stream/elements/sources/sources.h"
@@ -24,10 +24,10 @@ namespace stream {
 namespace streams {
 namespace builders {
 
-TestStreamBuilder::TestStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer)
+TestInputStreamBuilder::TestInputStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer)
     : base_class(api, observer) {}
 
-Connector TestStreamBuilder::BuildInput() {
+Connector TestInputStreamBuilder::BuildInput() {
   elements::Element* video = nullptr;
   const EncodingConfig* config = static_cast<const EncodingConfig*>(GetConfig());
   if (config->HaveVideo()) {
@@ -53,7 +53,7 @@ Connector TestStreamBuilder::BuildInput() {
   return {video, audio};
 }
 
-Connector TestStreamBuilder::BuildUdbConnections(Connector conn) {
+Connector TestInputStreamBuilder::BuildUdbConnections(Connector conn) {
   return conn;
 }
 

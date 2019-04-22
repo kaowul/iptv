@@ -9,33 +9,28 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
-    along with iptv_cloud. If not, see <http://www.gnu.org/licenses/>.
+    along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
 
-#include <stdint.h>
-
-#include <string>  // for string
-
-#include <common/optional.h>
+#include "stream/streams/relay_stream.h"
 
 namespace iptv_cloud {
+namespace stream {
+namespace streams {
+namespace test {
 
-typedef uint64_t channel_id_t;
-typedef std::string stream_id_t;
-typedef common::Optional<double> volume_t;
-typedef double alpha_t;
-typedef common::Optional<int> bit_rate_t;
+class TestLifeStream : public RelayStream {
+ public:
+  TestLifeStream(const RelayConfig* config, IStreamClient* client, StreamStruct* stats);
+  const char* ClassName() const override;
 
-enum StreamType : uint8_t {
-  RELAY = 0,
-  ENCODE = 1,
-  TIMESHIFT_PLAYER = 2,
-  TIMESHIFT_RECORDER = 3,
-  CATCHUP = 4,
-  TEST_LIFE = 5,
-  SCREEN  // for inner use
+ protected:
+  IBaseBuilder* CreateBuilder() override;
 };
 
+}  // namespace test
+}  // namespace streams
+}  // namespace stream
 }  // namespace iptv_cloud

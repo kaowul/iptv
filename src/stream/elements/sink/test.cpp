@@ -9,33 +9,23 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
-    along with iptv_cloud. If not, see <http://www.gnu.org/licenses/>.
+    along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
-#include <stdint.h>
-
-#include <string>  // for string
-
-#include <common/optional.h>
+#include "stream/elements/sink/test.h"
 
 namespace iptv_cloud {
+namespace stream {
+namespace elements {
+namespace sink {
 
-typedef uint64_t channel_id_t;
-typedef std::string stream_id_t;
-typedef common::Optional<double> volume_t;
-typedef double alpha_t;
-typedef common::Optional<int> bit_rate_t;
+ElementTestSink* make_test_sink(element_id_t sink_id) {
+  ElementTestSink* test_sink = make_sink<ElementTestSink>(sink_id);
+  // test_sink->SetSync(true);
+  return test_sink;
+}
 
-enum StreamType : uint8_t {
-  RELAY = 0,
-  ENCODE = 1,
-  TIMESHIFT_PLAYER = 2,
-  TIMESHIFT_RECORDER = 3,
-  CATCHUP = 4,
-  TEST_LIFE = 5,
-  SCREEN  // for inner use
-};
-
+}  // namespace sink
+}  // namespace elements
+}  // namespace stream
 }  // namespace iptv_cloud

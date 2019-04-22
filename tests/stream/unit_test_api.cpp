@@ -18,7 +18,7 @@ TEST(Api, init) {
   uri.SetOutput(common::uri::Url("screen"));
   ouri.push_back(uri);
 
-  ASSERT_TRUE(iptv_cloud::IsTestUrl(iptv_cloud::InputUri(0, common::uri::Url(TEST_URL))));
+  ASSERT_TRUE(iptv_cloud::IsTestInputUrl(iptv_cloud::InputUri(0, common::uri::Url(TEST_URL))));
 
   ASSERT_TRUE(iptv_cloud::stream::IsScreenUrl(common::uri::Url(SCREEN_URL)));
   ASSERT_TRUE(iptv_cloud::stream::IsRecordingUrl(common::uri::Url(RECORDING_URL)));

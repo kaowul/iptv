@@ -147,7 +147,7 @@ common::Error InputUri::SerializeFields(json_object* out) const {
   return common::Error();
 }
 
-bool IsTestUrl(const InputUri& url) {
+bool IsTestInputUrl(const InputUri& url) {
   return url.GetInput() == common::uri::Url(TEST_URL);
 }
 

@@ -69,11 +69,13 @@ SET(STREAM_BUILDERS_HEADERS
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_audio_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_video_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test_input_stream_builder.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/fake_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/device_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_encoding_stream_builder.h
+
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test/test_life_stream_builder.h
 )
 SET(STREAM_BUILDERS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/gst_base_builder.cpp
@@ -93,11 +95,13 @@ SET(STREAM_BUILDERS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_audio_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_video_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test_input_stream_builder.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/fake_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/device_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_encoding_stream_builder.cpp
+
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test/test_life_stream_builder.cpp
 )
 
 SET(STREAMS_HEADERS
@@ -114,6 +118,7 @@ SET(STREAMS_HEADERS
   ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift_recorder_stream.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/catchup_stream.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_relay_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/test/test_life_stream.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_stream.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_audio_stream.h
@@ -141,6 +146,7 @@ SET(STREAMS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift_recorder_stream.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/catchup_stream.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_relay_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/test/test_life_stream.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_stream.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_audio_stream.cpp
@@ -190,6 +196,7 @@ SET(SINKS_HEADERS
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/tcp.h
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/http.h
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/fake.h
+  ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/test.h
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/screen.h
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/build_output.h
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/sink.h
@@ -200,6 +207,7 @@ SET(SINKS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/tcp.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/http.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/fake.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/test.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/screen.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/build_output.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/elements/sink/sink.cpp
