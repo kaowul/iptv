@@ -21,7 +21,7 @@ namespace sink {
 
 ElementTestSink* make_test_sink(element_id_t sink_id) {
   ElementTestSink* test_sink = make_sink<ElementTestSink>(sink_id);
-  // test_sink->SetSync(true);
+  test_sink->SetSync(true);
   return test_sink;
 }
 

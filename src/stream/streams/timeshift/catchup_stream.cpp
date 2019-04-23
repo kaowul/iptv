@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/catchup_stream.h"
+#include "stream/streams/timeshift/catchup_stream.h"
 
 #include <algorithm>
 
@@ -23,7 +23,7 @@
 
 #define PLAYLIST_NAME "master.m3u8"
 
-#include "stream/streams/builders/catchup_stream_builder.h"
+#include "stream/streams/builders/timeshift/catchup_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {

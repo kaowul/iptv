@@ -12,20 +12,15 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
-#include "stream/streams/builders/timeshift_recorder_stream_builder.h"
+#include "stream/streams/builders/timeshift/catchup_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
 namespace builders {
 
-class CatchupStreamBuilder : public TimeShiftRecorderStreamBuilder {
- public:
-  typedef TimeShiftRecorderStreamBuilder base_class;
-  CatchupStreamBuilder(const TimeshiftConfig* api, TimeShiftRecorderStream* observer);
-};
+CatchupStreamBuilder::CatchupStreamBuilder(const TimeshiftConfig* api, TimeShiftRecorderStream* observer)
+    : base_class(api, observer) {}
 
 }  // namespace builders
 }  // namespace streams

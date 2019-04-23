@@ -12,14 +12,14 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/builders/timeshift_recorder_stream_builder.h"
+#include "stream/streams/builders/timeshift/timeshift_recorder_stream_builder.h"
 
 #include <common/sprintf.h>
 
 #include "stream/elements/muxer/muxer.h"
 #include "stream/elements/sink/sink.h"
 
-#include "stream/streams/timeshift_recorder_stream.h"
+#include "stream/streams/timeshift/timeshift_recorder_stream.h"
 
 namespace iptv_cloud {
 namespace stream {

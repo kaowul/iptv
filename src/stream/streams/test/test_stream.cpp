@@ -12,17 +12,26 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/builders/catchup_stream_builder.h"
+#include "stream/streams/test/test_stream.h"
+
+#include "stream/streams/builders/test/test_input_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
-namespace builders {
 
-CatchupStreamBuilder::CatchupStreamBuilder(const TimeshiftConfig* api, TimeShiftRecorderStream* observer)
-    : base_class(api, observer) {}
+TestInputStream::TestInputStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats)
+    : EncodingStream(config, client, stats) {}
 
-}  // namespace builders
+const char* TestInputStream::ClassName() const {
+  return "TestInputStream";
+}
+
+IBaseBuilder* TestInputStream::CreateBuilder() {
+  const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetConfig());
+  return new builders::TestInputStreamBuilder(econf, this);
+}
+
 }  // namespace streams
 }  // namespace stream
 }  // namespace iptv_cloud

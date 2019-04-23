@@ -12,9 +12,9 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/timeshift_player_stream.h"
+#include "stream/streams/timeshift/timeshift_player_stream.h"
 
-#include "stream/streams/builders/timeshift_player_stream_builder.h"
+#include "stream/streams/builders/timeshift/timeshift_player_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {

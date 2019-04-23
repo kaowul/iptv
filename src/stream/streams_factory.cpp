@@ -18,7 +18,6 @@
 
 #include "config_fields.h"
 
-#include "stream/streams/catchup_stream.h"
 #include "stream/streams/device_stream.h"
 #include "stream/streams/encoding_only_audio_stream.h"
 #include "stream/streams/encoding_only_video_stream.h"
@@ -26,9 +25,10 @@
 #include "stream/streams/playlist_encoding_stream.h"
 #include "stream/streams/playlist_relay_stream.h"
 #include "stream/streams/test/test_life_stream.h"
-#include "stream/streams/test_stream.h"
-#include "stream/streams/timeshift_player_stream.h"
-#include "stream/streams/timeshift_recorder_stream.h"
+#include "stream/streams/test/test_stream.h"
+#include "stream/streams/timeshift/catchup_stream.h"
+#include "stream/streams/timeshift/timeshift_player_stream.h"
+#include "stream/streams/timeshift/timeshift_recorder_stream.h"
 
 #include "utils/arg_converter.h"
 
@@ -69,7 +69,7 @@ IBaseStream* StreamsFactory::CreateStream(const Config* config,
     }
 
     if (IsTestInputUrl(iuri)) {
-      return new streams::TestStream(econfig, client, stats);
+      return new streams::TestInputStream(econfig, client, stats);
     }
 
     if (input_uri.GetScheme() == common::uri::Url::dev) {

@@ -14,31 +14,19 @@
 
 #pragma once
 
-#include <vector>
-
-#include "stream/streams/timeshift_recorder_stream.h"
+#include "stream/streams/encoding_stream.h"
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-class CatchupStream : public TimeShiftRecorderStream {
+class TestInputStream : public EncodingStream {
  public:
-  typedef TimeShiftRecorderStream base_class;
-  CatchupStream(const TimeshiftConfig* config, const TimeShiftInfo& info, IStreamClient* client, StreamStruct* stats);
-
+  TestInputStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
   const char* ClassName() const override;
 
  protected:
-  chunk_index_t GetNextChunkStrategy(chunk_index_t last_index, time_t last_index_created_time) const override;
   IBaseBuilder* CreateBuilder() override;
-
-  void PostLoop(ExitStatus status) override;
-  gchararray OnPathSet(GstElement* splitmux, guint fragment_id, GstSample* sample) override;
-
- private:
-  void WriteM3u8List();
-  std::vector<utils::ChunkInfo> chunks_;
 };
 
 }  // namespace streams

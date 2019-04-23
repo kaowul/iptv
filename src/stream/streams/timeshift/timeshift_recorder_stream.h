@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "stream/streams/itimeshift_recorder_stream.h"
+#include "stream/streams/timeshift/itimeshift_recorder_stream.h"
 
 #include "utils/chunk_info.h"
 

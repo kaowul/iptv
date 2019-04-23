@@ -61,21 +61,22 @@ SET(STREAM_BUILDERS_HEADERS
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/src_decodebin_stream_builder.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/relay_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift_player_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift_recorder_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/catchup_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_relay_stream_builder.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_audio_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_video_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test_input_stream_builder.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/fake_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/device_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_encoding_stream_builder.h
 
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/catchup_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/timeshift_player_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/timeshift_recorder_stream_builder.h
+
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test/test_life_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test/test_input_stream_builder.h
 )
 SET(STREAM_BUILDERS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/gst_base_builder.cpp
@@ -87,21 +88,22 @@ SET(STREAM_BUILDERS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/src_decodebin_stream_builder.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/relay_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift_player_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift_recorder_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/catchup_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_relay_stream_builder.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_audio_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_video_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test_input_stream_builder.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/fake_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/device_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_encoding_stream_builder.cpp
 
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/catchup_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/timeshift_player_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/timeshift_recorder_stream_builder.cpp
+
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test/test_life_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/test/test_input_stream_builder.cpp
 )
 
 SET(STREAMS_HEADERS
@@ -113,21 +115,23 @@ SET(STREAMS_HEADERS
   ${CMAKE_SOURCE_DIR}/src/stream/streams/src_decodebin_stream.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/relay_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift_player_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/itimeshift_recorder_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift_recorder_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/catchup_stream.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_relay_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/test/test_life_stream.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_stream.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_audio_stream.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_video_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/test_stream.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/fake_stream.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/device_stream.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_encoding_stream.h
+
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/catchup_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/timeshift_player_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/itimeshift_recorder_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/timeshift_recorder_stream.h
+
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/test/test_life_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/test/test_stream.h
 
   ${STREAM_BUILDERS_HEADERS}
   ${STREAM_CONFIGS_HEADERS}
@@ -141,21 +145,23 @@ SET(STREAMS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/stream/streams/src_decodebin_stream.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/relay_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift_player_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/itimeshift_recorder_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift_recorder_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/catchup_stream.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_relay_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/test/test_life_stream.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_stream.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_audio_stream.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_video_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/test_stream.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/fake_stream.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/device_stream.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_encoding_stream.cpp
+
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/catchup_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/timeshift_player_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/itimeshift_recorder_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/timeshift_recorder_stream.cpp
+
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/test/test_life_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/test/test_stream.cpp
 
   ${STREAM_BUILDERS_SOURCES}
   ${STREAM_CONFIGS_SOURCES}

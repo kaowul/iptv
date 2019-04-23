@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/builders/test_input_stream_builder.h"
+#include "stream/streams/builders/test/test_input_stream_builder.h"
 
 #include "stream/elements/element.h"  // for Element
 #include "stream/elements/sources/sources.h"
