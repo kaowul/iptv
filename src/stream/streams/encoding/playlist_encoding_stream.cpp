@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/playlist_encoding_stream.h"
+#include "stream/streams/encoding/playlist_encoding_stream.h"
 
 #include <string>
 
@@ -20,7 +20,7 @@
 
 #include "stream/elements/sources/appsrc.h"
 
-#include "stream/streams/builders/playlist_encoding_stream_builder.h"
+#include "stream/streams/builders/encoding/playlist_encoding_stream_builder.h"
 
 #define BUFFER_SIZE 4096
 

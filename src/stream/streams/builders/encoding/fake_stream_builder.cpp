@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/builders/fake_stream_builder.h"
+#include "stream/streams/builders/encoding/fake_stream_builder.h"
 
 #include "stream/pad/pad.h"  // for Pads
 

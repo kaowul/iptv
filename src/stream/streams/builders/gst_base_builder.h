@@ -37,7 +37,7 @@ class GstBaseBuilder : public IBaseBuilder {
   virtual Connector BuildOutput(Connector conn) = 0;
 
  protected:
-  bool InitPipeline() final;
+  bool InitPipeline() override final;
 };
 
 }  // namespace builders

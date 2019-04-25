@@ -18,12 +18,12 @@
 
 #include "config_fields.h"
 
-#include "stream/streams/device_stream.h"
-#include "stream/streams/encoding_only_audio_stream.h"
-#include "stream/streams/encoding_only_video_stream.h"
+#include "stream/streams/encoding/device_stream.h"
+#include "stream/streams/encoding/encoding_only_audio_stream.h"
+#include "stream/streams/encoding/encoding_only_video_stream.h"
+#include "stream/streams/encoding/playlist_encoding_stream.h"
 #include "stream/streams/mosaic_stream.h"
-#include "stream/streams/playlist_encoding_stream.h"
-#include "stream/streams/playlist_relay_stream.h"
+#include "stream/streams/relay/playlist_relay_stream.h"
 #include "stream/streams/test/test_life_stream.h"
 #include "stream/streams/test/test_stream.h"
 #include "stream/streams/timeshift/catchup_stream.h"

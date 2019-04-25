@@ -14,23 +14,33 @@
 
 #pragma once
 
-#include "stream/streams/builders/encoding_stream_builder.h"
+#include "stream/streams/encoding/encoding_stream.h"
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
-namespace builders {
 
-class EncodingOnlyVideoStreamBuilder : public EncodingStreamBuilder {
+class FakeStream : public EncodingStream {
  public:
-  EncodingOnlyVideoStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
+  typedef EncodingStream base_class;
+  FakeStream(EncodingConfig* config, IStreamClient* client);
+  const char* ClassName() const override;
+  ~FakeStream() override;
 
  protected:
-  elements_line_t BuildAudioPostProc(element_id_t audio_id) override;
-  elements_line_t BuildAudioConverter(element_id_t audio_id) override;
+  void PreLoop() override;
+  void PostLoop(ExitStatus status) override;
+
+  IBaseBuilder* CreateBuilder() override;
+
+  gboolean HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* message) override;
+
+  void HandleDecodeBinElementAdded(GstBin* bin, GstElement* element) override;
+  void HandleDecodeBinElementRemoved(GstBin* bin, GstElement* element) override;
+
+  gboolean HandleMainTimerTick() override;
 };
 
-}  // namespace builders
 }  // namespace streams
 }  // namespace stream
 }  // namespace iptv_cloud

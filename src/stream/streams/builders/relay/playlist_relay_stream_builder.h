@@ -14,21 +14,28 @@
 
 #pragma once
 
-#include "stream/streams/builders/encoding_stream_builder.h"
+#include "stream/streams/builders/relay/relay_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {
+namespace elements {
+namespace sources {
+class ElementAppSrc;
+}
+}  // namespace elements
+
 namespace streams {
+class PlaylistRelayStream;
 namespace builders {
 
-class FakeStreamBuilder : public EncodingStreamBuilder {
+class PlaylistRelayStreamBuilder : public RelayStreamBuilder {
  public:
-  FakeStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
+  PlaylistRelayStreamBuilder(const PlaylistRelayConfig* api, PlaylistRelayStream* observer);
 
-  Connector BuildOutput(Connector conn) override;
+  elements::Element* BuildInputSrc() override;
 
- private:
-  Connector BuildFakeOutput(Connector conn);
+ protected:
+  void HandleAppSrcCreated(elements::sources::ElementAppSrc* src);
 };
 
 }  // namespace builders

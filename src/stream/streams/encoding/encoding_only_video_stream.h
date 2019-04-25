@@ -14,48 +14,22 @@
 
 #pragma once
 
-#include "stream/streams/encoding_stream.h"
+#include "stream/streams/encoding/encoding_stream.h"
 
 namespace iptv_cloud {
 namespace stream {
-
-namespace elements {
-namespace sources {
-class ElementAppSrc;
-}
-}  // namespace elements
-
 namespace streams {
 
-namespace builders {
-class PlaylistEncodingStreamBuilder;
-}
-
-class PlaylistEncodingStream : public EncodingStream {
-  friend class builders::PlaylistEncodingStreamBuilder;
-
+class EncodingOnlyVideoStream : public EncodingStream {
  public:
-  PlaylistEncodingStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
-  ~PlaylistEncodingStream() override;
+  EncodingOnlyVideoStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
 
   const char* ClassName() const override;
 
  protected:
-  void PreLoop() override;
-
-  virtual void OnAppSrcCreatedCreated(elements::sources::ElementAppSrc* src);
   IBaseBuilder* CreateBuilder() override;
 
-  virtual void HandleNeedData(GstElement* pipeline, guint rsize);
-
- private:
-  static void need_data_callback(GstElement* pipeline, guint size, gpointer user_data);
-
-  FILE* OpenNextFile();
-
-  elements::sources::ElementAppSrc* app_src_;
-  FILE* current_file_;
-  size_t curent_pos_;
+  gboolean HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad, GstCaps* caps) override;
 };
 
 }  // namespace streams

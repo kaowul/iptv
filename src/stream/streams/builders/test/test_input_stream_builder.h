@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "stream/streams/builders/encoding_stream_builder.h"
+#include "stream/streams/builders/encoding/encoding_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {

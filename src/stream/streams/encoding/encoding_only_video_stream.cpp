@@ -12,33 +12,33 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/encoding_only_audio_stream.h"
+#include "stream/streams/encoding/encoding_only_video_stream.h"
 
 #include <string>
 
 #include "stream/gstreamer_utils.h"
 
-#include "stream/streams/builders/encoding_only_audio_stream_builder.h"
+#include "stream/streams/builders/encoding/encoding_only_video_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-EncodingOnlyAudioStream::EncodingOnlyAudioStream(const EncodingConfig* config,
+EncodingOnlyVideoStream::EncodingOnlyVideoStream(const EncodingConfig* config,
                                                  IStreamClient* client,
                                                  StreamStruct* stats)
     : EncodingStream(config, client, stats) {}
 
-const char* EncodingOnlyAudioStream::ClassName() const {
-  return "EncodingOnlyAudioStream";
+const char* EncodingOnlyVideoStream::ClassName() const {
+  return "EncodingOnlyVideoStream";
 }
 
-IBaseBuilder* EncodingOnlyAudioStream::CreateBuilder() {
+IBaseBuilder* EncodingOnlyVideoStream::CreateBuilder() {
   const EncodingConfig* econf = static_cast<const EncodingConfig*>(GetConfig());
-  return new builders::EncodingOnlyAudioStreamBuilder(econf, this);
+  return new builders::EncodingOnlyVideoStreamBuilder(econf, this);
 }
 
-gboolean EncodingOnlyAudioStream::HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad, GstCaps* caps) {
+gboolean EncodingOnlyVideoStream::HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad, GstCaps* caps) {
   UNUSED(elem);
   UNUSED(pad);
 
@@ -69,11 +69,11 @@ gboolean EncodingOnlyAudioStream::HandleDecodeBinAutoplugger(GstElement* elem, G
       if (pad_struct && gst_structure_get_int(pad_struct, "width", &width) &&
           gst_structure_get_int(pad_struct, "height", &height)) {
         RegisterVideoCaps(svideo, caps, 0);
-        return FALSE;
+        return TRUE;
       }
       return TRUE;
     } else if (svideo == VIDEO_H265_CODEC) {
-      return FALSE;
+      return TRUE;
     } else if (svideo == VIDEO_MPEG_CODEC) {
       return TRUE;
     }
@@ -84,7 +84,7 @@ gboolean EncodingOnlyAudioStream::HandleDecodeBinAutoplugger(GstElement* elem, G
       gint rate = 0;
       if (pad_struct && gst_structure_get_int(pad_struct, "rate", &rate)) {
         RegisterAudioCaps(saudio, caps, 0);
-        return TRUE;
+        return FALSE;
       }
       return TRUE;
     } else if (saudio == AUDIO_AC3_CODEC) {
@@ -92,7 +92,7 @@ gboolean EncodingOnlyAudioStream::HandleDecodeBinAutoplugger(GstElement* elem, G
       gint rate = 0;
       if (pad_struct && gst_structure_get_int(pad_struct, "rate", &rate)) {
         RegisterAudioCaps(saudio, caps, 0);
-        return TRUE;
+        return FALSE;
       }
       return TRUE;
     }

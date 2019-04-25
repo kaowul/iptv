@@ -12,25 +12,21 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/builders/encoding_only_video_stream_builder.h"
+#pragma once
+
+#include "stream/streams/builders/encoding/encoding_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
 namespace builders {
 
-EncodingOnlyVideoStreamBuilder::EncodingOnlyVideoStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer)
-    : EncodingStreamBuilder(api, observer) {}
-
-elements_line_t EncodingOnlyVideoStreamBuilder::BuildAudioPostProc(element_id_t audio_id) {
-  UNUSED(audio_id);
-  return {nullptr, nullptr};
-}
-
-elements_line_t EncodingOnlyVideoStreamBuilder::BuildAudioConverter(element_id_t audio_id) {
-  UNUSED(audio_id);
-  return {nullptr, nullptr};
-}
+class DeviceStreamBuilder : public EncodingStreamBuilder {
+ public:
+  enum { VIDEO_WIDTH = 1920, VIDEO_HEIGHT = 1080 };
+  DeviceStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
+  Connector BuildInput() override;
+};
 
 }  // namespace builders
 }  // namespace streams

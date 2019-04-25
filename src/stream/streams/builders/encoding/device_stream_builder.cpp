@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/builders/device_stream_builder.h"
+#include "stream/streams/builders/encoding/device_stream_builder.h"
 
 #include <common/sprintf.h>
 

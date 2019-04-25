@@ -14,20 +14,20 @@
 
 #pragma once
 
-#include "stream/streams/builders/encoding_stream_builder.h"
+#include "stream/streams/builders/encoding/encoding_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
 namespace builders {
 
-class EncodingOnlyAudioStreamBuilder : public EncodingStreamBuilder {
+class EncodingOnlyVideoStreamBuilder : public EncodingStreamBuilder {
  public:
-  EncodingOnlyAudioStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
+  EncodingOnlyVideoStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
 
  protected:
-  elements_line_t BuildVideoPostProc(element_id_t video_id) override;
-  elements_line_t BuildVideoConverter(element_id_t video_id) override;
+  elements_line_t BuildAudioPostProc(element_id_t audio_id) override;
+  elements_line_t BuildAudioConverter(element_id_t audio_id) override;
 };
 
 }  // namespace builders

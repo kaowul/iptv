@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "stream/streams/builders/relay_stream_builder.h"
+#include "stream/streams/builders/relay/relay_stream_builder.h"
 
 #define SPLIT_SINK_NAME_1U "splitmuxsink_%lu"
 

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "stream/streams/relay_stream.h"  // for RelayStream
+#include "stream/streams/relay/relay_stream.h"  // for RelayStream
 
 #include "stream/timeshift.h"
 

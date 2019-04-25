@@ -60,16 +60,15 @@ SET(STREAM_BUILDERS_HEADERS
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/src_decodebin_stream_builder.h
 
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/relay_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_relay_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/relay/relay_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/relay/playlist_relay_stream_builder.h
 
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_audio_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_video_stream_builder.h
-
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/fake_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/device_stream_builder.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_encoding_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/encoding_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/encoding_only_audio_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/encoding_only_video_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/playlist_encoding_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/device_stream_builder.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/fake_stream_builder.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/catchup_stream_builder.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/timeshift_player_stream_builder.h
@@ -87,16 +86,15 @@ SET(STREAM_BUILDERS_SOURCES
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/src_decodebin_stream_builder.cpp
 
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/relay_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_relay_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/relay/relay_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/relay/playlist_relay_stream_builder.cpp
 
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_audio_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding_only_video_stream_builder.cpp
-
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/fake_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/device_stream_builder.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/playlist_encoding_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/encoding_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/encoding_only_audio_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/encoding_only_video_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/playlist_encoding_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/device_stream_builder.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/encoding/fake_stream_builder.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/catchup_stream_builder.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/builders/timeshift/timeshift_player_stream_builder.cpp
@@ -114,16 +112,15 @@ SET(STREAMS_HEADERS
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/src_decodebin_stream.h
 
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/relay_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_relay_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/relay/relay_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/relay/playlist_relay_stream.h
 
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_audio_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_video_stream.h
-
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/fake_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/device_stream.h
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_encoding_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/encoding_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/encoding_only_audio_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/encoding_only_video_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/playlist_encoding_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/device_stream.h
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/fake_stream.h
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/catchup_stream.h
   ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/timeshift_player_stream.h
@@ -144,16 +141,15 @@ SET(STREAMS_SOURCES
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/src_decodebin_stream.cpp
 
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/relay_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_relay_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/relay/relay_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/relay/playlist_relay_stream.cpp
 
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_audio_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding_only_video_stream.cpp
-
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/fake_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/device_stream.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream/streams/playlist_encoding_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/encoding_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/encoding_only_audio_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/encoding_only_video_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/playlist_encoding_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/device_stream.cpp
+  ${CMAKE_SOURCE_DIR}/src/stream/streams/encoding/fake_stream.cpp
 
   ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/catchup_stream.cpp
   ${CMAKE_SOURCE_DIR}/src/stream/streams/timeshift/timeshift_player_stream.cpp

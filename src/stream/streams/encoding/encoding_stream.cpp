@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/encoding_stream.h"
+#include "stream/streams/encoding/encoding_stream.h"
 
 #include <string>
 
@@ -25,7 +25,7 @@
 #include "stream/elements/parser/video_parsers.h"
 #include "stream/gstreamer_utils.h"
 #include "stream/pad/pad.h"
-#include "stream/streams/builders/encoding_stream_builder.h"
+#include "stream/streams/builders/encoding/encoding_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {

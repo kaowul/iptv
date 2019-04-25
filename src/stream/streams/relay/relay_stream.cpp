@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/relay_stream.h"
+#include "stream/streams/relay/relay_stream.h"
 
 #include <string.h>
 
@@ -27,7 +27,7 @@
 
 #include "stream/pad/pad.h"  // for Pad
 
-#include "stream/streams/builders/relay_stream_builder.h"
+#include "stream/streams/builders/relay/relay_stream_builder.h"
 
 namespace iptv_cloud {
 namespace stream {

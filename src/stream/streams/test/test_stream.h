@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "stream/streams/encoding_stream.h"
+#include "stream/streams/encoding/encoding_stream.h"
 
 namespace iptv_cloud {
 namespace stream {

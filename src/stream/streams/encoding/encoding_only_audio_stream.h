@@ -14,21 +14,24 @@
 
 #pragma once
 
-#include "stream/streams/builders/encoding_stream_builder.h"
+#include "stream/streams/encoding/encoding_stream.h"
 
 namespace iptv_cloud {
 namespace stream {
 namespace streams {
-namespace builders {
 
-class DeviceStreamBuilder : public EncodingStreamBuilder {
+class EncodingOnlyAudioStream : public EncodingStream {
  public:
-  enum { VIDEO_WIDTH = 1920, VIDEO_HEIGHT = 1080 };
-  DeviceStreamBuilder(const EncodingConfig* api, SrcDecodeBinStream* observer);
-  Connector BuildInput() override;
+  EncodingOnlyAudioStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
+
+  const char* ClassName() const override;
+
+ protected:
+  IBaseBuilder* CreateBuilder() override;
+
+  gboolean HandleDecodeBinAutoplugger(GstElement* elem, GstPad* pad, GstCaps* caps) override;
 };
 
-}  // namespace builders
 }  // namespace streams
 }  // namespace stream
 }  // namespace iptv_cloud

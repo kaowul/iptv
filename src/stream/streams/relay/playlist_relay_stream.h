@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "stream/streams/relay_stream.h"
+#include "stream/streams/relay/relay_stream.h"
 
 namespace iptv_cloud {
 namespace stream {

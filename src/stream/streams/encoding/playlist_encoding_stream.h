@@ -14,31 +14,48 @@
 
 #pragma once
 
-#include "stream/streams/encoding_stream.h"
+#include "stream/streams/encoding/encoding_stream.h"
 
 namespace iptv_cloud {
 namespace stream {
+
+namespace elements {
+namespace sources {
+class ElementAppSrc;
+}
+}  // namespace elements
+
 namespace streams {
 
-class FakeStream : public EncodingStream {
+namespace builders {
+class PlaylistEncodingStreamBuilder;
+}
+
+class PlaylistEncodingStream : public EncodingStream {
+  friend class builders::PlaylistEncodingStreamBuilder;
+
  public:
-  typedef EncodingStream base_class;
-  FakeStream(EncodingConfig* config, IStreamClient* client);
+  PlaylistEncodingStream(const EncodingConfig* config, IStreamClient* client, StreamStruct* stats);
+  ~PlaylistEncodingStream() override;
+
   const char* ClassName() const override;
-  ~FakeStream() override;
 
  protected:
   void PreLoop() override;
-  void PostLoop(ExitStatus status) override;
 
+  virtual void OnAppSrcCreatedCreated(elements::sources::ElementAppSrc* src);
   IBaseBuilder* CreateBuilder() override;
 
-  gboolean HandleAsyncBusMessageReceived(GstBus* bus, GstMessage* message) override;
+  virtual void HandleNeedData(GstElement* pipeline, guint rsize);
 
-  void HandleDecodeBinElementAdded(GstBin* bin, GstElement* element) override;
-  void HandleDecodeBinElementRemoved(GstBin* bin, GstElement* element) override;
+ private:
+  static void need_data_callback(GstElement* pipeline, guint size, gpointer user_data);
 
-  gboolean HandleMainTimerTick() override;
+  FILE* OpenNextFile();
+
+  elements::sources::ElementAppSrc* app_src_;
+  FILE* current_file_;
+  size_t curent_pos_;
 };
 
 }  // namespace streams

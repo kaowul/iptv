@@ -12,13 +12,13 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stream/streams/builders/playlist_relay_stream_builder.h"
+#include "stream/streams/builders/relay/playlist_relay_stream_builder.h"
 
 #include "stream/pad/pad.h"
 
 #include "stream/elements/sources/appsrc.h"
 
-#include "stream/streams/playlist_relay_stream.h"
+#include "stream/streams/relay/playlist_relay_stream.h"
 
 namespace iptv_cloud {
 namespace stream {
