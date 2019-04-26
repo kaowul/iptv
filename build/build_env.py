@@ -6,6 +6,7 @@ import subprocess
 import sys
 
 from pyfastogt import system_info, utils
+from check_plugins import check_plugins
 
 GLIB_SRC_ROOT = "http://ftp.acc.umu.se/pub/gnome/sources/glib"
 GLIB_ARCH_COMP = "xz"
@@ -81,7 +82,8 @@ class BuildRequest(object):
                 dep_libs = ['gcc', 'g++', 'git', 'make', 'cmake', 'autoconf', 'libtool', 'pkg-config', 'gettext',
                             'libssl-dev',
                             'libcairo2-dev',
-                            'libmount-dev', 'libdrm-dev', 'libsoup2.4-dev', 'libudev-dev', 'libjpeg-dev', 'freeglut3-dev',
+                            'libmount-dev', 'libdrm-dev', 'libsoup2.4-dev', 'libudev-dev', 'libjpeg-dev',
+                            'freeglut3-dev',
                             'libegl1-mesa-dev',
                             'zlib1g-dev', 'libffi-dev', 'yasm', 'bison', 'flex', 'libxrandr-dev', 'libfaac-dev',
                             'libfaad-dev',
@@ -124,7 +126,7 @@ class BuildRequest(object):
 
         utils.build_command_configure(jsonc_compiler_flags, g_script_path, self.prefix_path_)
         os.chdir(pwd)
-        #shutil.rmtree(cloned_dir)
+        # shutil.rmtree(cloned_dir)
 
     def build_libev(self):
         libev_compiler_flags = utils.CompileInfo([], ['--with-pic', '--disable-shared', '--enable-static'])
@@ -138,7 +140,7 @@ class BuildRequest(object):
 
         utils.build_command_configure(libev_compiler_flags, g_script_path, self.prefix_path_)
         os.chdir(pwd)
-        #shutil.rmtree(cloned_dir)
+        # shutil.rmtree(cloned_dir)
 
     def build_common(self):
         pwd = os.getcwd()
@@ -164,7 +166,7 @@ class BuildRequest(object):
             subprocess.call(common_cmake_line)
             subprocess.call(['make', 'install'])
             os.chdir(self.build_dir_path_)
-            #shutil.rmtree(cloned_dir)
+            # shutil.rmtree(cloned_dir)
         except Exception as ex:
             os.chdir(self.build_dir_path_)
             raise ex
@@ -172,8 +174,9 @@ class BuildRequest(object):
     def build_glib(self, version):
         glib_version_short = version[:version.rfind('.')]
         compiler_flags = utils.CompileInfo([], [])
-        utils.build_from_sources_autogen('{0}/{1}/glib-{2}.{3}'.format(GLIB_SRC_ROOT, glib_version_short, 
-                                         version, GLIB_ARCH_EXT), compiler_flags, g_script_path, self.prefix_path_)
+        utils.build_from_sources_autogen('{0}/{1}/glib-{2}.{3}'.format(GLIB_SRC_ROOT, glib_version_short,
+                                                                       version, GLIB_ARCH_EXT), compiler_flags,
+                                         g_script_path, self.prefix_path_)
 
     def build_gstreamer(self, version):
         compiler_flags = utils.CompileInfo([], ['--disable-debug'])
@@ -387,3 +390,5 @@ if __name__ == "__main__":
 
     if argv.with_gst_libav:
         request.build_gst_libav(argv.gst_libav_version)
+
+    check_plugins()
