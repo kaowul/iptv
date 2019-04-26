@@ -3,7 +3,7 @@ FROM debian:stretch-slim
 LABEL maintainer="FastoGT Maintainers <support@fastogt.com>"
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-ENV USER iptv
+ENV USER iptv_cloud
 ENV APP_NAME streamer_service
 RUN groupadd -r $USER && useradd -r -g $USER $USER
 
