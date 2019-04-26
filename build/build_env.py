@@ -87,15 +87,15 @@ class BuildRequest(object):
                             'libegl1-mesa-dev',
                             'zlib1g-dev', 'libffi-dev', 'yasm', 'bison', 'flex', 'libxrandr-dev', 'libfaac-dev',
                             'libfaad-dev',
-                            'ninja-build', 'libsqlite3-dev', 'intltool', 'liborc-0.4-dev', 'libxml2-dev', 'libx264-dev',
+                            'ninja-build', 'intltool', 'liborc-0.4-dev', 'libxml2-dev', 'libx264-dev',
                             'glib-networking',
-                            'libmp3lame-dev']
+                            'libmp3lame-dev', 'librtmp-dev']
             elif distribution == 'RHEL':
                 dep_libs = ['gcc', 'gcc-c++', 'git', 'make', 'cmake', 'autoconf', 'libtool', 'cairo-gobject-devel',
                             'libmount-devel',
                             'libpciaccess-devel', 'libxcb-devel', 'libdrm-devel', 'libsoup-devel', 'libx264-devel',
                             'libudev-devel', 'libjpeg-turbo-devel', 'zlib-devel', 'libffi-devel', 'pcre-devel', 'yasm',
-                            'bison', 'flex', 'alsa-lib-devel', 'ninja-build', 'patch', 'lame-devel']
+                            'bison', 'flex', 'alsa-lib-devel', 'ninja-build', 'patch', 'lame-devel', 'librtmp-devel']
         else:
             raise NotImplemented("Unknown platform '%s'" % platform_name)
 
