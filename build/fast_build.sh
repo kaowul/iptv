@@ -9,7 +9,7 @@ USER=iptv_cloud
 
 # update system
 apt-get update
-apt-get install -y git python3-pip mongodb --no-install-recommends
+apt-get install -y git python3-setuptools python3-pip mongodb --no-install-recommends
 
 # sync modules
 git submodule update --init --recursive
