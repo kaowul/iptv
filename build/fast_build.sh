@@ -3,12 +3,9 @@
 USER=iptv_cloud
 
 apt-get update
-apt-get install git python3-pip mongodb
+apt-get install -y git python3-pip mongodb --no-install-recommends
 
-git clone https://github.com/fastogt/iptv
-cd iptv
 git submodule update --init --recursive
-cd build
 
 git clone https://github.com/fastogt/pyfastogt
 cd pyfastogt
