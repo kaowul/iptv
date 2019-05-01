@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 #include <map>
 #include <string>
 
-#include "config_fields.h"
-#include "gst_constants.h"
+#include "base/config_fields.h"
+#include "base/gst_constants.h"
 
 #include "stream/streams/configs/encoding_config.h"
 #include "stream/streams/configs/relay_config.h"
@@ -30,7 +30,7 @@ namespace stream {
 
 namespace {
 
-const static size_t kDefaultRestartAttempts = 10;
+const size_t kDefaultRestartAttempts = 10;
 
 template <typename T>
 void CheckAndSetValue(const utils::ArgsMap& args, const std::string& name, std::map<std::string, T>* map) {

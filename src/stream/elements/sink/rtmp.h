@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
 #pragma once
 
 // for element_id_t
+
+#include <string>
 
 #include "stream/elements/element.h"    // for SupportedElements::ELEMENT_RTMP_SINK
 #include "stream/elements/sink/sink.h"  // for ElementSync

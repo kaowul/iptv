@@ -5,31 +5,32 @@ SET(STREAMER_COMMON ${STREAMER_NAME}_common)
 SET(SOURCE_ROOT ${CMAKE_SOURCE_DIR}/src)
 
 # for sources only absolute paths
-SET(GLOBAL_COMMON_HEADERS
-  ${CMAKE_SOURCE_DIR}/src/gst_constants.h
-  ${CMAKE_SOURCE_DIR}/src/constants.h
-  ${CMAKE_SOURCE_DIR}/src/config_fields.h
-  ${CMAKE_SOURCE_DIR}/src/output_uri.h
-  ${CMAKE_SOURCE_DIR}/src/inputs_outputs.h
-  ${CMAKE_SOURCE_DIR}/src/input_uri.h
-  ${CMAKE_SOURCE_DIR}/src/logo.h
-  ${CMAKE_SOURCE_DIR}/src/stream_struct.h
-  ${CMAKE_SOURCE_DIR}/src/channel_stats.h
-  ${CMAKE_SOURCE_DIR}/src/stream_commands.h
-  ${CMAKE_SOURCE_DIR}/src/types.h
+SET(BASE_HEADERS
+  ${CMAKE_SOURCE_DIR}/src/base/types.h
+  ${CMAKE_SOURCE_DIR}/src/base/input_uri.h
+  ${CMAKE_SOURCE_DIR}/src/base/output_uri.h
+  ${CMAKE_SOURCE_DIR}/src/base/constants.h
+  ${CMAKE_SOURCE_DIR}/src/base/gst_constants.h
+  ${CMAKE_SOURCE_DIR}/src/base/config_fields.h
+  ${CMAKE_SOURCE_DIR}/src/base/logo.h
+  ${CMAKE_SOURCE_DIR}/src/base/inputs_outputs.h
+  ${CMAKE_SOURCE_DIR}/src/base/channel_stats.h
+  ${CMAKE_SOURCE_DIR}/src/base/stream_struct.h
+  ${CMAKE_SOURCE_DIR}/src/base/stream_commands.h
 )
-SET(GLOBAL_COMMON_SOURCES
-  ${CMAKE_SOURCE_DIR}/src/gst_constants.cpp
-  ${CMAKE_SOURCE_DIR}/src/constants.cpp
-  ${CMAKE_SOURCE_DIR}/src/config_fields.cpp
-  ${CMAKE_SOURCE_DIR}/src/output_uri.cpp
-  ${CMAKE_SOURCE_DIR}/src/inputs_outputs.cpp
-  ${CMAKE_SOURCE_DIR}/src/input_uri.cpp
-  ${CMAKE_SOURCE_DIR}/src/logo.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream_struct.cpp
-  ${CMAKE_SOURCE_DIR}/src/channel_stats.cpp
-  ${CMAKE_SOURCE_DIR}/src/stream_commands.cpp
-  ${CMAKE_SOURCE_DIR}/src/types.cpp
+
+SET(BASE_SOURCES
+  ${CMAKE_SOURCE_DIR}/src/base/types.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/input_uri.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/output_uri.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/constants.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/gst_constants.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/config_fields.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/logo.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/inputs_outputs.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/channel_stats.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/stream_struct.cpp
+  ${CMAKE_SOURCE_DIR}/src/base/stream_commands.cpp
 )
 
 SET(PROTOCOL_HEADERS
@@ -76,7 +77,7 @@ ADD_SUBDIRECTORY(utils)
 SET(STREAMER_COMMON_SOURCES
   ${STREAM_COMMANDS_INFO_HEADERS} ${STREAM_COMMANDS_INFO_SOURCES}
   ${PROTOCOL_HEADERS} ${PROTOCOL_SOURCES}
-  ${GLOBAL_COMMON_HEADERS} ${GLOBAL_COMMON_SOURCES}
+  ${BASE_HEADERS} ${BASE_SOURCES}
 )
 SET(STREAMER_COMMON_LIBRARIES ${STREAMER_COMMON_LIBRARIES} ${JSONC_LIBRARIES} utils ${COMMON_BASE_LIBRARY})
 SET(PRIVATE_INCLUDE_DIRECTORIES_COMMON

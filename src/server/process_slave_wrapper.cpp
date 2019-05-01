@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,15 +32,15 @@
 #include <common/string_util.h>
 #include <common/system_info/system_info.h>
 
-#include "child_stream.h"
-#include "config_fields.h"
-#include "inputs_outputs.h"
-#include "stream_commands.h"
+#include "base/config_fields.h"
+#include "base/inputs_outputs.h"
+#include "base/stream_commands.h"
 
 #include "stream/main_wrapper.h"
 
 #include "pipe/pipe_client.h"
 
+#include "server/child_stream.h"
 #include "server/commands_info/service/activate_info.h"
 #include "server/commands_info/service/get_log_info.h"
 #include "server/commands_info/service/ping_info.h"

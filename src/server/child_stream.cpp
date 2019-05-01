@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,8 +14,8 @@
 
 #include "server/child_stream.h"
 
-#include "stream_commands.h"
-#include "stream_struct.h"
+#include "base/stream_commands.h"
+#include "base/stream_struct.h"
 
 namespace iptv_cloud {
 namespace server {

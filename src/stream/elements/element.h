@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -191,7 +191,7 @@ class ElementEx : public Element {
   typedef ElementsTraits<el> traits_t;
   typedef Element base_class;
 
-  ElementEx(const std::string& name) : Element(GetPluginName(), name) {}  // allocate element
+  explicit ElementEx(const std::string& name) : Element(GetPluginName(), name) {}  // allocate element
   ElementEx(const std::string& name, GstElement* const element)
       : Element(GetPluginName(), name, element) {}  // take poiner of element, only wrap
 

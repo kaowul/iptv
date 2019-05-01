@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,11 +22,10 @@
 #include <common/threads/barrier.h>
 
 #include "protocol/types.h"
-#include "timeshift.h"
+#include "stream/ibase_stream.h"
+#include "stream/timeshift.h"
 #include "utils/arg_converter.h"
 #include "utils/utils.h"
-
-#include "stream/ibase_stream.h"
 
 namespace iptv_cloud {
 namespace stream {

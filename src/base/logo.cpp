@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "logo.h"
+#include "base/logo.h"
 
 #include <string>
 
@@ -21,7 +21,7 @@
 
 #include <common/sprintf.h>
 
-#include "constants.h"
+#include "base/constants.h"
 
 #define LOGO_PATH_FIELD "path"
 #define LOGO_POSITION_FIELD "position"

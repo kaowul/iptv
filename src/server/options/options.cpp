@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@
 
 #include <common/file_system/file_system.h>
 
-#include "config_fields.h"
-#include "constants.h"
-#include "gst_constants.h"
-#include "inputs_outputs.h"
-#include "logo.h"
+#include "base/config_fields.h"
+#include "base/constants.h"
+#include "base/gst_constants.h"
+#include "base/inputs_outputs.h"
+#include "base/logo.h"
 
 #include "utils/arg_converter.h"
 

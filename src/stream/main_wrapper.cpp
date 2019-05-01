@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
 // some links:
 // http://gstreamer-devel.narkive.com/YF3JF3qj/issue-in-seeking-while-streaming-video-files
 
-#include "main_wrapper.h"
+#include "stream/main_wrapper.h"
 
 #include <string>
 
 #include <common/file_system/string_path_utils.h>
 
-#include "config_fields.h"
+#include "base/config_fields.h"
 
 #include "stream/stream_controller.h"
 

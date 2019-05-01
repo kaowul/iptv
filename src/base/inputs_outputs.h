@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,10 +14,13 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <common/media/types.h>
 
-#include "input_uri.h"   // for InputUri
-#include "output_uri.h"  // for OutputUri
+#include "base/input_uri.h"   // for InputUri
+#include "base/output_uri.h"  // for OutputUri
 
 #include "utils/arg_reader.h"  // for ArgsMap
 

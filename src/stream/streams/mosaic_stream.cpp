@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include <common/sprintf.h>
 
-#include "gst_constants.h"
+#include "base/gst_constants.h"
 #include "stream/gstreamer_utils.h"
 
 #include "stream/elements/video/video.h"
@@ -215,44 +215,8 @@ void MosaicStream::HandleElementAdded(GstBin* bin, GstElement* element) {
 GValueArray* MosaicStream::HandleAutoplugSort(GstElement* bin, GstPad* pad, GstCaps* caps, GValueArray* factories) {
   UNUSED(bin);
   UNUSED(pad);
-
-  std::string type_title;
-  std::string type_full;
-  if (!get_type_from_caps(caps, &type_title, &type_full)) {
-    return nullptr;
-  }
-
-  const EncodingConfig* econfig = static_cast<const EncodingConfig*>(GetConfig());
-  // SupportedAudioCodecs saudio;
-  SupportedVideoCodec svideo;
-  // bool is_audio = IsAudioCodecFromType(type, &saudio);
-  bool is_video = IsVideoCodecFromType(type_title, &svideo);
-  if (is_video) {  // if not want vaapi decoder skip it
-    bool is_gpu = econfig->IsGpu();
-    GValueArray* result = g_value_array_new(factories->n_values);
-    for (guint i = 0; i < factories->n_values; ++i) {
-      GValue* val = g_value_array_get_nth(factories, i);
-      gpointer factory = gvalue_cast<gpointer>(val);
-      const std::string factoryName = gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory));
-      if (factoryName == elements::ElementVaapiDecodebin::GetPluginName()) {  // VAAPI_DECODEBIN
-                                                                              // not worked
-        DEBUG_LOG() << "skip: " << factoryName;
-      } else if (factoryName == elements::ElementAvdecH264::GetPluginName() &&
-                 (is_gpu && !econfig->IsMfxGpu())) {  // skip cpu decoder for vaapi
-        DEBUG_LOG() << "skip: " << factoryName;
-      } else if (factoryName == elements::ElementMFXH264Decode::GetPluginName() &&
-                 (!is_gpu || !econfig->IsMfxGpu())) {  // skip mfx decoder if not vaapi
-        DEBUG_LOG() << "skip: " << factoryName;
-      } else {
-        DEBUG_LOG() << "not skip: " << factoryName;
-        GValue val = make_gvalue(factory);
-        g_value_array_append(result, &val);
-        g_value_unset(&val);
-      }
-    }
-    return result;
-  }
-
+  UNUSED(caps);
+  UNUSED(factories);
   return nullptr;
 }
 

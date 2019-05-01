@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include <common/sprintf.h>
 
-#include "types.h"
+#include "base/types.h"
 
 #include "stream/gst_types.h"
 #include "stream/ilinker.h"  // for ILinker (ptr only), elements_line_t

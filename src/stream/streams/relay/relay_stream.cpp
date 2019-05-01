@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 #include "stream/gstreamer_utils.h"  // for pad_get_type
 
-#include "constants.h"
-#include "gst_constants.h"
+#include "base/constants.h"
+#include "base/gst_constants.h"
 
 #include "stream/elements/parser/video_parsers.h"
 
@@ -170,14 +170,8 @@ void RelayStream::HandleDecodeBinPadAdded(GstElement* src, GstPad* new_pad) {
 GValueArray* RelayStream::HandleAutoplugSort(GstElement* bin, GstPad* pad, GstCaps* caps, GValueArray* factories) {
   UNUSED(bin);
   UNUSED(pad);
+  UNUSED(caps);
   UNUSED(factories);
-
-  std::string type_title;
-  std::string type_full;
-  if (!get_type_from_caps(caps, &type_title, &type_full)) {
-    return nullptr;
-  }
-
   return nullptr;
 }
 

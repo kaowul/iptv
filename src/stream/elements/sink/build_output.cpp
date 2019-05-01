@@ -1,4 +1,4 @@
-/*  Copyright (C) 2014-2018 FastoGT. All right reserved.
+/*  Copyright (C) 2014-2019 FastoGT. All right reserved.
     This file is part of iptv_cloud.
     iptv_cloud is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,9 +14,11 @@
 
 #include "stream/elements/sink/build_output.h"
 
+#include <string>
+
 #include <common/uri/url.h>
 
-#include "output_uri.h"  // for OutputUri, IsFakeUrl
+#include "base/output_uri.h"  // for OutputUri, IsFakeUrl
 
 #include "stream/elements/sink/http.h"  // for build_http_sink, HlsOutput
 #include "stream/elements/sink/rtmp.h"  // for build_rtmp_sink
