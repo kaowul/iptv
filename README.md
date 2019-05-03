@@ -43,7 +43,7 @@ Build documentation: [Build IPTV](https://github.com/fastogt/iptv/wiki/Build)
 License
 =======
 
-Copyright (C) 2014-2018 FastoGT (https://fastogt.com)
+Copyright (C) 2014-2019 FastoGT (https://fastogt.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 
