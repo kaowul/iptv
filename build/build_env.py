@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import argparse
 import os
-import shutil
 import subprocess
 import sys
 
-from pyfastogt import system_info, utils
+from pyfastogt import system_info, build_utils
 from check_plugins import check_plugins
 
 GLIB_SRC_ROOT = "http://ftp.acc.umu.se/pub/gnome/sources/glib"
@@ -39,34 +38,10 @@ GST_LIBAV_ARCH_EXT = "tar." + GST_LIBAV_ARCH_COMP
 g_script_path = os.path.realpath(sys.argv[0])
 
 
-class BuildRequest(object):
+class BuildRequest(build_utils.BuildRequest):
     def __init__(self, platform, arch_name, dir_path, prefix_path):
-        platform_or_none = system_info.get_supported_platform_by_name(platform)
-
-        if not platform_or_none:
-            raise utils.BuildError('invalid platform')
-
-        build_arch = platform_or_none.architecture_by_arch_name(arch_name)
-        if not build_arch:
-            raise utils.BuildError('invalid arch')
-
-        if not prefix_path:
-            prefix_path = build_arch.default_install_prefix_path()
-
-        packages_types = platform_or_none.package_types()
-        build_platform = platform_or_none.make_platform_by_arch(build_arch, packages_types)
-
-        self.platform_ = build_platform
-        build_dir_path = os.path.abspath(dir_path)
-        if os.path.exists(build_dir_path):
-            shutil.rmtree(build_dir_path)
-
-        os.mkdir(build_dir_path)
-        os.chdir(build_dir_path)
-
-        self.build_dir_path_ = build_dir_path
-        self.prefix_path_ = prefix_path
-        print("Build request platform: {0}({1}) created".format(build_platform.name(), build_arch.name()))
+        patches_path = os.path.abspath(os.path.join(g_script_path, os.pardir))
+        build_utils.BuildRequest.__init__(self, platform, arch_name, patches_path, dir_path, prefix_path)
 
     def get_system_libs(self):
         platform = self.platform_
@@ -111,91 +86,56 @@ class BuildRequest(object):
             if distribution == 'RHEL':
                 subprocess.call(['ln', '-sf', '/usr/bin/ninja-build', '/usr/bin/ninja'])
 
-    def build_jsonc(self):
-        cloned_dir = utils.git_clone('https://github.com/fastogt/json-c.git')
-        self.__build_via_cmake(cloned_dir, ['-DBUILD_SHARED_LIBS=OFF'])
-
-    def build_libev(self):
-        libev_compiler_flags = utils.CompileInfo([], ['--with-pic', '--disable-shared', '--enable-static'])
-
-        pwd = os.getcwd()
-        cloned_dir = utils.git_clone('https://github.com/fastogt/libev.git', pwd)
-        os.chdir(cloned_dir)
-
-        autogen_libev = ['sh', 'autogen.sh']
-        subprocess.call(autogen_libev)
-
-        utils.build_command_configure(libev_compiler_flags, g_script_path, self.prefix_path_)
-        os.chdir(pwd)
-
-    def build_common(self):
-        cloned_dir = utils.git_clone('https://github.com/fastogt/common.git')
-        self.__build_via_cmake(cloned_dir)
-
     def build_glib(self, version):
-        pwd = os.getcwd()
         glib_version_short = version[:version.rfind('.')]
-        compiler_flags = utils.CompileInfo([], [])
-
-        file_path = utils.download_file('{0}/{1}/glib-{2}.{3}'.format(GLIB_SRC_ROOT, glib_version_short,
-                                                                      version, GLIB_ARCH_EXT))
-        extracted_folder = utils.extract_file(file_path)
-        os.chdir(extracted_folder)
-
-        autogen_cmd = ['sh', 'autogen.sh']
-        subprocess.call(autogen_cmd)
-
-        utils.build_command_configure(compiler_flags, g_script_path, self.prefix_path_)
-        os.chdir(pwd)
+        compiler_flags = build_utils.CompileInfo([], [])
+        url = '{0}/{1}/glib-{2}.{3}'.format(GLIB_SRC_ROOT, glib_version_short,
+                                            version, GLIB_ARCH_EXT)
+        self._download_and_build_via_autogen(url, compiler_flags)
 
     def build_gstreamer(self, version):
-        compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.__download_and_build_via_configure(
+        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        self._download_and_build_via_configure(
             '{0}gstreamer/gstreamer-{1}.{2}'.format(GSTREAMER_SRC_ROOT, version, GSTREAMER_ARCH_EXT),
             compiler_flags)
 
     def build_gst_plugins_base(self, version):
-        compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.__download_and_build_via_configure(
+        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        self._download_and_build_via_configure(
             '{0}gst-plugins-base/gst-plugins-base-{1}.{2}'.format(GST_PLUGINS_BASE_SRC_ROOT, version,
                                                                   GST_PLUGINS_BASE_ARCH_EXT),
             compiler_flags)
 
     def build_gst_plugins_good(self, version):
-        compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.__download_and_build_via_configure(
+        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        self._download_and_build_via_configure(
             '{0}gst-plugins-good/gst-plugins-good-{1}.{2}'.format(GST_PLUGINS_GOOD_SRC_ROOT, version,
                                                                   GST_PLUGINS_GOOD_ARCH_EXT),
             compiler_flags)
 
     def build_gst_plugins_bad(self, version):
-        compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.__download_and_build_via_configure(
+        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        self._download_and_build_via_configure(
             '{0}gst-plugins-bad/gst-plugins-bad-{1}.{2}'.format(GST_PLUGINS_BAD_SRC_ROOT, version,
                                                                 GST_PLUGINS_BAD_ARCH_EXT),
             compiler_flags)
 
     def build_gst_plugins_ugly(self, version):
-        compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.__download_and_build_via_configure(
+        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        self._download_and_build_via_configure(
             '{0}gst-plugins-ugly/gst-plugins-ugly-{1}.{2}'.format(GST_PLUGINS_UGLY_SRC_ROOT, version,
                                                                   GST_PLUGINS_UGLY_ARCH_EXT),
             compiler_flags)
 
     def build_gst_libav(self, version):
-        compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.__download_and_build_via_configure(
+        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        self._download_and_build_via_configure(
             '{0}gst-libav/gst-libav-{1}.{2}'.format(GST_LIBAV_SRC_ROOT, version, GST_LIBAV_ARCH_EXT),
             compiler_flags)
 
-    def __build_via_cmake(self, directory, cmake_flags=[]):
-        utils.build_command_cmake(directory, self.prefix_path_, cmake_flags)
-
-    def __download_and_build_via_configure(self, url, compiler_flags: utils.CompileInfo, executable='./configure'):
-        utils.build_from_sources(url, compiler_flags, g_script_path, self.prefix_path_, executable)
-
 
 if __name__ == "__main__":
+    openssl_default_version = '1.1.1b'
     glib_default_version = '2.58.1'
     gstreamer_default_version = '1.14.4'
     gst_plugins_base_default_version = gstreamer_default_version
@@ -245,6 +185,17 @@ if __name__ == "__main__":
                           default=False)
     parser.add_argument('--glib-version', help='glib version (default: {0})'.format(glib_default_version),
                         default=glib_default_version)
+
+    # openssl
+    openssl_grp = parser.add_mutually_exclusive_group()
+    openssl_grp.add_argument('--with-openssl',
+                             help='build openssl (default, version:{0})'.format(openssl_default_version),
+                             dest='with_openssl', action='store_true', default=True)
+    openssl_grp.add_argument('--without-openssl', help='build without openssl', dest='with_openssl',
+                             action='store_false',
+                             default=False)
+    parser.add_argument('--openssl-version', help='openssl version (default: {0})'.format(openssl_default_version),
+                        default=openssl_default_version)
 
     # gstreamer
     gstreamer_grp = parser.add_mutually_exclusive_group()
@@ -354,6 +305,8 @@ if __name__ == "__main__":
 
     if argv.with_glib:
         request.build_glib(argv.glib_version)
+    if argv.with_openssl:
+        request.build_openssl(argv.openssl_version)
 
     if argv.with_gstreamer:
         request.build_gstreamer(argv.gstreamer_version)
