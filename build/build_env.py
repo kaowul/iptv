@@ -68,9 +68,6 @@ class BuildRequest(object):
         self.prefix_path_ = prefix_path
         print("Build request platform: {0}({1}) created".format(build_platform.name(), build_arch.name()))
 
-    def build(self, url, compiler_flags: utils.CompileInfo, executable='./configure'):
-        utils.build_from_sources(url, compiler_flags, g_script_path, self.prefix_path_, executable)
-
     def get_system_libs(self):
         platform = self.platform_
         platform_name = platform.name()
@@ -115,18 +112,8 @@ class BuildRequest(object):
                 subprocess.call(['ln', '-sf', '/usr/bin/ninja-build', '/usr/bin/ninja'])
 
     def build_jsonc(self):
-        jsonc_compiler_flags = utils.CompileInfo([], ['--with-pic', '--disable-shared', '--enable-static'])
-
-        pwd = os.getcwd()
-        cloned_dir = utils.git_clone('https://github.com/fastogt/json-c.git', pwd)
-        os.chdir(cloned_dir)
-
-        autogen_jsonc = ['sh', 'autogen.sh']
-        subprocess.call(autogen_jsonc)
-
-        utils.build_command_configure(jsonc_compiler_flags, g_script_path, self.prefix_path_)
-        os.chdir(pwd)
-        # shutil.rmtree(cloned_dir)
+        cloned_dir = utils.git_clone('https://github.com/fastogt/json-c.git')
+        self.__build_via_cmake(cloned_dir, ['-DBUILD_SHARED_LIBS=OFF'])
 
     def build_libev(self):
         libev_compiler_flags = utils.CompileInfo([], ['--with-pic', '--disable-shared', '--enable-static'])
@@ -140,77 +127,72 @@ class BuildRequest(object):
 
         utils.build_command_configure(libev_compiler_flags, g_script_path, self.prefix_path_)
         os.chdir(pwd)
-        # shutil.rmtree(cloned_dir)
 
     def build_common(self):
-        pwd = os.getcwd()
-        cmake_project_root_abs_path = '..'
-        if not os.path.exists(cmake_project_root_abs_path):
-            raise utils.BuildError('invalid cmake_project_root_path: %s' % cmake_project_root_abs_path)
-
-        # project static options
-        prefix_args = '-DCMAKE_INSTALL_PREFIX={0}'.format(self.prefix_path_)
-
-        cmake_line = ['cmake', cmake_project_root_abs_path, '-GUnix Makefiles', '-DCMAKE_BUILD_TYPE=RELEASE',
-                      prefix_args]
-        try:
-            cloned_dir = utils.git_clone('https://github.com/fastogt/common.git', pwd)
-            os.chdir(cloned_dir)
-
-            os.mkdir('build_cmake_release')
-            os.chdir('build_cmake_release')
-            common_cmake_line = list(cmake_line)
-            common_cmake_line.append('-DQT_ENABLED=OFF')
-            common_cmake_line.append('-DJSON_ENABLED=ON')
-            common_cmake_line.append('-DBUILD_WITH_FPIC=ON')
-            subprocess.call(common_cmake_line)
-            subprocess.call(['make', 'install'])
-            os.chdir(self.build_dir_path_)
-            # shutil.rmtree(cloned_dir)
-        except Exception as ex:
-            os.chdir(self.build_dir_path_)
-            raise ex
+        cloned_dir = utils.git_clone('https://github.com/fastogt/common.git')
+        self.__build_via_cmake(cloned_dir)
 
     def build_glib(self, version):
+        pwd = os.getcwd()
         glib_version_short = version[:version.rfind('.')]
         compiler_flags = utils.CompileInfo([], [])
-        utils.build_from_sources_autogen('{0}/{1}/glib-{2}.{3}'.format(GLIB_SRC_ROOT, glib_version_short,
-                                                                       version, GLIB_ARCH_EXT), compiler_flags,
-                                         g_script_path, self.prefix_path_)
+
+        file_path = utils.download_file('{0}/{1}/glib-{2}.{3}'.format(GLIB_SRC_ROOT, glib_version_short,
+                                                                      version, GLIB_ARCH_EXT))
+        extracted_folder = utils.extract_file(file_path)
+        os.chdir(extracted_folder)
+
+        autogen_cmd = ['sh', 'autogen.sh']
+        subprocess.call(autogen_cmd)
+
+        utils.build_command_configure(compiler_flags, g_script_path, self.prefix_path_)
+        os.chdir(pwd)
 
     def build_gstreamer(self, version):
         compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.build('{0}gstreamer/gstreamer-{1}.{2}'.format(GSTREAMER_SRC_ROOT, version, GSTREAMER_ARCH_EXT),
-                   compiler_flags)
+        self.__download_and_build_via_configure(
+            '{0}gstreamer/gstreamer-{1}.{2}'.format(GSTREAMER_SRC_ROOT, version, GSTREAMER_ARCH_EXT),
+            compiler_flags)
 
     def build_gst_plugins_base(self, version):
         compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.build('{0}gst-plugins-base/gst-plugins-base-{1}.{2}'.format(GST_PLUGINS_BASE_SRC_ROOT, version,
-                                                                         GST_PLUGINS_BASE_ARCH_EXT),
-                   compiler_flags)
+        self.__download_and_build_via_configure(
+            '{0}gst-plugins-base/gst-plugins-base-{1}.{2}'.format(GST_PLUGINS_BASE_SRC_ROOT, version,
+                                                                  GST_PLUGINS_BASE_ARCH_EXT),
+            compiler_flags)
 
     def build_gst_plugins_good(self, version):
         compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.build('{0}gst-plugins-good/gst-plugins-good-{1}.{2}'.format(GST_PLUGINS_GOOD_SRC_ROOT, version,
-                                                                         GST_PLUGINS_GOOD_ARCH_EXT),
-                   compiler_flags)
+        self.__download_and_build_via_configure(
+            '{0}gst-plugins-good/gst-plugins-good-{1}.{2}'.format(GST_PLUGINS_GOOD_SRC_ROOT, version,
+                                                                  GST_PLUGINS_GOOD_ARCH_EXT),
+            compiler_flags)
 
     def build_gst_plugins_bad(self, version):
         compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.build('{0}gst-plugins-bad/gst-plugins-bad-{1}.{2}'.format(GST_PLUGINS_BAD_SRC_ROOT, version,
-                                                                       GST_PLUGINS_BAD_ARCH_EXT),
-                   compiler_flags)
+        self.__download_and_build_via_configure(
+            '{0}gst-plugins-bad/gst-plugins-bad-{1}.{2}'.format(GST_PLUGINS_BAD_SRC_ROOT, version,
+                                                                GST_PLUGINS_BAD_ARCH_EXT),
+            compiler_flags)
 
     def build_gst_plugins_ugly(self, version):
         compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.build('{0}gst-plugins-ugly/gst-plugins-ugly-{1}.{2}'.format(GST_PLUGINS_UGLY_SRC_ROOT, version,
-                                                                         GST_PLUGINS_UGLY_ARCH_EXT),
-                   compiler_flags)
+        self.__download_and_build_via_configure(
+            '{0}gst-plugins-ugly/gst-plugins-ugly-{1}.{2}'.format(GST_PLUGINS_UGLY_SRC_ROOT, version,
+                                                                  GST_PLUGINS_UGLY_ARCH_EXT),
+            compiler_flags)
 
     def build_gst_libav(self, version):
         compiler_flags = utils.CompileInfo([], ['--disable-debug'])
-        self.build('{0}gst-libav/gst-libav-{1}.{2}'.format(GST_LIBAV_SRC_ROOT, version, GST_LIBAV_ARCH_EXT),
-                   compiler_flags)
+        self.__download_and_build_via_configure(
+            '{0}gst-libav/gst-libav-{1}.{2}'.format(GST_LIBAV_SRC_ROOT, version, GST_LIBAV_ARCH_EXT),
+            compiler_flags)
+
+    def __build_via_cmake(self, directory, cmake_flags=[]):
+        utils.build_command_cmake(directory, self.prefix_path_, cmake_flags)
+
+    def __download_and_build_via_configure(self, url, compiler_flags: utils.CompileInfo, executable='./configure'):
+        utils.build_from_sources(url, compiler_flags, g_script_path, self.prefix_path_, executable)
 
 
 if __name__ == "__main__":
