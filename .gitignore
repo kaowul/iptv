@@ -38,5 +38,7 @@ CMakeLists.txt.user
 
 # fastogt tmp files
 build/.idea/
+build/build_*_env/
 build_cmake/
+build_cmake_release/
 clients/.idea

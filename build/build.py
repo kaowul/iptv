@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 import sys
-import subprocess
-import shutil
 import os
-
-build_dir = 'build_linux'
+from pyfastogt import build_utils
 
 
 def print_usage():
@@ -39,16 +36,8 @@ if __name__ == "__main__":
         prefix_path = sys.argv[4]
 
     pwd = os.getcwd()
-
-    abs_dir_path = os.path.abspath(build_dir)
-    if os.path.exists(abs_dir_path):
-        shutil.rmtree(abs_dir_path)
-
-    os.mkdir(abs_dir_path)
-    os.chdir(build_dir)
-    subprocess.call(['cmake', '../../', '-GNinja', '-DCMAKE_BUILD_TYPE={0}'.format(build_type),
-                     '-DCMAKE_INSTALL_PREFIX={0}'.format(prefix_path), '-DLICENSE_KEY={0}'.format(license_key),
-                     '-DHARDWARE_LICENSE_ALGO={0}'.format(license_algo),
-                     '-DJSONC_USE_STATIC=ON'])
-    subprocess.call(['ninja', 'install'])
+    os.chdir('..')
+    build_utils.build_command_cmake(prefix_path,
+                                    ['-DLICENSE_KEY=%s' % license_key, '-DHARDWARE_LICENSE_ALGO=%s' % license_algo],
+                                    build_type)
     os.chdir(pwd)

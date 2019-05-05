@@ -74,12 +74,12 @@ class BuildRequest(build_utils.BuildRequest):
         return dep_libs
 
     def install_system(self):
-        platform = self.platform_
         dep_libs = self.get_system_libs()
         for lib in dep_libs:
-            platform.install_package(lib)
+            self._install_package(lib)
 
         # post install step
+        platform = self.platform()
         platform_name = platform.name()
         if platform_name == 'linux':
             distribution = system_info.linux_get_dist()
@@ -95,43 +95,37 @@ class BuildRequest(build_utils.BuildRequest):
 
     def build_gstreamer(self, version):
         compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
-        self._download_and_build_via_configure(
-            '{0}gstreamer/gstreamer-{1}.{2}'.format(GSTREAMER_SRC_ROOT, version, GSTREAMER_ARCH_EXT),
-            compiler_flags)
+        url = '{0}gstreamer/gstreamer-{1}.{2}'.format(GSTREAMER_SRC_ROOT, version, GSTREAMER_ARCH_EXT)
+        self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_plugins_base(self, version):
         compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
-        self._download_and_build_via_configure(
-            '{0}gst-plugins-base/gst-plugins-base-{1}.{2}'.format(GST_PLUGINS_BASE_SRC_ROOT, version,
-                                                                  GST_PLUGINS_BASE_ARCH_EXT),
-            compiler_flags)
+        url = '{0}gst-plugins-base/gst-plugins-base-{1}.{2}'.format(GST_PLUGINS_BASE_SRC_ROOT, version,
+                                                                    GST_PLUGINS_BASE_ARCH_EXT)
+        self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_plugins_good(self, version):
         compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
-        self._download_and_build_via_configure(
-            '{0}gst-plugins-good/gst-plugins-good-{1}.{2}'.format(GST_PLUGINS_GOOD_SRC_ROOT, version,
-                                                                  GST_PLUGINS_GOOD_ARCH_EXT),
-            compiler_flags)
+        url = '{0}gst-plugins-good/gst-plugins-good-{1}.{2}'.format(GST_PLUGINS_GOOD_SRC_ROOT, version,
+                                                                    GST_PLUGINS_GOOD_ARCH_EXT)
+        self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_plugins_bad(self, version):
         compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
-        self._download_and_build_via_configure(
-            '{0}gst-plugins-bad/gst-plugins-bad-{1}.{2}'.format(GST_PLUGINS_BAD_SRC_ROOT, version,
-                                                                GST_PLUGINS_BAD_ARCH_EXT),
-            compiler_flags)
+        url = '{0}gst-plugins-bad/gst-plugins-bad-{1}.{2}'.format(GST_PLUGINS_BAD_SRC_ROOT, version,
+                                                                  GST_PLUGINS_BAD_ARCH_EXT)
+        self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_plugins_ugly(self, version):
         compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
-        self._download_and_build_via_configure(
-            '{0}gst-plugins-ugly/gst-plugins-ugly-{1}.{2}'.format(GST_PLUGINS_UGLY_SRC_ROOT, version,
-                                                                  GST_PLUGINS_UGLY_ARCH_EXT),
-            compiler_flags)
+        url = '{0}gst-plugins-ugly/gst-plugins-ugly-{1}.{2}'.format(GST_PLUGINS_UGLY_SRC_ROOT, version,
+                                                                    GST_PLUGINS_UGLY_ARCH_EXT)
+        self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_libav(self, version):
         compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
-        self._download_and_build_via_configure(
-            '{0}gst-libav/gst-libav-{1}.{2}'.format(GST_LIBAV_SRC_ROOT, version, GST_LIBAV_ARCH_EXT),
-            compiler_flags)
+        url = '{0}gst-libav/gst-libav-{1}.{2}'.format(GST_LIBAV_SRC_ROOT, version, GST_LIBAV_ARCH_EXT)
+        self._download_and_build_via_configure(url, compiler_flags)
 
 
 if __name__ == "__main__":
@@ -291,8 +285,7 @@ if __name__ == "__main__":
     arg_prefix_path = argv.prefix_path
     arg_architecture = argv.architecture
 
-    request = BuildRequest(arg_platform, arg_architecture, 'build_' + arg_platform + '_env',
-                           arg_prefix_path)
+    request = BuildRequest(arg_platform, arg_architecture, 'build_' + arg_platform + '_env', arg_prefix_path)
     if argv.with_system:
         request.install_system()
 
