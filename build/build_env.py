@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import argparse
-import os
 import subprocess
-import sys
 
 from pyfastogt import system_info, build_utils
 from check_plugins import check_plugins
+
+# Script for building environment on clean machine
 
 GLIB_SRC_ROOT = "http://ftp.acc.umu.se/pub/gnome/sources/glib"
 GLIB_ARCH_COMP = "xz"
@@ -35,13 +35,10 @@ GST_LIBAV_SRC_ROOT = GSTREAMER_SRC_ROOT
 GST_LIBAV_ARCH_COMP = "xz"
 GST_LIBAV_ARCH_EXT = "tar." + GST_LIBAV_ARCH_COMP
 
-g_script_path = os.path.realpath(sys.argv[0])
-
 
 class BuildRequest(build_utils.BuildRequest):
     def __init__(self, platform, arch_name, dir_path, prefix_path):
-        patches_path = os.path.abspath(os.path.join(g_script_path, os.pardir))
-        build_utils.BuildRequest.__init__(self, platform, arch_name, patches_path, dir_path, prefix_path)
+        build_utils.BuildRequest.__init__(self, platform, arch_name, dir_path, prefix_path)
 
     def get_system_libs(self):
         platform = self.platform_
@@ -88,42 +85,42 @@ class BuildRequest(build_utils.BuildRequest):
 
     def build_glib(self, version):
         glib_version_short = version[:version.rfind('.')]
-        compiler_flags = build_utils.CompileInfo([], [])
+        compiler_flags = []
         url = '{0}/{1}/glib-{2}.{3}'.format(GLIB_SRC_ROOT, glib_version_short,
                                             version, GLIB_ARCH_EXT)
         self._download_and_build_via_autogen(url, compiler_flags)
 
     def build_gstreamer(self, version):
-        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        compiler_flags = ['--disable-debug']
         url = '{0}gstreamer/gstreamer-{1}.{2}'.format(GSTREAMER_SRC_ROOT, version, GSTREAMER_ARCH_EXT)
         self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_plugins_base(self, version):
-        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        compiler_flags = ['--disable-debug']
         url = '{0}gst-plugins-base/gst-plugins-base-{1}.{2}'.format(GST_PLUGINS_BASE_SRC_ROOT, version,
                                                                     GST_PLUGINS_BASE_ARCH_EXT)
         self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_plugins_good(self, version):
-        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        compiler_flags = ['--disable-debug']
         url = '{0}gst-plugins-good/gst-plugins-good-{1}.{2}'.format(GST_PLUGINS_GOOD_SRC_ROOT, version,
                                                                     GST_PLUGINS_GOOD_ARCH_EXT)
         self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_plugins_bad(self, version):
-        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        compiler_flags = ['--disable-debug']
         url = '{0}gst-plugins-bad/gst-plugins-bad-{1}.{2}'.format(GST_PLUGINS_BAD_SRC_ROOT, version,
                                                                   GST_PLUGINS_BAD_ARCH_EXT)
         self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_plugins_ugly(self, version):
-        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        compiler_flags = ['--disable-debug']
         url = '{0}gst-plugins-ugly/gst-plugins-ugly-{1}.{2}'.format(GST_PLUGINS_UGLY_SRC_ROOT, version,
                                                                     GST_PLUGINS_UGLY_ARCH_EXT)
         self._download_and_build_via_configure(url, compiler_flags)
 
     def build_gst_libav(self, version):
-        compiler_flags = build_utils.CompileInfo([], ['--disable-debug'])
+        compiler_flags = ['--disable-debug']
         url = '{0}gst-libav/gst-libav-{1}.{2}'.format(GST_LIBAV_SRC_ROOT, version, GST_LIBAV_ARCH_EXT)
         self._download_and_build_via_configure(url, compiler_flags)
 
