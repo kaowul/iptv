@@ -71,6 +71,7 @@
 
 #define SERVICE_ID_FIELD "id"
 #define SERVICE_LOG_FILE_FIELD "log_file"
+#define SERVICE_HOST_FIELD "host"
 
 namespace {
 
@@ -311,7 +312,7 @@ int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
   }
 
   protocol::request_t req = StopServiceRequest(protocol::MakeRequestID(0), stop_str);
-  common::net::HostAndPort host = GetServerHostAndPort();
+  common::net::HostAndPort host = common::net::HostAndPort::CreateLocalHost(CLIENT_PORT);
   common::net::socket_info client_info;
   common::ErrnoError err = common::net::connect(host, common::net::ST_SOCK_STREAM, 0, &client_info);
   if (err) {
@@ -1258,6 +1259,10 @@ void ProcessSlaveWrapper::ReadConfig() {  // CONFIG_SLAVE_FILE_PATH
     WARNING_LOG() << "Define " SERVICE_LOG_FILE_FIELD " variable and make it valid, now used: " DUMMY_LOG_FILE_PATH ".";
     log_path_ = DUMMY_LOG_FILE_PATH;
   }
+
+  if (!utils::ArgsGetValue(slave_config_args, SERVICE_HOST_FIELD, &host_)) {
+    host_ = common::net::HostAndPort::CreateLocalHost(CLIENT_PORT);
+  }
 }
 
 std::string ProcessSlaveWrapper::MakeServiceStats() const {
@@ -1294,7 +1299,7 @@ std::string ProcessSlaveWrapper::MakeServiceStats() const {
 }
 
 common::net::HostAndPort ProcessSlaveWrapper::GetServerHostAndPort() {
-  return common::net::HostAndPort::CreateLocalHost(CLIENT_PORT);
+  return host_;
 }
 
 std::string ProcessSlaveWrapper::GetLogPath() const {

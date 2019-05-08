@@ -39,7 +39,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   ~ProcessSlaveWrapper() override;
 
   static int SendStopDaemonRequest(const std::string& license);
-  static common::net::HostAndPort GetServerHostAndPort();
+  common::net::HostAndPort GetServerHostAndPort();
 
   int Exec(int argc, char** argv);
 
@@ -126,6 +126,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
 
   std::string node_id_;
   const time_t start_time_;
+  common::net::HostAndPort host_;
 
   int process_argc_;
   char** process_argv_;
