@@ -294,9 +294,9 @@ ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key)
       cleanup_timer_(INVALID_TIMER_ID),
       node_stats_(new NodeStats),
       stream_exec_func_(nullptr) {
+  ReadConfig();
   loop_ = new DaemonServer(GetServerHostAndPort(), this);
   loop_->SetName("back_end_server");
-  ReadConfig();
 }
 
 int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
