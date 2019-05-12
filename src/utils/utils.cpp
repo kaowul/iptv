@@ -67,7 +67,7 @@ void RemoveOldFilesByTime(const common::file_system::ascii_directory_string_path
       std::string file_path = common::MemSPrintf("%s%s", path, dent->d_name);
       time_t mtime;
       common::ErrnoError err = common::file_system::get_file_time_last_modification(file_path, &mtime);
-      if (!err) {
+      if (err) {
         WARNING_LOG() << "Can't get timestamp file: " << file_path << ", error: " << err->GetDescription();
       } else {
         if (mtime < max_life_secs) {
