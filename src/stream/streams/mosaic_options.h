@@ -39,7 +39,6 @@ struct ImageInfo {
 struct SoundInfo {
   SoundInfo();
   volume_t volume;
-  bool mute;
   std::vector<AudioChannelInfo> channels;
 };
 

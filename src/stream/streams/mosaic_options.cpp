@@ -18,7 +18,7 @@ namespace iptv_cloud {
 namespace stream {
 namespace streams {
 
-SoundInfo::SoundInfo() : volume(), mute(), channels() {}
+SoundInfo::SoundInfo() : volume(), channels() {}
 
 MosaicImageOptions::MosaicImageOptions() : screen_size(), right_padding(0), sreams() {}
 

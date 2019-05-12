@@ -59,6 +59,10 @@ Element* build_output(const OutputUri& output, element_id_t sink_id) {
     const common::file_system::ascii_directory_string_path http_root = output.GetHttpRoot();
     const common::uri::Upath upath = uri.GetPath();
     const std::string filename = upath.GetFileName();
+    if (filename.empty()) {
+      NOTREACHED() << "Empty playlist name, please create urls like http://localhost/master.m3u8!";
+      return nullptr;
+    }
     elements::sink::HlsOutput hout = MakeHlsOutput(uri, http_root, filename);
     ElementHLSSink* http_sink = elements::sink::make_http_sink(sink_id, hout);
     return http_sink;

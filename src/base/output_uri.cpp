@@ -24,16 +24,13 @@
 #define FIELD_OUTPUT_ID "id"
 #define FIELD_OUTPUT_URI "uri"
 #define FIELD_OUTPUT_HTTP_ROOT "http_root"
-#define FIELD_OUTPUT_SIZE "size"
-#define FIELD_OUTPUT_VIDEO_BITRATE "video_bitrate"
-#define FIELD_OUTPUT_AUDIO_BITRATE "audio_bitrate"
 
 namespace iptv_cloud {
 
 OutputUri::OutputUri() : OutputUri(0, common::uri::Url()) {}
 
 OutputUri::OutputUri(uri_id_t id, const common::uri::Url& output)
-    : base_class(), id_(id), output_(output), http_root_(), size_(), audio_bit_rate_(), video_bit_rate_() {}
+    : base_class(), id_(id), output_(output), http_root_() {}
 
 OutputUri::uri_id_t OutputUri::GetID() const {
   return id_;
@@ -59,33 +56,8 @@ void OutputUri::SetHttpRoot(const http_root_t& root) {
   http_root_ = root;
 }
 
-common::draw::Size OutputUri::GetSize() const {
-  return size_;
-}
-
-void OutputUri::SetSize(common::draw::Size size) {
-  size_ = size;
-}
-
-bit_rate_t OutputUri::GetAudioBitrate() const {
-  return audio_bit_rate_;
-}
-
-void OutputUri::SetAudioBitrate(bit_rate_t rate) {
-  audio_bit_rate_ = rate;
-}
-
-bit_rate_t OutputUri::GetVideoBitrate() const {
-  return video_bit_rate_;
-}
-
-void OutputUri::SetVideoBitrate(bit_rate_t rate) {
-  video_bit_rate_ = rate;
-}
-
 bool OutputUri::Equals(const OutputUri& inf) const {
-  return id_ == inf.id_ && output_ == inf.output_ && http_root_ == inf.http_root_ && size_ == inf.size_ &&
-         audio_bit_rate_ == inf.audio_bit_rate_ && video_bit_rate_ == inf.video_bit_rate_;
+  return id_ == inf.id_ && output_ == inf.output_ && http_root_ == inf.http_root_;
 }
 
 common::Error OutputUri::DoDeSerialize(json_object* serialized) {
@@ -110,27 +82,6 @@ common::Error OutputUri::DoDeSerialize(json_object* serialized) {
     res.SetHttpRoot(http_root);
   }
 
-  json_object* jsize = nullptr;
-  json_bool jsize_exists = json_object_object_get_ex(serialized, FIELD_OUTPUT_SIZE, &jsize);
-  if (jsize_exists) {
-    common::draw::Size size;
-    if (common::ConvertFromString(json_object_get_string(jsize), &size)) {
-      res.SetSize(size);
-    }
-  }
-
-  json_object* jvbitrate = nullptr;
-  json_bool jvbitrate_exists = json_object_object_get_ex(serialized, FIELD_OUTPUT_VIDEO_BITRATE, &jvbitrate);
-  if (jvbitrate_exists) {
-    res.SetVideoBitrate(json_object_get_int(jvbitrate));
-  }
-
-  json_object* jabitrate = nullptr;
-  json_bool jabitrate_exists = json_object_object_get_ex(serialized, FIELD_OUTPUT_AUDIO_BITRATE, &jabitrate);
-  if (jabitrate_exists) {
-    res.SetAudioBitrate(json_object_get_int(jabitrate));
-  }
-
   *this = res;
   return common::Error();
 }
@@ -143,16 +94,6 @@ common::Error OutputUri::SerializeFields(json_object* out) const {
   std::string url_str = common::ConvertToString(GetOutput());
   json_object_object_add(out, FIELD_OUTPUT_URI, json_object_new_string(url_str.c_str()));
   json_object_object_add(out, FIELD_OUTPUT_HTTP_ROOT, json_object_new_string(http_root_str.c_str()));
-  const std::string size_str = common::ConvertToString(GetSize());
-  json_object_object_add(out, FIELD_OUTPUT_SIZE, json_object_new_string(size_str.c_str()));
-  const auto vid_bit_rate = GetVideoBitrate();
-  if (vid_bit_rate) {
-    json_object_object_add(out, FIELD_OUTPUT_VIDEO_BITRATE, json_object_new_int(*vid_bit_rate));
-  }
-  const auto audio_bit_rate = GetAudioBitrate();
-  if (audio_bit_rate) {
-    json_object_object_add(out, FIELD_OUTPUT_AUDIO_BITRATE, json_object_new_int(*audio_bit_rate));
-  }
   return common::Error();
 }
 

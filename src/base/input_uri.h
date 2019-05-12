@@ -43,9 +43,6 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   common::uri::Url GetInput() const;
   void SetInput(const common::uri::Url& uri);
 
-  bool GetMute() const;
-  void SetMute(bool mute);
-
   volume_t GetVolume() const;  // 0.0, 10.0
   void SetVolume(volume_t vol);
 
@@ -60,7 +57,6 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   common::uri::Url input_;
 
   volume_t volume_;
-  bool mute_;
 
   bool relay_video_;
   bool relay_audio_;

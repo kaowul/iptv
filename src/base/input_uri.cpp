@@ -26,7 +26,6 @@
 
 #define FIELD_INPUT_RELAY_AUDIO "relay_audio"
 #define FIELD_INPUT_RELAY_VIDEO "relay_video"
-#define FIELD_INPUT_MUTE_AUDIO "mute"
 #define FIELD_INPUT_VOLUME_AUDIO "volume"
 
 namespace iptv_cloud {
@@ -34,7 +33,7 @@ namespace iptv_cloud {
 InputUri::InputUri() : InputUri(0, common::uri::Url()) {}
 
 InputUri::InputUri(uri_id_t id, const common::uri::Url& input)
-    : base_class(), id_(id), input_(input), volume_(), mute_(false), relay_video_(false), relay_audio_(false) {}
+    : base_class(), id_(id), input_(input), volume_(), relay_video_(false), relay_audio_(false) {}
 
 bool InputUri::GetRelayVideo() const {
   return relay_video_;
@@ -68,14 +67,6 @@ void InputUri::SetInput(const common::uri::Url& uri) {
   input_ = uri;
 }
 
-bool InputUri::GetMute() const {
-  return mute_;
-}
-
-void InputUri::SetMute(bool mute) {
-  mute_ = mute;
-}
-
 volume_t InputUri::GetVolume() const {
   return volume_;
 }
@@ -85,8 +76,8 @@ void InputUri::SetVolume(volume_t vol) {
 }
 
 bool InputUri::Equals(const InputUri& inf) const {
-  return id_ == inf.id_ && input_ == inf.input_ && volume_ == inf.volume_ && mute_ == inf.mute_ &&
-         relay_video_ == inf.relay_video_ && relay_audio_ == inf.relay_audio_;
+  return id_ == inf.id_ && input_ == inf.input_ && volume_ == inf.volume_ && relay_video_ == inf.relay_video_ &&
+         relay_audio_ == inf.relay_audio_;
 }
 
 common::Error InputUri::DoDeSerialize(json_object* serialized) {
@@ -108,12 +99,6 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
       json_object_object_get_ex(serialized, FIELD_INPUT_VOLUME_AUDIO, &juri_volume_audio);
   if (juri_volume_audio_exists) {
     res.SetVolume(json_object_get_double(juri_volume_audio));
-  }
-
-  json_object* juri_mute_audio = nullptr;
-  json_bool juri_mute_audio_exists = json_object_object_get_ex(serialized, FIELD_INPUT_MUTE_AUDIO, &juri_mute_audio);
-  if (juri_mute_audio_exists) {
-    res.SetMute(json_object_get_boolean(juri_mute_audio));
   }
 
   json_object* juri_relay_video = nullptr;
@@ -140,7 +125,6 @@ common::Error InputUri::SerializeFields(json_object* out) const {
   if (vol) {
     json_object_object_add(out, FIELD_INPUT_VOLUME_AUDIO, json_object_new_double(*vol));
   }
-  json_object_object_add(out, FIELD_INPUT_MUTE_AUDIO, json_object_new_boolean(GetMute()));
   json_object_object_add(out, FIELD_INPUT_RELAY_VIDEO, json_object_new_boolean(GetRelayVideo()));
   json_object_object_add(out, FIELD_INPUT_RELAY_AUDIO, json_object_new_boolean(GetRelayAudio()));
   return common::Error();

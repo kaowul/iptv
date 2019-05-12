@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include <common/draw/types.h>
 #include <common/file_system/path.h>
 #include <common/serializer/json_serializer.h>
 #include <common/uri/url.h>
@@ -40,15 +39,6 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
   http_root_t GetHttpRoot() const;
   void SetHttpRoot(const http_root_t& root);
 
-  common::draw::Size GetSize() const;
-  void SetSize(common::draw::Size size);
-
-  bit_rate_t GetAudioBitrate() const;
-  void SetAudioBitrate(bit_rate_t rate);
-
-  bit_rate_t GetVideoBitrate() const;
-  void SetVideoBitrate(bit_rate_t rate);
-
   bool Equals(const OutputUri& inf) const;
 
  protected:
@@ -59,11 +49,6 @@ class OutputUri : public common::serializer::JsonSerializer<OutputUri> {
   uri_id_t id_;
   common::uri::Url output_;
   http_root_t http_root_;
-
-  common::draw::Size size_;
-
-  bit_rate_t audio_bit_rate_;
-  bit_rate_t video_bit_rate_;
 };
 
 inline bool operator==(const OutputUri& left, const OutputUri& right) {

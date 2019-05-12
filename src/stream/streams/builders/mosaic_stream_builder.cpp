@@ -163,19 +163,14 @@ bool MosaicStreamBuilder::InitPipeline() {
         const std::string pad_name = common::MemSPrintf("sink_%lu", i);
         pad::Pad* sink_pad = amix->StaticPad(pad_name.c_str());
         volume_t vol = uri.GetVolume();
-        bool mute = uri.GetMute();
         if (sink_pad->IsValid()) {
           if (vol) {
             sink_pad->SetProperty("volume", *vol);
-          }
-          if (mute) {
-            sink_pad->SetProperty("mute", true);
           }
         }
         delete sink_pad;
 
         sound.volume = vol ? *vol : DEFAULT_VOLUME;
-        sound.mute = mute;
       }
       StreamInfo stream{image, sound};
       options.sreams.push_back(stream);
@@ -291,13 +286,7 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       elements::Element* next = video_tee_queue;
       ElementLink(video, next);
 
-      common::draw::Size size = output.GetSize();
-      const auto video_bitrate = output.GetVideoBitrate();
       elements::Element* last = next;
-      if (size.IsValid() && !config->IsMfxGpu()) {
-        last = elements::encoders::build_video_scale(size.width, size.height, this, last, i);
-      }
-
       const auto aratio = config->GetAspectRatio();
       if (aratio) {
         elements::video::ElementAspectRatio* aspect_ratio =
@@ -314,7 +303,7 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       }
 
       elements_line_t video_encoder = elements::encoders::build_video_encoder(
-          config->GetVideoEncoder(), video_bitrate, config->GetVideoEncoderArgs(), config->GetVideoEncoderStrArgs(),
+          config->GetVideoEncoder(), bit_rate_t(), config->GetVideoEncoderArgs(), config->GetVideoEncoderStrArgs(),
           this, i);
       ElementLink(last, video_encoder.front());
       next = video_encoder.back();
@@ -353,11 +342,10 @@ void MosaicStreamBuilder::BuildOutput(elements::Element* video, elements::Elemen
       elements::Element* next = audio_tee_queue;
       ElementLink(audio, next);
 
-      const auto audiorate = output.GetAudioBitrate();
       const std::string audio_encoder_str = config->GetAudioEncoder();
       std::string name_codec = common::MemSPrintf(AUDIO_CODEC_NAME_1U, i);
       elements::Element* audio_encoder =
-          elements::encoders::make_audio_encoder(audio_encoder_str, name_codec, audiorate);
+          elements::encoders::make_audio_encoder(audio_encoder_str, name_codec, bit_rate_t());
       ElementAdd(audio_encoder);
       if (audio_encoder_str == elements::encoders::ElementMP3Enc::GetPluginName()) {
         elements::audio::ElementAudioResample* audioresample =
