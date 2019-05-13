@@ -155,9 +155,9 @@ int main(int argc, char** argv, char** envp) {
   iptv_cloud::server::ProcessSlaveWrapper wrapper(license_key);
   const std::string log_path = wrapper.GetLogPath();
   common::logging::INIT_LOGGER(STREAMER_SERVICE_NAME, log_path,
-                               common::logging::LOG_LEVEL_INFO);  // initialization
-                                                                  // of logging
-                                                                  // system
+                               common::logging::LOG_LEVEL_NOTICE);  // initialization
+                                                                    // of logging
+                                                                    // system
   NOTICE_LOG() << "Running " PROJECT_VERSION_HUMAN << " in " << (run_as_daemon ? "daemon" : "common") << " mode";
 
   for (char** env = envp; *env != nullptr; env++) {
