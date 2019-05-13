@@ -33,6 +33,7 @@ class ElementSoupHTTPSrc : public ElementLocation<ELEMENT_SOUP_HTTP_SRC> {
 
   void SetIsLive(bool live = false);  // Defaut: false
   void SetTimeOut(gint secs = 15);    // 0 - 3600 Default: 15
+  void SetUserAgent(const std::string& agent);
 };
 
 ElementSoupHTTPSrc* make_http_src(const std::string& location, gint timeout_secs, element_id_t input_id);
