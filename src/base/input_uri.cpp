@@ -24,32 +24,11 @@
 #define FIELD_INPUT_ID "id"
 #define FIELD_INPUT_URI "uri"
 
-#define FIELD_INPUT_RELAY_AUDIO "relay_audio"
-#define FIELD_INPUT_RELAY_VIDEO "relay_video"
-#define FIELD_INPUT_VOLUME_AUDIO "volume"
-
 namespace iptv_cloud {
 
 InputUri::InputUri() : InputUri(0, common::uri::Url()) {}
 
-InputUri::InputUri(uri_id_t id, const common::uri::Url& input)
-    : base_class(), id_(id), input_(input), volume_(), relay_video_(false), relay_audio_(false) {}
-
-bool InputUri::GetRelayVideo() const {
-  return relay_video_;
-}
-
-void InputUri::SetRelayVideo(bool rv) {
-  relay_video_ = rv;
-}
-
-bool InputUri::GetRelayAudio() const {
-  return relay_audio_;
-}
-
-void InputUri::SetRelayAudio(bool ra) {
-  relay_audio_ = ra;
-}
+InputUri::InputUri(uri_id_t id, const common::uri::Url& input) : base_class(), id_(id), input_(input) {}
 
 InputUri::uri_id_t InputUri::GetID() const {
   return id_;
@@ -67,17 +46,8 @@ void InputUri::SetInput(const common::uri::Url& uri) {
   input_ = uri;
 }
 
-volume_t InputUri::GetVolume() const {
-  return volume_;
-}
-
-void InputUri::SetVolume(volume_t vol) {
-  volume_ = vol;
-}
-
 bool InputUri::Equals(const InputUri& inf) const {
-  return id_ == inf.id_ && input_ == inf.input_ && volume_ == inf.volume_ && relay_video_ == inf.relay_video_ &&
-         relay_audio_ == inf.relay_audio_;
+  return id_ == inf.id_ && input_ == inf.input_;
 }
 
 common::Error InputUri::DoDeSerialize(json_object* serialized) {
@@ -94,25 +64,6 @@ common::Error InputUri::DoDeSerialize(json_object* serialized) {
     res.SetInput(common::uri::Url(json_object_get_string(juri)));
   }
 
-  json_object* juri_volume_audio = nullptr;
-  json_bool juri_volume_audio_exists =
-      json_object_object_get_ex(serialized, FIELD_INPUT_VOLUME_AUDIO, &juri_volume_audio);
-  if (juri_volume_audio_exists) {
-    res.SetVolume(json_object_get_double(juri_volume_audio));
-  }
-
-  json_object* juri_relay_video = nullptr;
-  json_bool juri_relay_video_exists = json_object_object_get_ex(serialized, FIELD_INPUT_RELAY_VIDEO, &juri_relay_video);
-  if (juri_relay_video_exists) {
-    res.SetRelayVideo(json_object_get_boolean(juri_relay_video));
-  }
-
-  json_object* juri_relay_audio = nullptr;
-  json_bool juri_relay_audio_exists = json_object_object_get_ex(serialized, FIELD_INPUT_RELAY_AUDIO, &juri_relay_audio);
-  if (juri_relay_audio_exists) {
-    res.SetRelayAudio(json_object_get_boolean(juri_relay_audio));
-  }
-
   *this = res;
   return common::Error();
 }
@@ -121,12 +72,6 @@ common::Error InputUri::SerializeFields(json_object* out) const {
   json_object_object_add(out, FIELD_INPUT_ID, json_object_new_int64(GetID()));
   std::string url_str = common::ConvertToString(GetInput());
   json_object_object_add(out, FIELD_INPUT_URI, json_object_new_string(url_str.c_str()));
-  const auto vol = GetVolume();
-  if (vol) {
-    json_object_object_add(out, FIELD_INPUT_VOLUME_AUDIO, json_object_new_double(*vol));
-  }
-  json_object_object_add(out, FIELD_INPUT_RELAY_VIDEO, json_object_new_boolean(GetRelayVideo()));
-  json_object_object_add(out, FIELD_INPUT_RELAY_AUDIO, json_object_new_boolean(GetRelayAudio()));
   return common::Error();
 }
 

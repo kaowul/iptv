@@ -38,7 +38,6 @@ struct ImageInfo {
 
 struct SoundInfo {
   SoundInfo();
-  volume_t volume;
   std::vector<AudioChannelInfo> channels;
 };
 

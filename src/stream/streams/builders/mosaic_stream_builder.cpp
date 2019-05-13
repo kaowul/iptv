@@ -160,6 +160,7 @@ bool MosaicStreamBuilder::InitPipeline() {
         ElementLink(audio_queue, spec);
 
         ElementLink(spec, amix);
+        /*
         const std::string pad_name = common::MemSPrintf("sink_%lu", i);
         pad::Pad* sink_pad = amix->StaticPad(pad_name.c_str());
         volume_t vol = uri.GetVolume();
@@ -169,8 +170,8 @@ bool MosaicStreamBuilder::InitPipeline() {
           }
         }
         delete sink_pad;
-
         sound.volume = vol ? *vol : DEFAULT_VOLUME;
+        */
       }
       StreamInfo stream{image, sound};
       options.sreams.push_back(stream);

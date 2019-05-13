@@ -433,6 +433,8 @@ bool FindOption(const std::string& key, option_t* opt) {
                                                   {HAVE_VIDEO_FIELD, dont_validate},
                                                   {HAVE_AUDIO_FIELD, dont_validate},
                                                   {DEINTERLACE_FIELD, dont_validate},
+                                                  {RELAY_AUDIO_FIELD, dont_validate},
+                                                  {RELAY_VIDEO_FIELD, dont_validate},
                                                   {LOOP_FIELD, dont_validate},
                                                   {SIZE_FIELD, validate_size},
                                                   {LOGO_FIELD, validate_logo},

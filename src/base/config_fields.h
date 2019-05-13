@@ -47,5 +47,7 @@
 #define MAIN_PROFILE_FIELD "mainprofile"
 #define MAIN_PROFILE_EXTERNAL_FIELD "mainprofile_external"
 #define ASPECT_RATIO_FIELD "aspect_ratio"
+#define RELAY_AUDIO_FIELD "relay_audio"
+#define RELAY_VIDEO_FIELD "relay_video"
 
 #define DECKLINK_VIDEO_MODE_FILELD "decklink_video_mode"

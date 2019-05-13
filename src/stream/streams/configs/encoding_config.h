@@ -33,6 +33,12 @@ class EncodingConfig : public AudioVideoConfig {
   typedef AudioVideoConfig base_class;
   explicit EncodingConfig(const base_class& config);
 
+  bool GetRelayVideo() const;
+  void SetRelayVideo(bool rv);
+
+  bool GetRelayAudio() const;
+  void SetRelayAudio(bool ra);
+
   volume_t GetVolume() const;  // encoding
   void SetVolume(volume_t volume);
 
@@ -100,6 +106,9 @@ class EncodingConfig : public AudioVideoConfig {
 
   decklink_video_mode_t decklink_video_mode_;
   rational_t aspect_ratio_;
+
+  bool relay_video_;
+  bool relay_audio_;
 };
 
 typedef EncodingConfig PlaylistEncodingConfig;

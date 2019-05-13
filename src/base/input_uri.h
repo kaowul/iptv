@@ -31,20 +31,11 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
   InputUri();
   explicit InputUri(uri_id_t id, const common::uri::Url& input);
 
-  bool GetRelayVideo() const;
-  void SetRelayVideo(bool rv);
-
-  bool GetRelayAudio() const;
-  void SetRelayAudio(bool ra);
-
   uri_id_t GetID() const;
   void SetID(uri_id_t id);
 
   common::uri::Url GetInput() const;
   void SetInput(const common::uri::Url& uri);
-
-  volume_t GetVolume() const;  // 0.0, 10.0
-  void SetVolume(volume_t vol);
 
   bool Equals(const InputUri& inf) const;
 
@@ -55,11 +46,6 @@ class InputUri : public common::serializer::JsonSerializer<InputUri> {
  private:
   uri_id_t id_;
   common::uri::Url input_;
-
-  volume_t volume_;
-
-  bool relay_video_;
-  bool relay_audio_;
 };
 
 inline bool operator==(const InputUri& left, const InputUri& right) {

@@ -43,7 +43,25 @@ EncodingConfig::EncodingConfig(const base_class& config)
       audio_bit_rate_(),
       logo_(),
       decklink_video_mode_(DEFAULT_DECKLINK_VIDEO_MODE),
-      aspect_ratio_() {}
+      aspect_ratio_(),
+      relay_video_(false),
+      relay_audio_(false) {}
+
+bool EncodingConfig::GetRelayVideo() const {
+  return relay_video_;
+}
+
+void EncodingConfig::SetRelayVideo(bool rv) {
+  relay_video_ = rv;
+}
+
+bool EncodingConfig::GetRelayAudio() const {
+  return relay_audio_;
+}
+
+void EncodingConfig::SetRelayAudio(bool ra) {
+  relay_audio_ = ra;
+}
 
 void EncodingConfig::SetVolume(volume_t volume) {
   volume_ = volume;

@@ -218,6 +218,15 @@ common::Error make_config(const utils::ArgsMap& config_args, Config** config) {
     return common::Error();
   } else if (stream_type == ENCODE) {
     streams::EncodingConfig* econfig = new streams::EncodingConfig(aconf);
+    bool relay_audio;
+    if (utils::ArgsGetValue(config_args, RELAY_AUDIO_FIELD, &relay_audio)) {
+      econfig->SetRelayAudio(relay_audio);
+    }
+    bool relay_video;
+    if (utils::ArgsGetValue(config_args, RELAY_VIDEO_FIELD, &relay_video)) {
+      econfig->SetRelayVideo(relay_video);
+    }
+
     bool deinterlace;
     if (utils::ArgsGetValue(config_args, DEINTERLACE_FIELD, &deinterlace)) {
       econfig->SetDeinterlace(deinterlace);

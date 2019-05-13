@@ -76,9 +76,9 @@ IBaseStream* StreamsFactory::CreateStream(const Config* config,
       return new streams::DeviceStream(econfig, client, stats);
     }
 
-    if (iuri.GetRelayVideo()) {
+    if (econfig->GetRelayVideo()) {
       return new streams::EncodingOnlyAudioStream(econfig, client, stats);
-    } else if (iuri.GetRelayAudio()) {
+    } else if (econfig->GetRelayAudio()) {
       return new streams::EncodingOnlyVideoStream(econfig, client, stats);
     }
 
