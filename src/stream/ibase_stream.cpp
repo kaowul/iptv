@@ -40,7 +40,6 @@
 #define MIN_OUT_DATA 4 * 1024 * 60  // 4 kBps
 #define MIN_IN_DATA 4 * 1024 * 60   // 4 kBps
 #define DEFAULT_FRAMERATE 25
-
 #define MFX_ENV "iHD"
 #define MFX_DRIVER_PATH "/opt/intel/mediasdk/lib64"
 
@@ -184,7 +183,7 @@ IBaseStream::IBaseStream(const Config* config, IStreamClient* client, StreamStru
   CHECK(config) << "Config must be!";
   CHECK(stats && stats->IsValid()) << "Stats must be!";
   CHECK_EQ(GetType(), config_->GetType());
-  RuntimeCleanUp();
+  RuntimeCleanup();
 }
 
 void IBaseStream::LinkInputPad(GstPad* pad, element_id_t id) {
@@ -199,8 +198,8 @@ void IBaseStream::LinkOutputPad(GstPad* pad, element_id_t id) {
   probe_out_.push_back(probe);
 }
 
-void IBaseStream::RuntimeCleanUp() {
-  const time_t max_life_time = common::time::current_mstime() / 1000 - 24 * 60 * 60;
+void IBaseStream::RuntimeCleanup() {
+  const time_t max_life_time = common::time::current_mstime() / 1000 - cleanup_period_sec;
   for (const OutputUri& output : config_->GetOutput()) {
     common::uri::Url uri = output.GetOutput();
     common::uri::Url::scheme scheme = uri.GetScheme();

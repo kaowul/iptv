@@ -58,7 +58,12 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
   };
 
   enum InitedFlag { INITED_NOTHING = 0x0000, INITED_VIDEO = 0x0001, INITED_AUDIO = 0x0002 };
-  enum { main_timer_msecs = 1000, no_data_panic_sec = 60, src_timeout_sec = no_data_panic_sec * 2 };
+  enum {
+    main_timer_msecs = 1000,
+    no_data_panic_sec = 60,
+    src_timeout_sec = no_data_panic_sec * 2,
+    cleanup_period_sec = 24 * 60 * 60
+  };
 
   // channel_id_t not empty
   IBaseStream(const Config* config, IStreamClient* client, StreamStruct* stats);
@@ -145,7 +150,7 @@ class IBaseStream : public common::IMetaClassInfo, public IBaseBuilderObserver {
   std::vector<Probe*> probe_in_;
   std::vector<Probe*> probe_out_;
 
-  void RuntimeCleanUp();
+  void RuntimeCleanup();
   bool InitPipeLine();
   void ClearOutProbes();
   void ClearInProbes();
