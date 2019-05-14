@@ -78,6 +78,10 @@ Validity validate_output(const std::string& value) {
   return Validity::VALID;
 }
 
+Validity validate_restart_attempts(const std::string& value) {
+  return validate_range<size_t>(value, 1, std::numeric_limits<size_t>::max(), false);
+}
+
 Validity validate_feedback_dir(const std::string& value) {
   return common::file_system::is_valid_path(value) ? Validity::VALID : Validity::INVALID;
 }
@@ -208,7 +212,7 @@ Validity validate_mfxh264_gopsize(const std::string& value) {
 }
 
 Validity validate_nvh264_preset(const std::string& value) {
-  return validate_range(value, uint16_t(0), std::numeric_limits<uint16_t>::max(), false);
+  return validate_range<uint16_t>(value, 0, std::numeric_limits<uint16_t>::max(), false);
 }
 
 // x264enc validators
@@ -417,6 +421,7 @@ bool FindOption(const std::string& key, option_t* opt) {
                                                   {LOG_LEVEL_FIELD, validate_log_level},
                                                   {INPUT_FIELD, validate_input},
                                                   {OUTPUT_FIELD, validate_output},
+                                                  {RESTART_ATTEMPTS_FIELD, validate_restart_attempts},
                                                   {AUTO_EXIT_TIME_FIELD, validate_auto_exit_time},
                                                   {TIMESHIFT_DIR_FIELD, validate_timeshift_dir},
                                                   {TIMESHIFT_CHUNK_LIFE_TIME_FIELD, validate_timeshift_chunk_life_time},
