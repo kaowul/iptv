@@ -22,6 +22,7 @@
 #include "base/types.h"
 #include "protocol/types.h"
 #include "server/commands_info/stream/start_info.h"
+#include "server/config.h"
 
 namespace iptv_cloud {
 namespace server {
@@ -35,15 +36,13 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
  public:
   enum { node_stats_send_seconds = 10, ping_timeout_clients_seconds = 60, cleanup_seconds = 3 };
 
-  explicit ProcessSlaveWrapper(const std::string& licensy_key);
+  explicit ProcessSlaveWrapper(const std::string& licensy_key, const Config& config);
   ~ProcessSlaveWrapper() override;
 
   static int SendStopDaemonRequest(const std::string& license);
   common::net::HostAndPort GetServerHostAndPort();
 
-  int Exec(int argc, char** argv);
-
-  std::string GetLogPath() const;
+  int Exec() WARN_UNUSED_RESULT;
 
  protected:
   void PreLooped(common::libev::IoLoop* server) override;
@@ -119,23 +118,15 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   common::ErrnoError HandleResponcePingService(ProtocoledDaemonClient* dclient,
                                                protocol::response_t* resp) WARN_UNUSED_RESULT;
 
-  void ReadConfig();
   std::string MakeServiceStats() const;
 
   struct NodeStats;
 
-  std::string node_id_;
-  const time_t start_time_;
-  common::net::HostAndPort host_;
-
-  int process_argc_;
-  char** process_argv_;
-
-  std::string log_path_;
+  const Config config_;
+  const std::string license_key_;
 
   common::libev::IoLoop* loop_;
 
-  const std::string license_key_;
   std::atomic<protocol::seq_id_t> id_;
   common::libev::timer_id_t ping_client_id_timer_;
   common::libev::timer_id_t node_stats_timer_;

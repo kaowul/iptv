@@ -1,3 +1,4 @@
 id=localhost
-log_file=~/@STREAMER_SERVICE_NAME@.log
+log_path=~/@STREAMER_SERVICE_NAME@.log
+log_level=INFO
 host=@STREAMER_SERVICE_HOST@

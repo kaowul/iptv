@@ -64,6 +64,7 @@ SET(DAEMONS_HEADERS
   ${CMAKE_SOURCE_DIR}/src/server/daemon_server.h
   ${CMAKE_SOURCE_DIR}/src/server/daemon_commands.h
   ${CMAKE_SOURCE_DIR}/src/server/stream_struct_utils.h
+  ${CMAKE_SOURCE_DIR}/src/server/config.h
 
   ${DAEMONS_HEADERS_COMANDS_INFO}
 )
@@ -74,6 +75,7 @@ SET(DAEMONS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/server/daemon_server.cpp
   ${CMAKE_SOURCE_DIR}/src/server/daemon_commands.cpp
   ${CMAKE_SOURCE_DIR}/src/server/stream_struct_utils.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/config.cpp
 
   ${DAEMONS_SOURCES_COMANDS_INFO}
 )

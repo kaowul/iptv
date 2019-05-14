@@ -85,6 +85,7 @@ int main(int argc, char** argv, char** envp) {
     } else if (strcmp(argv[i], "--stop") == 0) {
       std::string license_key;
       if (!create_license_key(&license_key)) {
+        std::cerr << "Can't generate license.";
         return EXIT_FAILURE;
       }
 
@@ -93,9 +94,16 @@ int main(int argc, char** argv, char** envp) {
       std::cout << HELP_TEXT << std::endl;
       return EXIT_SUCCESS;
     } else {
-      std::cout << HELP_TEXT << std::endl;
+      std::cerr << HELP_TEXT << std::endl;
       return EXIT_FAILURE;
     }
+  }
+
+  iptv_cloud::server::Config config;
+  common::ErrnoError err = iptv_cloud::server::load_config_from_file(CONFIG_SLAVE_FILE_PATH, &config);
+  if (err) {
+    std::cerr << err->GetDescription() << std::endl;
+    return EXIT_FAILURE;
   }
 
   if (run_as_daemon) {
@@ -104,7 +112,8 @@ int main(int argc, char** argv, char** envp) {
     }
   }
 
-  common::logging::SET_LOGGER_PROJECT_NAME(STREAMER_SERVICE_NAME);
+  common::logging::INIT_LOGGER(STREAMER_SERVICE_NAME, config.log_path,
+                               config.log_level);  // initialization of logging system
 
   const pid_t daemon_pid = getpid();
   const std::string folder_path_to_pid = common::file_system::get_dir_path(PIDFILE_PATH);
@@ -120,7 +129,7 @@ int main(int argc, char** argv, char** envp) {
     }
   }
 
-  common::ErrnoError err = common::file_system::node_access(folder_path_to_pid);
+  err = common::file_system::node_access(folder_path_to_pid);
   if (err) {
     ERROR_LOG() << "Can't have permissions to create, pid file path: " << PIDFILE_PATH;
     return EXIT_FAILURE;
@@ -152,12 +161,7 @@ int main(int argc, char** argv, char** envp) {
   }
 
   // start
-  iptv_cloud::server::ProcessSlaveWrapper wrapper(license_key);
-  const std::string log_path = wrapper.GetLogPath();
-  common::logging::INIT_LOGGER(STREAMER_SERVICE_NAME, log_path,
-                               common::logging::LOG_LEVEL_NOTICE);  // initialization
-                                                                    // of logging
-                                                                    // system
+  iptv_cloud::server::ProcessSlaveWrapper wrapper(license_key, config);
   NOTICE_LOG() << "Running " PROJECT_VERSION_HUMAN << " in " << (run_as_daemon ? "daemon" : "common") << " mode";
 
   for (char** env = envp; *env != nullptr; env++) {
@@ -165,7 +169,7 @@ int main(int argc, char** argv, char** envp) {
     INFO_LOG() << cur_env;
   }
 
-  int res = wrapper.Exec(argc, argv);
+  int res = wrapper.Exec();
   NOTICE_LOG() << "Quiting " PROJECT_VERSION_HUMAN;
 
   err = pidfile.Unlock();

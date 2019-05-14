@@ -19,7 +19,6 @@
 
 #include <dlfcn.h>
 
-#include <fstream>
 #include <string>
 #include <thread>
 #include <utility>
@@ -64,14 +63,6 @@
 
 #include "utils/arg_converter.h"
 #include "utils/utils.h"
-
-#define DUMMY_LOG_FILE_PATH "/dev/null"
-
-#define CLIENT_PORT 6317
-
-#define SERVICE_ID_FIELD "id"
-#define SERVICE_LOG_FILE_FIELD "log_file"
-#define SERVICE_HOST_FIELD "host"
 
 namespace {
 
@@ -160,32 +151,6 @@ common::ErrnoError CreatePipe(int* read_client_fd, int* write_client_fd) {
   *read_client_fd = pipefd[0];
   *write_client_fd = pipefd[1];
   return common::ErrnoError();
-}
-
-iptv_cloud::utils::ArgsMap ReadSlaveConfig(const std::string& path) {
-  if (path.empty()) {
-    CRITICAL_LOG() << "Invalid config path!";
-  }
-
-  std::ifstream config(path);
-  if (!config.is_open()) {
-    CRITICAL_LOG() << "Failed to open config path:" << path;
-  }
-
-  iptv_cloud::utils::ArgsMap options;
-  std::string line;
-  while (getline(config, line)) {
-    const std::pair<std::string, std::string> pair = iptv_cloud::utils::GetKeyValue(line, '=');
-    if (pair.first == SERVICE_ID_FIELD) {
-      options.push_back(pair);
-    } else if (pair.first == SERVICE_LOG_FILE_FIELD) {
-      options.push_back(pair);
-    } else {
-      WARNING_LOG() << "Unknown option: " << pair.first;
-    }
-  }
-
-  return options;
 }
 
 }  // namespace
@@ -283,20 +248,18 @@ struct ProcessSlaveWrapper::NodeStats {
   time_t timestamp;
 };
 
-ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key)
-    : node_id_(),
-      start_time_(common::time::current_mstime() / 1000),
-      loop_(),
+ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key, const Config& config)
+    : config_(config),
       license_key_(license_key),
+      loop_(),
       id_(0),
       ping_client_id_timer_(INVALID_TIMER_ID),
       node_stats_timer_(INVALID_TIMER_ID),
       cleanup_timer_(INVALID_TIMER_ID),
       node_stats_(new NodeStats),
       stream_exec_func_(nullptr) {
-  ReadConfig();
-  loop_ = new DaemonServer(GetServerHostAndPort(), this);
-  loop_->SetName("back_end_server");
+  loop_ = new DaemonServer(config.host, this);
+  loop_->SetName(config.id);
 }
 
 int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
@@ -335,7 +298,7 @@ ProcessSlaveWrapper::~ProcessSlaveWrapper() {
   destroy(&node_stats_);
 }
 
-int ProcessSlaveWrapper::Exec(int argc, char** argv) {
+int ProcessSlaveWrapper::Exec() {
   const std::string absolute_source_dir = common::file_system::absolute_path_from_relative(RELATIVE_SOURCE_DIR);
   const std::string lib_full_path = common::file_system::make_path(absolute_source_dir, CORE_LIBRARY);
   void* handle = dlopen(lib_full_path.c_str(), RTLD_LAZY);
@@ -352,9 +315,6 @@ int ProcessSlaveWrapper::Exec(int argc, char** argv) {
     dlclose(handle);
     return EXIT_FAILURE;
   }
-
-  process_argc_ = argc;
-  process_argv_ = argv;
 
   // gpu statistic monitor
   std::thread perf_thread;
@@ -761,13 +721,7 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(const stream::StartInf
   if (pid == 0) {  // child
     const struct cmd_args client_args = {feedback_dir.c_str(), logs_level};
     const std::string new_process_name = common::MemSPrintf(STREAMER_NAME "_%s", sha.id);
-    for (int i = 0; i < process_argc_; ++i) {
-      memset(process_argv_[i], 0, strlen(process_argv_[i]));
-    }
     const char* new_name = new_process_name.c_str();
-    char* app_name = process_argv_[0];
-    strncpy(app_name, new_name, new_process_name.length());
-    app_name[new_process_name.length()] = 0;
     prctl(PR_SET_NAME, new_name);
 
 #if !defined(TEST)
@@ -1167,7 +1121,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientGetLogService(Protoco
 
     const auto remote_log_path = get_log_info.GetLogPath();
     if (remote_log_path.GetScheme() == common::uri::Url::http) {
-      PostHttpFile(common::file_system::ascii_file_string_path(log_path_), remote_log_path);
+      PostHttpFile(common::file_system::ascii_file_string_path(config_.log_path), remote_log_path);
     } else if (remote_log_path.GetScheme() == common::uri::Url::https) {
     }
 
@@ -1249,22 +1203,6 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponceStreamsCommand(pipe::Proto
   return common::ErrnoError();
 }
 
-void ProcessSlaveWrapper::ReadConfig() {  // CONFIG_SLAVE_FILE_PATH
-  utils::ArgsMap slave_config_args = ReadSlaveConfig(CONFIG_SLAVE_FILE_PATH);
-  if (!utils::ArgsGetValue(slave_config_args, SERVICE_ID_FIELD, &node_id_)) {
-    CRITICAL_LOG() << "Define " SERVICE_ID_FIELD " variable and make it valid.";
-  }
-
-  if (!utils::ArgsGetValue(slave_config_args, SERVICE_LOG_FILE_FIELD, &log_path_)) {
-    WARNING_LOG() << "Define " SERVICE_LOG_FILE_FIELD " variable and make it valid, now used: " DUMMY_LOG_FILE_PATH ".";
-    log_path_ = DUMMY_LOG_FILE_PATH;
-  }
-
-  if (!utils::ArgsGetValue(slave_config_args, SERVICE_HOST_FIELD, &host_)) {
-    host_ = common::net::HostAndPort::CreateLocalHost(CLIENT_PORT);
-  }
-}
-
 std::string ProcessSlaveWrapper::MakeServiceStats() const {
   utils::CpuShot next = utils::GetMachineCpuShot();
   long double cpu_load = utils::GetCpuMachineLoad(node_stats_->prev, next);
@@ -1286,7 +1224,7 @@ std::string ProcessSlaveWrapper::MakeServiceStats() const {
   }
   node_stats_->timestamp = current_time;
 
-  service::ServerInfo stat(node_id_, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
+  service::ServerInfo stat(config_.id, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
                            bytes_recv / ts_diff, bytes_send / ts_diff, sshot, current_time);
 
   std::string node_stats;
@@ -1296,14 +1234,6 @@ std::string ProcessSlaveWrapper::MakeServiceStats() const {
     WARNING_LOG() << "Failed to generate node statistic: " << err_str;
   }
   return node_stats;
-}
-
-common::net::HostAndPort ProcessSlaveWrapper::GetServerHostAndPort() {
-  return host_;
-}
-
-std::string ProcessSlaveWrapper::GetLogPath() const {
-  return log_path_;
 }
 
 }  // namespace server
