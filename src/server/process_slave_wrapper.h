@@ -42,7 +42,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   static int SendStopDaemonRequest(const std::string& license);
   common::net::HostAndPort GetServerHostAndPort();
 
-  int Exec() WARN_UNUSED_RESULT;
+  int Exec(int argc, char** argv) WARN_UNUSED_RESULT;
 
  protected:
   void PreLooped(common::libev::IoLoop* server) override;
@@ -124,6 +124,9 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
 
   const Config config_;
   const std::string license_key_;
+
+  int process_argc_;
+  char** process_argv_;
 
   common::libev::IoLoop* loop_;
 

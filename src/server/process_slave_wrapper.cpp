@@ -251,6 +251,8 @@ struct ProcessSlaveWrapper::NodeStats {
 ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key, const Config& config)
     : config_(config),
       license_key_(license_key),
+      process_argc_(0),
+      process_argv_(nullptr),
       loop_(),
       id_(0),
       ping_client_id_timer_(INVALID_TIMER_ID),
@@ -298,7 +300,7 @@ ProcessSlaveWrapper::~ProcessSlaveWrapper() {
   destroy(&node_stats_);
 }
 
-int ProcessSlaveWrapper::Exec() {
+int ProcessSlaveWrapper::Exec(int argc, char** argv) {
   const std::string absolute_source_dir = common::file_system::absolute_path_from_relative(RELATIVE_SOURCE_DIR);
   const std::string lib_full_path = common::file_system::make_path(absolute_source_dir, CORE_LIBRARY);
   void* handle = dlopen(lib_full_path.c_str(), RTLD_LAZY);
@@ -315,6 +317,9 @@ int ProcessSlaveWrapper::Exec() {
     dlclose(handle);
     return EXIT_FAILURE;
   }
+
+  process_argc_ = argc;
+  process_argv_ = argv;
 
   // gpu statistic monitor
   std::thread perf_thread;
@@ -721,7 +726,13 @@ common::ErrnoError ProcessSlaveWrapper::CreateChildStream(const stream::StartInf
   if (pid == 0) {  // child
     const struct cmd_args client_args = {feedback_dir.c_str(), logs_level};
     const std::string new_process_name = common::MemSPrintf(STREAMER_NAME "_%s", sha.id);
+    for (int i = 0; i < process_argc_; ++i) {
+      memset(process_argv_[i], 0, strlen(process_argv_[i]));
+    }
     const char* new_name = new_process_name.c_str();
+    char* app_name = process_argv_[0];
+    strncpy(app_name, new_name, new_process_name.length());
+    app_name[new_process_name.length()] = 0;
     prctl(PR_SET_NAME, new_name);
 
 #if !defined(TEST)

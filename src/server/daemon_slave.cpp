@@ -169,7 +169,7 @@ int main(int argc, char** argv, char** envp) {
     INFO_LOG() << cur_env;
   }
 
-  int res = wrapper.Exec();
+  int res = wrapper.Exec(argc, argv);
   NOTICE_LOG() << "Quiting " PROJECT_VERSION_HUMAN;
 
   err = pidfile.Unlock();
