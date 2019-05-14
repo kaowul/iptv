@@ -269,15 +269,15 @@ int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
     return EXIT_FAILURE;
   }
 
-  service::StopInfo stop_req(license);
+  const service::StopInfo stop_req(license);
   std::string stop_str;
   common::Error serialize_error = stop_req.SerializeToString(&stop_str);
   if (serialize_error) {
     return EXIT_FAILURE;
   }
 
-  protocol::request_t req = StopServiceRequest(protocol::MakeRequestID(0), stop_str);
-  common::net::HostAndPort host = common::net::HostAndPort::CreateLocalHost(CLIENT_PORT);
+  const protocol::request_t req = StopServiceRequest(protocol::MakeRequestID(0), stop_str);
+  const common::net::HostAndPort host = Config::GetDefaultHost();
   common::net::socket_info client_info;
   common::ErrnoError err = common::net::connect(host, common::net::ST_SOCK_STREAM, 0, &client_info);
   if (err) {

@@ -23,7 +23,10 @@
 #define SERVICE_LOG_PATH_FIELD "log_path"
 #define SERVICE_LOG_LEVEL_FIELD "log_level"
 #define SERVICE_HOST_FIELD "host"
+
 #define DUMMY_LOG_FILE_PATH "/dev/null"
+
+#define CLIENT_PORT 6317
 
 namespace {
 common::ErrnoError ReadSlaveConfig(const std::string& path, iptv_cloud::utils::ArgsMap* args) {
@@ -32,12 +35,12 @@ common::ErrnoError ReadSlaveConfig(const std::string& path, iptv_cloud::utils::A
   }
 
   if (path.empty()) {
-    return common::make_errno_error("Invalid config path.", EINVAL);
+    return common::make_errno_error("Invalid config path", EINVAL);
   }
 
   std::ifstream config(path);
   if (!config.is_open()) {
-    return common::make_errno_error("Failed to open config path: " + path + ".", EINVAL);
+    return common::make_errno_error("Failed to open config path: " + path, EINVAL);
   }
 
   iptv_cloud::utils::ArgsMap options;
@@ -65,10 +68,11 @@ namespace iptv_cloud {
 namespace server {
 
 Config::Config()
-    : id(),
-      host(common::net::HostAndPort::CreateLocalHost(CLIENT_PORT)),
-      log_path(DUMMY_LOG_FILE_PATH),
-      log_level(common::logging::LOG_LEVEL_INFO) {}
+    : id(), host(GetDefaultHost()), log_path(DUMMY_LOG_FILE_PATH), log_level(common::logging::LOG_LEVEL_INFO) {}
+
+common::net::HostAndPort Config::GetDefaultHost() {
+  return common::net::HostAndPort::CreateLocalHost(CLIENT_PORT);
+}
 
 common::ErrnoError load_config_from_file(const std::string& config_absolute_path, Config* config) {
   if (!config) {
@@ -84,7 +88,7 @@ common::ErrnoError load_config_from_file(const std::string& config_absolute_path
 
   std::string id;
   if (!utils::ArgsGetValue(slave_config_args, SERVICE_ID_FIELD, &id)) {
-    return common::make_errno_error("Invalid " SERVICE_ID_FIELD ".", EINVAL);
+    return common::make_errno_error("Invalid " SERVICE_ID_FIELD, EINVAL);
   }
   lconfig.id = id;
 

@@ -19,13 +19,13 @@
 #include <common/error.h>
 #include <common/net/types.h>
 
-#define CLIENT_PORT 6317
-
 namespace iptv_cloud {
 namespace server {
 
 struct Config {
   Config();
+
+  static common::net::HostAndPort GetDefaultHost();
 
   std::string id;
   common::net::HostAndPort host;
