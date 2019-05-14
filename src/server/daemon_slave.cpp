@@ -57,12 +57,10 @@ bool create_license_key(std::string* license_key) {
     return false;
   }
 
-  if (SIZEOFMASS(LICENSE_KEY) == 1) {  // runtime check
-    CRITICAL_LOG() << "A-a-a license key is empty, don't hack me!";
-  }
+  COMPILE_ASSERT(SIZEOFMASS(LICENSE_KEY) != 1, "License key is empty, please use license_gen command to get key!");
 
   if (!common::license::GenerateHardwareHash(license_algo, license_key)) {
-    WARNING_LOG() << "Failed to generate hash!";
+    ERROR_LOG() << "Failed to generate hash!";
     return false;
   }
 
@@ -166,7 +164,7 @@ int main(int argc, char** argv, char** envp) {
 
   for (char** env = envp; *env != nullptr; env++) {
     char* cur_env = *env;
-    INFO_LOG() << cur_env;
+    DEBUG_LOG() << cur_env;
   }
 
   int res = wrapper.Exec(argc, argv);

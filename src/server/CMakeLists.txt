@@ -89,6 +89,10 @@ SET(PERF_OBSERVER_SOURCES
 
 # HARDWARE specific
 SET(LICENSE_KEY "" CACHE STRING "Hardware specific key")
+IF("${LICENSE_KEY}" STREQUAL "")
+  MESSAGE(FATAL_ERROR "License key is empty, please use license_gen command to get key!")
+ENDIF("${LICENSE_KEY}" STREQUAL "")
+
 MESSAGE(STATUS "LICENSE_KEY: ${LICENSE_KEY}")
 
 #gpu nvidia
