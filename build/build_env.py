@@ -127,7 +127,7 @@ class BuildRequest(build_utils.BuildRequest):
 
 if __name__ == "__main__":
     openssl_default_version = '1.1.1b'
-    glib_default_version = '2.59.3'
+    glib_default_version = '2.57.3'
     gstreamer_default_version = '1.16.0'
     gst_plugins_base_default_version = gstreamer_default_version
     gst_plugins_good_default_version = gstreamer_default_version
