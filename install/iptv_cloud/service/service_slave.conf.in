@@ -2,3 +2,4 @@ id=localhost
 log_path=~/@STREAMER_SERVICE_NAME@.log
 log_level=INFO
 host=@STREAMER_SERVICE_HOST@
+http_host=@STREAMER_SERVICE_HTTP_HOST@

@@ -129,6 +129,8 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   char** process_argv_;
 
   common::libev::IoLoop* loop_;
+  common::libev::IoLoop* http_server_;
+  common::libev::IoLoopObserver* http_handler_;
 
   std::atomic<protocol::seq_id_t> id_;
   common::libev::timer_id_t ping_client_id_timer_;

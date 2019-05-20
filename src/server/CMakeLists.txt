@@ -1,5 +1,6 @@
 SET(STREAMER_SERVICE_NAME ${STREAMER_NAME}_service)
 SET(STREAMER_SERVICE_HOST "localhost:6317")
+SET(STREAMER_SERVICE_HTTP_HOST "localhost:8080")
 SET(STREAMER_SERVICE_NAME_EXE ${STREAMER_SERVICE_NAME}_s)
 
 SET(DAEMONS_HEADERS_COMANDS_INFO
@@ -62,6 +63,9 @@ SET(DAEMONS_HEADERS
   ${CMAKE_SOURCE_DIR}/src/server/process_slave_wrapper.h
   ${CMAKE_SOURCE_DIR}/src/server/daemon_client.h
   ${CMAKE_SOURCE_DIR}/src/server/daemon_server.h
+  ${CMAKE_SOURCE_DIR}/src/server/http_handler.h
+  ${CMAKE_SOURCE_DIR}/src/server/http_client.h
+  ${CMAKE_SOURCE_DIR}/src/server/http_server.h
   ${CMAKE_SOURCE_DIR}/src/server/daemon_commands.h
   ${CMAKE_SOURCE_DIR}/src/server/stream_struct_utils.h
   ${CMAKE_SOURCE_DIR}/src/server/config.h
@@ -73,6 +77,9 @@ SET(DAEMONS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/server/process_slave_wrapper.cpp
   ${CMAKE_SOURCE_DIR}/src/server/daemon_client.cpp
   ${CMAKE_SOURCE_DIR}/src/server/daemon_server.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/http_handler.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/http_client.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/http_server.cpp
   ${CMAKE_SOURCE_DIR}/src/server/daemon_commands.cpp
   ${CMAKE_SOURCE_DIR}/src/server/stream_struct_utils.cpp
   ${CMAKE_SOURCE_DIR}/src/server/config.cpp

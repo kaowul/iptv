@@ -14,27 +14,19 @@
 
 #pragma once
 
-#include <string>
-
-#include <common/error.h>
-#include <common/net/types.h>
+#include <common/libev/http/http_server.h>
 
 namespace iptv_cloud {
 namespace server {
 
-struct Config {
-  Config();
+class HttpServer : public common::libev::http::HttpServer {
+ public:
+  typedef common::libev::http::HttpServer base_class;
+  explicit HttpServer(const common::net::HostAndPort& host, common::libev::IoLoopObserver* observer = nullptr);
 
-  static common::net::HostAndPort GetDefaultHost();
-
-  std::string id;
-  common::net::HostAndPort host;
-  std::string log_path;
-  common::logging::LOG_LEVEL log_level;
-  common::net::HostAndPort http_host;
+ private:
+  common::libev::tcp::TcpClient* CreateClient(const common::net::socket_info& info) override;
 };
-
-common::ErrnoError load_config_from_file(const std::string& config_absolute_path, Config* config) WARN_UNUSED_RESULT;
 
 }  // namespace server
 }  // namespace iptv_cloud

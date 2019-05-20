@@ -29,6 +29,7 @@
 #define PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD "playlists_directory"
 #define PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD "dvb_directory"
 #define PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD "capture_card_directory"
+#define PREPARE_SERVICE_INFO_VODS_DIRECTORY_FIELD "vods_directory"
 
 #define SAVE_DIRECTORY_FIELD_PATH "path"
 #define SAVE_DIRECTORY_FIELD_RESULT "result"
@@ -63,7 +64,8 @@ PrepareInfo::PrepareInfo()
       hls_directory_(),
       playlists_directory_(),
       dvb_directory_(),
-      capture_card_directory_() {}
+      capture_card_directory_(),
+      vods_directory_() {}
 
 std::string PrepareInfo::GetFeedbackDirectory() const {
   return feedback_directory_;
@@ -89,6 +91,10 @@ std::string PrepareInfo::GetCaptureDirectory() const {
   return capture_card_directory_;
 }
 
+std::string PrepareInfo::GetVodsDirectory() const {
+  return vods_directory_;
+}
+
 common::Error PrepareInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, PREPARE_SERVICE_INFO_FEEDBACK_DIRECTORY_FIELD,
                          json_object_new_string(feedback_directory_.c_str()));
@@ -100,6 +106,8 @@ common::Error PrepareInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD, json_object_new_string(dvb_directory_.c_str()));
   json_object_object_add(out, PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD,
                          json_object_new_string(capture_card_directory_.c_str()));
+  json_object_object_add(out, PREPARE_SERVICE_INFO_VODS_DIRECTORY_FIELD,
+                         json_object_new_string(vods_directory_.c_str()));
   return common::Error();
 }
 
@@ -147,6 +155,13 @@ common::Error PrepareInfo::DoDeSerialize(json_object* serialized) {
     inf.capture_card_directory_ = json_object_get_string(jcapture_card_directory);
   }
 
+  json_object* jvods_directory = nullptr;
+  json_bool jvods_directory_exists =
+      json_object_object_get_ex(serialized, PREPARE_SERVICE_INFO_VODS_DIRECTORY_FIELD, &jvods_directory);
+  if (jvods_directory_exists) {
+    inf.vods_directory_ = json_object_get_string(jvods_directory);
+  }
+
   *this = inf;
   return common::Error();
 }
@@ -175,7 +190,8 @@ Directories::Directories(const PrepareInfo& sinf)
       hls_dir(sinf.GetHlsDirectory(), PREPARE_SERVICE_INFO_HLS_DIRECTORY_FIELD),
       playlist_dir(sinf.GetPlaylistsDirectory(), PREPARE_SERVICE_INFO_PLAYLIST_DIRECTORY_FIELD),
       dvb_dir(sinf.GetDvbDirectory(), PREPARE_SERVICE_INFO_DVB_DIRECTORY_FIELD),
-      capture_card_dir(sinf.GetCaptureDirectory(), PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD) {}
+      capture_card_dir(sinf.GetCaptureDirectory(), PREPARE_SERVICE_INFO_CAPTURE_CARD_DIRECTORY_FIELD),
+      vods_dir(sinf.GetCaptureDirectory(), PREPARE_SERVICE_INFO_VODS_DIRECTORY_FIELD) {}
 
 std::string MakeDirectoryResponce(const Directories& dirs) {
   json_object* obj = json_object_new_array();
@@ -185,6 +201,7 @@ std::string MakeDirectoryResponce(const Directories& dirs) {
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.playlist_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.dvb_dir));
   json_object_array_add(obj, MakeDirectoryStateResponce(dirs.capture_card_dir));
+  json_object_array_add(obj, MakeDirectoryStateResponce(dirs.vods_dir));
   std::string obj_str = json_object_get_string(obj);
   json_object_put(obj);
   return obj_str;

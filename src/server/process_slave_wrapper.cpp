@@ -53,6 +53,9 @@
 #include "server/daemon_client.h"
 #include "server/daemon_commands.h"
 #include "server/daemon_server.h"
+#include "server/http_client.h"
+#include "server/http_handler.h"
+#include "server/http_server.h"
 #include "server/options/options.h"
 #include "server/stream_struct_utils.h"
 
@@ -157,6 +160,7 @@ common::ErrnoError CreatePipe(int* read_client_fd, int* write_client_fd) {
 
 namespace iptv_cloud {
 namespace {
+
 common::ErrnoError MakeStreamInfo(const utils::ArgsMap& config_args,
                                   StreamInfo* sha,
                                   std::string* feedback_dir,
@@ -238,7 +242,6 @@ common::ErrnoError MakeStreamInfo(const utils::ArgsMap& config_args,
 }
 }  // namespace
 namespace server {
-
 struct ProcessSlaveWrapper::NodeStats {
   NodeStats() : prev(), prev_nshot(), gpu_load(0), timestamp(common::time::current_mstime() / 1000) {}
 
@@ -254,6 +257,8 @@ ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key, const C
       process_argc_(0),
       process_argv_(nullptr),
       loop_(),
+      http_server_(),
+      http_handler_(nullptr),
       id_(0),
       ping_client_id_timer_(INVALID_TIMER_ID),
       node_stats_timer_(INVALID_TIMER_ID),
@@ -262,6 +267,9 @@ ProcessSlaveWrapper::ProcessSlaveWrapper(const std::string& license_key, const C
       stream_exec_func_(nullptr) {
   loop_ = new DaemonServer(config.host, this);
   loop_->SetName(config.id);
+
+  http_handler_ = new HttpHandler;
+  http_server_ = new HttpServer(config.http_host, http_handler_);
 }
 
 int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
@@ -296,6 +304,8 @@ int ProcessSlaveWrapper::SendStopDaemonRequest(const std::string& license) {
 }
 
 ProcessSlaveWrapper::~ProcessSlaveWrapper() {
+  destroy(&http_server_);
+  destroy(&http_handler_);
   destroy(&loop_);
   destroy(&node_stats_);
 }
@@ -321,6 +331,8 @@ int ProcessSlaveWrapper::Exec(int argc, char** argv) {
   process_argc_ = argc;
   process_argv_ = argv;
 
+  std::thread http_thread;
+
   // gpu statistic monitor
   std::thread perf_thread;
   gpu_stats::IPerfMonitor* perf_monitor = gpu_stats::CreatePerfMonitor(&node_stats_->gpu_load);
@@ -328,8 +340,26 @@ int ProcessSlaveWrapper::Exec(int argc, char** argv) {
     perf_thread = std::thread([perf_monitor] { perf_monitor->Exec(); });
   }
 
+  HttpServer* http_server = static_cast<HttpServer*>(http_server_);
+  http_thread = std::thread([http_server] {
+    common::ErrnoError err = http_server->Bind(true);
+    if (err) {
+      DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
+      return;
+    }
+
+    err = http_server->Listen(5);
+    if (err) {
+      DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
+      return;
+    }
+
+    int res = http_server->Exec();
+    UNUSED(res);
+  });
+
   int res = EXIT_FAILURE;
-  common::libev::tcp::TcpServer* server = static_cast<common::libev::tcp::TcpServer*>(loop_);
+  DaemonServer* server = static_cast<DaemonServer*>(loop_);
   common::ErrnoError err = server->Bind(true);
   if (err) {
     DEBUG_MSG_ERROR(err, common::logging::LOG_LEVEL_ERR);
@@ -348,6 +378,9 @@ int ProcessSlaveWrapper::Exec(int argc, char** argv) {
   res = server->Exec();
 
 finished:
+  if (http_thread.joinable()) {
+    http_thread.join();
+  }
   if (perf_monitor) {
     perf_monitor->Stop();
   }
@@ -409,6 +442,7 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
     const std::string node_stats = MakeServiceStats();
     BroadcastClients(StatisitcServiceBroadcast(node_stats));
   } else if (cleanup_timer_ == id) {
+    http_server_->Stop();
     loop_->Stop();
   }
 }
