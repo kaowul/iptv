@@ -196,7 +196,6 @@ void HttpHandler::ProcessReceived(HttpClient* hclient, const char* request, size
     }
 
     ::close(file);
-    return;
   }
 
   if (!IsKeepAlive) {
