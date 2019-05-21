@@ -378,9 +378,7 @@ int ProcessSlaveWrapper::Exec(int argc, char** argv) {
   res = server->Exec();
 
 finished:
-  if (http_thread.joinable()) {
-    http_thread.join();
-  }
+  http_thread.join();
   if (perf_monitor) {
     perf_monitor->Stop();
   }
@@ -1056,6 +1054,9 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientPrepareService(Protoc
       const std::string err_str = err_des->GetDescription();
       return common::make_errno_error(err_str, EAGAIN);
     }
+
+    const auto http_root = HttpHandler::http_directory_path_t(state_info.GetHlsDirectory());
+    static_cast<HttpHandler*>(http_handler_)->SetHttpRoot(http_root);
 
     service::Directories dirs(state_info);
     std::string resp_str = service::MakeDirectoryResponce(dirs);

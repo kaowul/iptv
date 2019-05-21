@@ -28,7 +28,7 @@
 #define DUMMY_LOG_FILE_PATH "/dev/null"
 
 #define CLIENT_PORT 6317
-#define HTTP_HOST_PORT 8080
+#define HTTP_HOST_PORT 8000
 
 namespace {
 common::ErrnoError ReadSlaveConfig(const std::string& path, iptv_cloud::utils::ArgsMap* args) {
