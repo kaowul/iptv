@@ -24,12 +24,12 @@ ProtocoledPipeClient::ProtocoledPipeClient(common::libev::IoLoop* server, descri
       pipe_write_client_(new common::libev::PipeWriteClient(nullptr, write_fd)),
       read_fd_(read_fd) {}
 
-common::ErrnoError ProtocoledPipeClient::Write(const void* data, size_t size, size_t* nwrite_out) {
-  return pipe_write_client_->Write(data, size, nwrite_out);
+common::ErrnoError ProtocoledPipeClient::SingleWrite(const void* data, size_t size, size_t* nwrite_out) {
+  return pipe_write_client_->SingleWrite(data, size, nwrite_out);
 }
 
-common::ErrnoError ProtocoledPipeClient::Read(void* out, size_t max_size, size_t* nread) {
-  return pipe_read_client_->Read(out, max_size, nread);
+common::ErrnoError ProtocoledPipeClient::SingleRead(void* out, size_t max_size, size_t* nread) {
+  return pipe_read_client_->SingleRead(out, max_size, nread);
 }
 
 descriptor_t ProtocoledPipeClient::GetFd() const {

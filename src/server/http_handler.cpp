@@ -73,7 +73,7 @@ void HttpHandler::ChildStatusChanged(common::libev::IoChild* child, int status) 
 void HttpHandler::DataReceived(common::libev::IoClient* client) {
   char buff[BUF_SIZE] = {0};
   size_t nread = 0;
-  common::ErrnoError errn = client->Read(buff, BUF_SIZE, &nread);
+  common::ErrnoError errn = client->SingleRead(buff, BUF_SIZE - 1, &nread);
   if ((errn && errn->GetErrorCode() != EAGAIN) || nread == 0) {
     client->Close();
     delete client;

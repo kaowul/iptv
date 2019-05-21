@@ -32,8 +32,8 @@ class ProtocoledPipeClient : public protocol::ProtocolClient<common::libev::IoCl
   ProtocoledPipeClient(common::libev::IoLoop* server, descriptor_t read_fd, descriptor_t write_fd);
 
  protected:
-  common::ErrnoError Write(const void* data, size_t size, size_t* nwrite_out) override;
-  common::ErrnoError Read(void* out, size_t max_size, size_t* nread) override;
+  common::ErrnoError SingleWrite(const void* data, size_t size, size_t* nwrite_out) override;
+  common::ErrnoError SingleRead(void* out, size_t max_size, size_t* nread) override;
 
   descriptor_t GetFd() const override;
 
