@@ -146,6 +146,7 @@ void HttpHandler::ProcessReceived(HttpClient* hclient, const char* request, size
     }
 
     const std::string file_path_str = file_path->GetPath();
+    INFO_LOG() << "Http file request path: " << file_path_str;
     int open_flags = O_RDONLY;
     struct stat sb;
     if (stat(file_path_str.c_str(), &sb) < 0) {
