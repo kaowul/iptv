@@ -97,6 +97,7 @@ void HttpHandler::ProcessReceived(HttpClient* hclient, const char* request, size
   common::http::HttpRequest hrequest;
   std::string request_str(request, req_len);
   std::pair<common::http::http_status, common::Error> result = common::http::parse_http_request(request_str, &hrequest);
+  INFO_LOG() << "Http request: " << request;
 
   if (result.second) {
     const std::string error_text = result.second->GetDescription();
@@ -146,7 +147,6 @@ void HttpHandler::ProcessReceived(HttpClient* hclient, const char* request, size
     }
 
     const std::string file_path_str = file_path->GetPath();
-    INFO_LOG() << "Http file request method: " << hrequest.GetMethod() << ", path: " << file_path_str;
     int open_flags = O_RDONLY;
     struct stat sb;
     if (stat(file_path_str.c_str(), &sb) < 0) {
