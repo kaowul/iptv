@@ -97,7 +97,7 @@ void HttpHandler::ProcessReceived(HttpClient* hclient, const char* request, size
   common::http::HttpRequest hrequest;
   std::string request_str(request, req_len);
   std::pair<common::http::http_status, common::Error> result = common::http::parse_http_request(request_str, &hrequest);
-  INFO_LOG() << "Http request: " << request;
+  DEBUG_LOG() << "Http request:\n" << request;
 
   if (result.second) {
     const std::string error_text = result.second->GetDescription();
