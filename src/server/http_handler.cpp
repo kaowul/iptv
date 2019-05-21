@@ -113,9 +113,9 @@ void HttpHandler::ProcessReceived(HttpClient* hclient, const char* request, size
   }
 
   // keep alive
-  common::http::header_t connectionField;
-  hrequest.FindHeaderByKey("Connection", false, &connectionField);
-  bool IsKeepAlive = common::EqualsASCII(connectionField.value, "Keep-Alive", false);
+  common::http::header_t connection_field;
+  bool is_find_connection = hrequest.FindHeaderByKey("Connection", false, &connection_field);
+  bool IsKeepAlive = is_find_connection ? common::EqualsASCII(connection_field.value, "Keep-Alive", false) : true;
   const common::http::http_protocol protocol = hrequest.GetProtocol();
   const char* extra_header = nullptr;
   if (hrequest.GetMethod() == common::http::http_method::HM_GET ||
