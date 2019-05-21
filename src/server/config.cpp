@@ -118,7 +118,7 @@ common::ErrnoError load_config_from_file(const std::string& config_absolute_path
   lconfig.host = host;
 
   common::net::HostAndPort http_host;
-  if (!utils::ArgsGetValue(slave_config_args, SERVICE_HTTP_HOST_FIELD, &host)) {
+  if (!utils::ArgsGetValue(slave_config_args, SERVICE_HTTP_HOST_FIELD, &http_host)) {
     http_host = common::net::HostAndPort::CreateLocalHost(HTTP_HOST_PORT);
   }
   lconfig.http_host = http_host;
