@@ -118,7 +118,7 @@ class ProcessSlaveWrapper : public common::libev::IoLoopObserver {
   common::ErrnoError HandleResponcePingService(ProtocoledDaemonClient* dclient,
                                                protocol::response_t* resp) WARN_UNUSED_RESULT;
 
-  std::string MakeServiceStats() const;
+  std::string MakeServiceStats(bool full_stat) const;
 
   struct NodeStats;
 

@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include <common/net/types.h>
 #include <common/serializer/json_serializer.h>
 
 #include "utils/utils.h"
@@ -28,8 +29,7 @@ class ServerInfo : public common::serializer::JsonSerializer<ServerInfo> {
  public:
   typedef JsonSerializer<ServerInfo> base_class;
   ServerInfo();
-  explicit ServerInfo(const std::string& node_id,
-                      int cpu_load,
+  explicit ServerInfo(int cpu_load,
                       int gpu_load,
                       const std::string& uptime,
                       const utils::MemoryShot& mem_shot,
@@ -39,7 +39,6 @@ class ServerInfo : public common::serializer::JsonSerializer<ServerInfo> {
                       const utils::SysinfoShot& sys,
                       time_t timestamp);
 
-  std::string GetNodeID() const;
   int GetCpuLoad() const;
   int GetGpuLoad() const;
   std::string GetUptime() const;
@@ -48,14 +47,12 @@ class ServerInfo : public common::serializer::JsonSerializer<ServerInfo> {
   uint64_t GetNetBytesRecv() const;
   uint64_t GetNetBytesSend() const;
   time_t GetTimestamp() const;
-  std::string GetProjectVersion() const;
 
  protected:
   common::Error DoDeSerialize(json_object* serialized) override;
   common::Error SerializeFields(json_object* out) const override;
 
  private:
-  std::string node_id_;
   int cpu_load_;
   int gpu_load_;
   std::string uptime_;
@@ -65,6 +62,27 @@ class ServerInfo : public common::serializer::JsonSerializer<ServerInfo> {
   uint64_t net_bytes_send_;
   time_t current_ts_;
   utils::SysinfoShot sys_shot_;
+};
+
+class FullServiceInfo : public ServerInfo {
+ public:
+  typedef ServerInfo base_class;
+  FullServiceInfo();
+  explicit FullServiceInfo(const std::string& node_id,
+                           const common::net::HostAndPort& http_host,
+                           const base_class& base);
+
+  std::string GetNodeID() const;
+  common::net::HostAndPort GetHttpHost() const;
+  std::string GetProjectVersion() const;
+
+ protected:
+  common::Error DoDeSerialize(json_object* serialized) override;
+  common::Error SerializeFields(json_object* out) const override;
+
+ private:
+  std::string node_id_;
+  common::net::HostAndPort http_host_;
   std::string proj_ver_;
 };
 

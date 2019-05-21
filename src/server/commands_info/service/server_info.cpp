@@ -16,7 +16,6 @@
 
 #define STATISTIC_SERVICE_INFO_UPTIME_FIELD "uptime"
 #define STATISTIC_SERVICE_INFO_TIMESTAMP_FIELD "timestamp"
-#define STATISTIC_SERVICE_INFO_ID_FIELD "id"
 #define STATISTIC_SERVICE_INFO_CPU_FIELD "cpu"
 #define STATISTIC_SERVICE_INFO_GPU_FIELD "gpu"
 #define STATISTIC_SERVICE_INFO_MEMORY_TOTAL_FIELD "memory_total"
@@ -31,7 +30,9 @@
 #define STATISTIC_SERVICE_INFO_BANDWIDTH_IN_FIELD "bandwidth_in"
 #define STATISTIC_SERVICE_INFO_BANDWIDTH_OUT_FIELD "bandwidth_out"
 
-#define STATISTIC_SERVICE_INFO_VERSION_FIELD "version"
+#define FULL_SERVICE_INFO_ID_FIELD "id"
+#define FULL_SERVICE_INFO_HTTP_VERSION_FIELD "version"
+#define FULL_SERVICE_INFO_HTTP_HOST_FIELD "http_host"
 
 namespace iptv_cloud {
 namespace server {
@@ -39,7 +40,6 @@ namespace service {
 
 ServerInfo::ServerInfo()
     : base_class(),
-      node_id_(),
       cpu_load_(),
       gpu_load_(),
       uptime_(),
@@ -48,11 +48,9 @@ ServerInfo::ServerInfo()
       net_bytes_recv_(),
       net_bytes_send_(),
       current_ts_(),
-      sys_shot_(),
-      proj_ver_() {}
+      sys_shot_() {}
 
-ServerInfo::ServerInfo(const std::string& node_id,
-                       int cpu_load,
+ServerInfo::ServerInfo(int cpu_load,
                        int gpu_load,
                        const std::string& uptime,
                        const utils::MemoryShot& mem_shot,
@@ -62,7 +60,6 @@ ServerInfo::ServerInfo(const std::string& node_id,
                        const utils::SysinfoShot& sys,
                        time_t timestamp)
     : base_class(),
-      node_id_(node_id),
       cpu_load_(cpu_load),
       gpu_load_(gpu_load),
       uptime_(uptime),
@@ -71,11 +68,9 @@ ServerInfo::ServerInfo(const std::string& node_id,
       net_bytes_recv_(net_bytes_recv),
       net_bytes_send_(net_bytes_send),
       current_ts_(timestamp),
-      sys_shot_(sys),
-      proj_ver_(PROJECT_VERSION_HUMAN) {}
+      sys_shot_(sys) {}
 
 common::Error ServerInfo::SerializeFields(json_object* out) const {
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_ID_FIELD, json_object_new_string(node_id_.c_str()));
   json_object_object_add(out, STATISTIC_SERVICE_INFO_CPU_FIELD, json_object_new_int(cpu_load_));
   json_object_object_add(out, STATISTIC_SERVICE_INFO_GPU_FIELD, json_object_new_int(gpu_load_));
   json_object_object_add(out, STATISTIC_SERVICE_INFO_LOAD_AVERAGE_FIELD, json_object_new_string(uptime_.c_str()));
@@ -89,18 +84,11 @@ common::Error ServerInfo::SerializeFields(json_object* out) const {
   json_object_object_add(out, STATISTIC_SERVICE_INFO_BANDWIDTH_OUT_FIELD, json_object_new_int64(net_bytes_send_));
   json_object_object_add(out, STATISTIC_SERVICE_INFO_UPTIME_FIELD, json_object_new_int64(sys_shot_.uptime));
   json_object_object_add(out, STATISTIC_SERVICE_INFO_TIMESTAMP_FIELD, json_object_new_int64(current_ts_));
-  json_object_object_add(out, STATISTIC_SERVICE_INFO_VERSION_FIELD, json_object_new_string(proj_ver_.c_str()));
   return common::Error();
 }
 
 common::Error ServerInfo::DoDeSerialize(json_object* serialized) {
   ServerInfo inf;
-  json_object* jnode_id = nullptr;
-  json_bool jnode_id_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_ID_FIELD, &jnode_id);
-  if (!jnode_id_exists) {
-    return common::make_error_inval();
-  }
-  inf.node_id_ = json_object_get_string(jnode_id);
 
   json_object* jcpu_load = nullptr;
   json_bool jcpu_load_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_CPU_FIELD, &jcpu_load);
@@ -180,18 +168,8 @@ common::Error ServerInfo::DoDeSerialize(json_object* serialized) {
     inf.current_ts_ = json_object_get_int64(jcur_ts);
   }
 
-  json_object* jproj_ver = nullptr;
-  json_bool jproj_ver_exists = json_object_object_get_ex(serialized, STATISTIC_SERVICE_INFO_VERSION_FIELD, &jproj_ver);
-  if (jproj_ver_exists) {
-    inf.proj_ver_ = json_object_get_string(jproj_ver);
-  }
-
   *this = inf;
   return common::Error();
-}
-
-std::string ServerInfo::GetNodeID() const {
-  return node_id_;
 }
 
 int ServerInfo::GetCpuLoad() const {
@@ -226,8 +204,64 @@ time_t ServerInfo::GetTimestamp() const {
   return current_ts_;
 }
 
-std::string ServerInfo::GetProjectVersion() const {
+FullServiceInfo::FullServiceInfo() : base_class(), node_id_(), http_host_(), proj_ver_(PROJECT_VERSION_HUMAN) {}
+
+FullServiceInfo::FullServiceInfo(const std::string& node_id,
+                                 const common::net::HostAndPort& http_host,
+                                 const base_class& base)
+    : base_class(base), node_id_(node_id), http_host_(http_host), proj_ver_(PROJECT_VERSION_HUMAN) {}
+
+std::string FullServiceInfo::GetNodeID() const {
+  return node_id_;
+}
+
+common::net::HostAndPort FullServiceInfo::GetHttpHost() const {
+  return http_host_;
+}
+
+std::string FullServiceInfo::GetProjectVersion() const {
   return proj_ver_;
+}
+
+common::Error FullServiceInfo::DoDeSerialize(json_object* serialized) {
+  FullServiceInfo inf;
+  common::Error err = inf.base_class::DoDeSerialize(serialized);
+  if (err) {
+    return err;
+  }
+
+  json_object* jnode_id = nullptr;
+  json_bool jnode_id_exists = json_object_object_get_ex(serialized, FULL_SERVICE_INFO_ID_FIELD, &jnode_id);
+  if (!jnode_id_exists) {
+    return common::make_error_inval();
+  }
+  inf.node_id_ = json_object_get_string(jnode_id);
+
+  json_object* jhttp_host = nullptr;
+  json_bool jhttp_host_exists = json_object_object_get_ex(serialized, FULL_SERVICE_INFO_HTTP_HOST_FIELD, &jhttp_host);
+  if (jhttp_host_exists) {
+    common::net::HostAndPort host;
+    if (common::ConvertFromString(json_object_get_string(jhttp_host), &host)) {
+      inf.http_host_ = host;
+    }
+  }
+
+  json_object* jproj_ver = nullptr;
+  json_bool jproj_ver_exists = json_object_object_get_ex(serialized, FULL_SERVICE_INFO_HTTP_HOST_FIELD, &jproj_ver);
+  if (jproj_ver_exists) {
+    inf.proj_ver_ = json_object_get_string(jproj_ver);
+  }
+
+  *this = inf;
+  return common::Error();
+}
+
+common::Error FullServiceInfo::SerializeFields(json_object* out) const {
+  std::string http_host_str = common::ConvertToString(http_host_);
+  json_object_object_add(out, FULL_SERVICE_INFO_ID_FIELD, json_object_new_string(node_id_.c_str()));
+  json_object_object_add(out, FULL_SERVICE_INFO_HTTP_HOST_FIELD, json_object_new_string(http_host_str.c_str()));
+  json_object_object_add(out, FULL_SERVICE_INFO_HTTP_VERSION_FIELD, json_object_new_string(proj_ver_.c_str()));
+  return base_class::SerializeFields(out);
 }
 
 }  // namespace service

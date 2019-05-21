@@ -437,7 +437,7 @@ void ProcessSlaveWrapper::TimerEmited(common::libev::IoLoop* server, common::lib
       }
     }
   } else if (node_stats_timer_ == id) {
-    const std::string node_stats = MakeServiceStats();
+    const std::string node_stats = MakeServiceStats(false);
     BroadcastClients(StatisitcServiceBroadcast(node_stats));
   } else if (cleanup_timer_ == id) {
     http_server_->Stop();
@@ -1095,7 +1095,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleRequestClientActivate(ProtocoledDa
       return common::make_errno_error_inval();
     }
 
-    const std::string node_stats = MakeServiceStats();
+    const std::string node_stats = MakeServiceStats(true);
     protocol::response_t resp = ActivateResponce(req->id, node_stats);
     dclient->WriteResponce(resp);
     dclient->SetVerified(true);
@@ -1249,7 +1249,7 @@ common::ErrnoError ProcessSlaveWrapper::HandleResponceStreamsCommand(pipe::Proto
   return common::ErrnoError();
 }
 
-std::string ProcessSlaveWrapper::MakeServiceStats() const {
+std::string ProcessSlaveWrapper::MakeServiceStats(bool full_stat) const {
   utils::CpuShot next = utils::GetMachineCpuShot();
   long double cpu_load = utils::GetCpuMachineLoad(node_stats_->prev, next);
   node_stats_->prev = next;
@@ -1270,14 +1270,23 @@ std::string ProcessSlaveWrapper::MakeServiceStats() const {
   }
   node_stats_->timestamp = current_time;
 
-  service::ServerInfo stat(config_.id, cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot,
-                           bytes_recv / ts_diff, bytes_send / ts_diff, sshot, current_time);
+  service::ServerInfo stat(cpu_load * 100, node_stats_->gpu_load, uptime_str, mem_shot, hdd_shot, bytes_recv / ts_diff,
+                           bytes_send / ts_diff, sshot, current_time);
 
   std::string node_stats;
-  common::Error err_ser = stat.SerializeToString(&node_stats);
-  if (err_ser) {
-    const std::string err_str = err_ser->GetDescription();
-    WARNING_LOG() << "Failed to generate node statistic: " << err_str;
+  if (full_stat) {
+    service::FullServiceInfo fstat(config_.id, config_.http_host, stat);
+    common::Error err_ser = fstat.SerializeToString(&node_stats);
+    if (err_ser) {
+      const std::string err_str = err_ser->GetDescription();
+      WARNING_LOG() << "Failed to generate node full statistic: " << err_str;
+    }
+  } else {
+    common::Error err_ser = stat.SerializeToString(&node_stats);
+    if (err_ser) {
+      const std::string err_str = err_ser->GetDescription();
+      WARNING_LOG() << "Failed to generate node statistic: " << err_str;
+    }
   }
   return node_stats;
 }
