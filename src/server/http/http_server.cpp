@@ -12,9 +12,9 @@
     along with iptv_cloud.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "server/http_server.h"
+#include "server/http/http_server.h"
 
-#include "server/http_client.h"
+#include "server/http/http_client.h"
 
 namespace iptv_cloud {
 namespace server {
@@ -23,8 +23,7 @@ HttpServer::HttpServer(const common::net::HostAndPort& host, common::libev::IoLo
     : base_class(host, false, observer) {}
 
 common::libev::tcp::TcpClient* HttpServer::CreateClient(const common::net::socket_info& info) {
-  HttpClient* client = new HttpClient(this, info);
-  return client;
+  return new HttpClient(this, info);
 }
 
 }  // namespace server

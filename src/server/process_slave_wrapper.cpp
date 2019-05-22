@@ -53,9 +53,8 @@
 #include "server/daemon_client.h"
 #include "server/daemon_commands.h"
 #include "server/daemon_server.h"
-#include "server/http_client.h"
-#include "server/http_handler.h"
-#include "server/http_server.h"
+#include "server/http/http_handler.h"
+#include "server/http/http_server.h"
 #include "server/options/options.h"
 #include "server/stream_struct_utils.h"
 

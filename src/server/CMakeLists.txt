@@ -58,18 +58,28 @@ ELSEIF(OS_POSIX)
   SET(RELATIVE_SOURCE_DIR ..)
 ENDIF(OS_WINDOWS)
 
+SET(SERVER_HTTP_HEADERS
+  ${CMAKE_SOURCE_DIR}/src/server/http/http_handler.h
+  ${CMAKE_SOURCE_DIR}/src/server/http/http_client.h
+  ${CMAKE_SOURCE_DIR}/src/server/http/http_server.h
+)
+
+SET(SERVER_HTTP_SOURCES
+  ${CMAKE_SOURCE_DIR}/src/server/http/http_handler.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/http/http_client.cpp
+  ${CMAKE_SOURCE_DIR}/src/server/http/http_server.cpp
+)
+
 SET(DAEMONS_HEADERS
   ${CMAKE_SOURCE_DIR}/src/server/child_stream.h
   ${CMAKE_SOURCE_DIR}/src/server/process_slave_wrapper.h
   ${CMAKE_SOURCE_DIR}/src/server/daemon_client.h
   ${CMAKE_SOURCE_DIR}/src/server/daemon_server.h
-  ${CMAKE_SOURCE_DIR}/src/server/http_handler.h
-  ${CMAKE_SOURCE_DIR}/src/server/http_client.h
-  ${CMAKE_SOURCE_DIR}/src/server/http_server.h
   ${CMAKE_SOURCE_DIR}/src/server/daemon_commands.h
   ${CMAKE_SOURCE_DIR}/src/server/stream_struct_utils.h
   ${CMAKE_SOURCE_DIR}/src/server/config.h
 
+  ${SERVER_HTTP_HEADERS}
   ${DAEMONS_HEADERS_COMANDS_INFO}
 )
 SET(DAEMONS_SOURCES
@@ -77,13 +87,11 @@ SET(DAEMONS_SOURCES
   ${CMAKE_SOURCE_DIR}/src/server/process_slave_wrapper.cpp
   ${CMAKE_SOURCE_DIR}/src/server/daemon_client.cpp
   ${CMAKE_SOURCE_DIR}/src/server/daemon_server.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/http_handler.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/http_client.cpp
-  ${CMAKE_SOURCE_DIR}/src/server/http_server.cpp
   ${CMAKE_SOURCE_DIR}/src/server/daemon_commands.cpp
   ${CMAKE_SOURCE_DIR}/src/server/stream_struct_utils.cpp
   ${CMAKE_SOURCE_DIR}/src/server/config.cpp
 
+  ${SERVER_HTTP_SOURCES}
   ${DAEMONS_SOURCES_COMANDS_INFO}
 )
 
@@ -240,7 +248,7 @@ INSTALL(FILES ${SERVICE_DEB_SCRIPT_GEN_PATH}
   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
 SET(SERVICE_CONF_GEN_PATH ${CMAKE_BINARY_DIR}/service/${STREAMER_SERVICE_NAME}.conf)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/install/${PROJECT_NAME_LOWERCASE}/service/service_slave.conf.in
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/install/${PROJECT_NAME_LOWERCASE}/service/service.conf.in
   ${SERVICE_CONF_GEN_PATH} @ONLY IMMEDIATE
 )
 IF(NOT EXISTS "/etc/${STREAMER_SERVICE_NAME}.conf")
@@ -248,10 +256,7 @@ IF(NOT EXISTS "/etc/${STREAMER_SERVICE_NAME}.conf")
 ENDIF(NOT EXISTS "/etc/${STREAMER_SERVICE_NAME}.conf")
 
 IF (DEVELOPER_CHECK_STYLE)
-  SET(CHECK_SOURCES_DAEMON
-    ${DAEMON_SOURCES}
-    ${EXE_DAEMON_SOURCES}
-  )
+  SET(CHECK_SOURCES_DAEMON ${DAEMON_SOURCES} ${EXE_DAEMON_SOURCES})
   REGISTER_CHECK_STYLE_TARGET(check_style_${STREAMER_SERVICE_NAME} "${CHECK_SOURCES_DAEMON}")
   REGISTER_CHECK_INCLUDES_TARGET(${STREAMER_SERVICE_NAME_EXE})
 ENDIF(DEVELOPER_CHECK_STYLE)
