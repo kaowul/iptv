@@ -15,6 +15,8 @@ Free IPTV/Video cloud server
 * Streaming Protocols
 * File Formats
 * Presets
+* Vods
+* HTTP Live Streaming (HLS) server-side support
 * Public API, client server communication via [JSON RPC](https://www.jsonrpc.org/specification)
 * [Admin panel](https://github.com/fastogt/iptv_admin)
 * [Docker Image](https://hub.docker.com/r/fastogt/iptv)
