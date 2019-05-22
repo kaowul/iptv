@@ -24,7 +24,6 @@ HttpServer::HttpServer(const common::net::HostAndPort& host, common::libev::IoLo
 
 common::libev::tcp::TcpClient* HttpServer::CreateClient(const common::net::socket_info& info) {
   HttpClient* client = new HttpClient(this, info);
-  client->SetBlocking(false);
   return client;
 }
 
